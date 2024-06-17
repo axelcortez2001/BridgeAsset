@@ -1,0 +1,31 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-bridgeasset-dev-2f238-authRole",
+      "UnauthRoleArn": "arn:aws:iam::675436869821:role/amplify-bridgeasset-dev-2f238-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::675436869821:role/amplify-bridgeasset-dev-2f238-authRole",
+      "Region": "ap-southeast-1",
+      "DeploymentBucketName": "amplify-bridgeasset-dev-2f238-deployment",
+      "UnauthRoleName": "amplify-bridgeasset-dev-2f238-unauthRole",
+      "StackName": "amplify-bridgeasset-dev-2f238",
+      "StackId": "arn:aws:cloudformation:ap-southeast-1:675436869821:stack/amplify-bridgeasset-dev-2f238/398b7510-2c3e-11ef-a801-0a12469ff397",
+      "AmplifyAppId": "dqsrh4h3cvg2c",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-bridgeasset-dev-2f238-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+    },
+    "categories": {
+      "function": {
+        "bridgeassetfunction": {
+          "mongodbUri": "mongodb+srv://axelcortez:are-text2024@are-text.kye05rk.mongodb.net/BridgeAssets",
+          "deploymentBucketName": "amplify-bridgeasset-dev-2f238-deployment",
+          "s3Key": "amplify-builds/bridgeassetfunction-4f484974447774437a31-build.zip"
+        }
+      },
+      "auth": {
+        "bridgeasset": {}
+      },
+      "api": {
+        "BridgeAssetAPI": {}
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "api": {
+    "BridgeAssetAPI": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "bridgeassetfunction"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
+  "auth": {
+    "bridgeasset": {
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "managed"
+    }
+  },
+  "function": {
+    "bridgeassetfunction": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_bridgeassetfunction_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "bridgeassetfunction"
+        }
+      ]
+    },
+    "AMPLIFY_function_bridgeassetfunction_mongodbUri": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "bridgeassetfunction"
+        }
+      ]
+    },
+    "AMPLIFY_function_bridgeassetfunction_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "bridgeassetfunction"
+        }
+      ]
+    }
+  }
+}

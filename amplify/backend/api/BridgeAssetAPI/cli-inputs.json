@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "paths": {
+    "/assets": {
+      "name": "/assets",
+      "lambdaFunction": "bridgeassetfunction",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
+    }
+  }
+}
