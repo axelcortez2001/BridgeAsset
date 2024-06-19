@@ -37,6 +37,30 @@
     "resourceName": "bridgeasset",
     "sharedId": "b5552a0d",
     "serviceName": "Cognito",
-    "useDefault": "manual"
+    "useDefault": "defaultSocial",
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "useEnabledMfas": true,
+    "dependsOn": [],
+    "hostedUI": true,
+    "hostedUIDomainName": "bridgeasset41caaf33-41caaf33",
+    "authProvidersUserPool": [
+      "Google"
+    ],
+    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"https://main.dqsrh4h3cvg2c.amplifyapp.com/\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"https://main.dqsrh4h3cvg2c.amplifyapp.com/\"]}",
+    "userPoolGroupList": [],
+    "authProviders": []
   }
 }

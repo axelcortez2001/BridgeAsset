@@ -1,10 +1,4 @@
-/* Amplify Params - DO NOT EDIT
-	API_BRIDGEASSETAPI_APIID
-	API_BRIDGEASSETAPI_APINAME
-	AUTH_BRIDGEASSET_USERPOOLID
-	ENV
-	REGION
-Amplify Params - DO NOT EDIT */ /*
+/*
 Copyright 2017 - 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
     http://aws.amazon.com/apache2.0/
@@ -31,40 +25,50 @@ app.use(function (req, res, next) {
   next();
 });
 
-/**********************
- * Example get method *
- **********************/
-//connect to database
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   dbName: "BridgeAssets",
 });
-const assetSchema = new mongoose.Schema({
-  item: { type: String },
-  FA_code: { type: String },
-  serial_number: { type: String },
-  supplier: { type: String },
-  inventory_field: { type: String },
-  last_updated: { type: String },
-  unit_price: { type: Number },
-  dop: { type: String },
-  ytd: { type: String },
-  warranty_period: { type: String },
-  lifespan_status: { type: String },
-  warranty_status: { type: String },
-  status: { type: String },
-  asset_holder: {},
-});
-const AssetModel = mongoose.model("Assets", assetSchema);
 
-// define a route handler for the default home page
-app.get("/assets", function (req, res) {
-  // Add your code here
-  res.json({ success: "get call succeed!", url: req.url });
+//userSchema
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  sub: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  picture: {
+    type: String,
+  },
+});
+const userModel = mongoose.model("User", userSchema);
+/**********************
+ * Example get method *
+ **********************/
+
+app.get("/users", async (req, res) => {
+  try {
+    const user = await userModel.find();
+    if (!user) {
+      return res.status(404).json({ message: "Users Unavailable" });
+    }
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-app.get("/assets/*", function (req, res) {
+app.get("/users/*", function (req, res) {
   // Add your code here
   res.json({ success: "get call succeed!", url: req.url });
 });
@@ -73,18 +77,24 @@ app.get("/assets/*", function (req, res) {
  * Example post method *
  ****************************/
 
-app.post("/assets", async (req, res) => {
-  const { assetData } = req.body;
+app.post("/users", async (req, res) => {
+  const { email, sub, name, picture } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: "Username and email are required" });
+  }
   try {
-    const asset = new AssetModel(assetData);
-    await asset.save();
-    res.status(200).json({ success: true, asset });
+    let user = await userModel.findOne({ email });
+    if (!user) {
+      user = new userModel({ email, sub, name, picture });
+      await user.save();
+    }
+    res.status(200).json({ success: true, user });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-app.post("/assets/*", function (req, res) {
+app.post("/users/*", function (req, res) {
   // Add your code here
   res.json({ success: "post call succeed!", url: req.url, body: req.body });
 });
@@ -93,12 +103,12 @@ app.post("/assets/*", function (req, res) {
  * Example put method *
  ****************************/
 
-app.put("/assets", function (req, res) {
+app.put("/users", function (req, res) {
   // Add your code here
   res.json({ success: "put call succeed!", url: req.url, body: req.body });
 });
 
-app.put("/assets/*", function (req, res) {
+app.put("/users/*", function (req, res) {
   // Add your code here
   res.json({ success: "put call succeed!", url: req.url, body: req.body });
 });
@@ -107,12 +117,12 @@ app.put("/assets/*", function (req, res) {
  * Example delete method *
  ****************************/
 
-app.delete("/assets", function (req, res) {
+app.delete("/users", function (req, res) {
   // Add your code here
   res.json({ success: "delete call succeed!", url: req.url });
 });
 
-app.delete("/assets/*", function (req, res) {
+app.delete("/users/*", function (req, res) {
   // Add your code here
   res.json({ success: "delete call succeed!", url: req.url });
 });

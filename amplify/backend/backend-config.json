@@ -9,6 +9,14 @@
           ],
           "category": "function",
           "resourceName": "bridgeassetfunction"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "bridgeassetusers"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -30,7 +38,9 @@
         "signupAttributes": [
           "EMAIL"
         ],
-        "socialProviders": [],
+        "socialProviders": [
+          "GOOGLE"
+        ],
         "usernameAttributes": [],
         "verificationMechanisms": [
           "EMAIL"
@@ -43,6 +53,11 @@
   },
   "function": {
     "bridgeassetfunction": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "bridgeassetusers": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
@@ -70,6 +85,30 @@
         {
           "category": "function",
           "resourceName": "bridgeassetfunction"
+        }
+      ]
+    },
+    "AMPLIFY_function_bridgeassetusers_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "bridgeassetusers"
+        }
+      ]
+    },
+    "AMPLIFY_function_bridgeassetusers_mongodbUri": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "bridgeassetusers"
+        }
+      ]
+    },
+    "AMPLIFY_function_bridgeassetusers_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "bridgeassetusers"
         }
       ]
     }

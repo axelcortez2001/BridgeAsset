@@ -13,6 +13,19 @@
           "delete"
         ]
       }
+    },
+    "/users": {
+      "name": "/users",
+      "lambdaFunction": "bridgeassetusers",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
     }
   }
 }
