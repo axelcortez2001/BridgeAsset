@@ -42,3 +42,16 @@ export async function deleteAsset() {
     console.log("DEL call failed: ", JSON.parse(e.response.body));
   }
 }
+
+export async function getUsers(path) {
+  try {
+    const getOperation = get({
+      apiName: "BridgeAssetAPI",
+      path: path,
+    });
+    const { body } = await getOperation.response;
+    return await body.json();
+  } catch (e) {
+    console.log("Get call failed: ", JSON.parse(e.response.body));
+  }
+}

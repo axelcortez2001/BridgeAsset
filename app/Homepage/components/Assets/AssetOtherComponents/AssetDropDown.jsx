@@ -6,12 +6,12 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-const AssetDropDown = ({ selectedKeys, setSelectedKeys }) => {
+const AssetDropDown = ({ selectedType, setSelectedType }) => {
   return (
     <Dropdown>
       <DropdownTrigger>
         <Button variant='bordered' className='capitalize'>
-          {selectedKeys}
+          {selectedType}
         </Button>
       </DropdownTrigger>
       <DropdownMenu
@@ -19,12 +19,19 @@ const AssetDropDown = ({ selectedKeys, setSelectedKeys }) => {
         variant='flat'
         disallowEmptySelection
         selectionMode='single'
-        selectedKeys={selectedKeys}
-        onSelectionChange={setSelectedKeys}
       >
-        <DropdownItem key='laptops'>Laptops</DropdownItem>
-        <DropdownItem key='monitor'>Monitors</DropdownItem>
-        <DropdownItem key='peripherals'>Peripherals</DropdownItem>
+        <DropdownItem key='laptop' onClick={() => setSelectedType("laptop")}>
+          Laptop
+        </DropdownItem>
+        <DropdownItem key='monitor' onClick={() => setSelectedType("monitor")}>
+          Monitor
+        </DropdownItem>
+        <DropdownItem
+          key='peripheral'
+          onClick={() => setSelectedType("peripheral")}
+        >
+          Peripheral
+        </DropdownItem>
       </DropdownMenu>
     </Dropdown>
   );

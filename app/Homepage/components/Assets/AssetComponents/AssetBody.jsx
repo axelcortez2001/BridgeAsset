@@ -36,8 +36,10 @@ const AssetBody = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <div>Hakdof</div>
+      <div className='flex gap-x-5'>
+        <div>Block VIew</div>
+        <div>Table View</div>
+      </div>
     </div>
   );
 };

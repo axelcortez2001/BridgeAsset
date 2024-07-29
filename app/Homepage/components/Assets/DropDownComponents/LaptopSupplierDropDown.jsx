@@ -15,8 +15,7 @@ import {
 } from "@nextui-org/react";
 import { addSupplier, supplierData } from "@/app/Homepage/AssetStore";
 import { useAtomValue, useSetAtom } from "jotai";
-
-const SupplierDropDown = () => {
+const LaptopSupplierDropDown = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const supplier = useAtomValue(supplierData);
   const newSupplier = useSetAtom(addSupplier);
@@ -28,7 +27,6 @@ const SupplierDropDown = () => {
   const handleSelectedKeys = (stat) => {
     setSelectedKeys(stat);
   };
-
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [contact, setContact] = useState("");
@@ -135,4 +133,4 @@ const SupplierDropDown = () => {
   );
 };
 
-export default SupplierDropDown;
+export default LaptopSupplierDropDown;

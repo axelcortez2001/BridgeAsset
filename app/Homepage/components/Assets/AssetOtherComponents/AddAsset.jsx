@@ -9,29 +9,27 @@ import {
 import AssetDropDown from "./AssetDropDown";
 import AddLaptops from "./AddLaptops";
 import AddMonitors from "./AddMonitors";
+import { useAtom, useAtomValue } from "jotai";
+import { selectedTypeAtom } from "@/app/Homepage/AssetStore";
 
 const AddAsset = ({ setActionStatus, actionStatus }) => {
   //category selection state management
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["laptops"]));
-  const selectedValue = React.useMemo(
-    () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
-    [selectedKeys]
-  );
-  const handleSelectedKeys = (stat) => {
-    setSelectedKeys(stat);
+  const [selectedType, setSelectedType] = useAtom(selectedTypeAtom);
+  const handleSelectedType = (opt) => {
+    setSelectedType(opt);
   };
 
   return (
     <div className='h-full w-full flex flex-col relative p-2'>
       <div>
         <AssetDropDown
-          selectedKeys={selectedKeys}
-          setSelectedKeys={handleSelectedKeys}
+          selectedType={selectedType}
+          setSelectedType={handleSelectedType}
         />
       </div>
-      {selectedValue === "laptops" ? (
+      {selectedType === "laptop" ? (
         <AddLaptops
-          selectedValue={selectedValue}
+          selectedType={selectedType}
           actionStatus={actionStatus}
           setActionStatus={setActionStatus}
         />
@@ -39,7 +37,6 @@ const AddAsset = ({ setActionStatus, actionStatus }) => {
         <AddMonitors />
       )}
       {/* Close Button */}
-     
     </div>
   );
 };

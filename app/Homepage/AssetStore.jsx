@@ -1,7 +1,17 @@
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
-import { restInsert } from "../utils";
+import { getUsers, restInsert } from "../utils";
 
+export const selectedTypeAtom = atom("laptop");
+export const employeeOptionsAtom = atom([]);
+export const fetchEmployeeAtom = atom(null, async (get, set) => {
+  try {
+    const { user } = await getUsers("/users");
+    set(employeeOptionsAtom, user);
+  } catch (e) {
+    console.log(e);
+  }
+});
 let supplierId = 0;
 export const supplierData = atom([
   {

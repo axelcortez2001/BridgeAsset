@@ -45,9 +45,10 @@ const assetSchema = new mongoose.Schema({
   FA_code: { type: String },
   serial_number: { type: String },
   supplier: { type: String },
-  inventory_field: { type: String },
-  last_updated: { type: String },
+  inventory_filed: { type: String },
+  last_updated: { type: Date, default: Date.now() },
   unit_price: { type: Number },
+  doi: { type: String, default: Date.now() },
   dop: { type: String },
   ytd: { type: String },
   warranty_period: { type: String },
@@ -55,6 +56,7 @@ const assetSchema = new mongoose.Schema({
   warranty_status: { type: String },
   status: { type: String },
   asset_holder: {},
+  user_type: { type: String, default: "" },
 });
 const AssetModel = mongoose.model("Assets", assetSchema);
 
