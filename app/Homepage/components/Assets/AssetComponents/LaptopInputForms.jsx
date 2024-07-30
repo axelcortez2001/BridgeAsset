@@ -3,6 +3,24 @@ import { Input } from "@nextui-org/react";
 import LaptopSupplierDropDown from "../DropDownComponents/LaptopSupplierDropDown";
 import BranchDropDown from "../DropDownComponents/BranchDropDown";
 import EmployeeDropDown from "../DropDownComponents/EmployeeDropDown";
+import { useAtom, useSetAtom } from "jotai";
+import {
+  assetHolderAtom,
+  branchAtom,
+  doiAtom,
+  dopAtom,
+  FACodeAtom,
+  itemNameAtom,
+  SaveLaptopAtom,
+  serialNumberAtom,
+  statusAtom,
+  supplierAtom,
+  unitPriceAtom,
+  userTypeAtom,
+  warrantyPeriodAtom,
+} from "../Store/LaptopStore";
+import StatusOption from "../DropDownComponents/StatusOption";
+import UserRadioOption from "../DropDownComponents/UserRadioOption";
 
 const LaptopInputForms = ({
   selectedType,
@@ -10,16 +28,34 @@ const LaptopInputForms = ({
   employeeOptions,
 }) => {
   const dateToday = new Date();
-  const [item, setItem] = useState("");
-  const [faCode, setFaCode] = useState("");
-  const [serialNo, setSerialNo] = useState("");
-  const [employee, setEmployee] = useState("None");
-  const [doi, setDoi] = useState("");
-  const [supplier, setSupplier] = useState("");
-  const [inventoryFiled, setInventoryFiled] = useState(dateToday);
-  const [unitPrice, setUnitPrice] = useState("");
-  const [dop, setDop] = useState("");
-  console.log("EmployeeOptions: ", employeeOptions);
+  const [item, setItem] = useAtom(itemNameAtom);
+  const [faCode, setFaCode] = useAtom(FACodeAtom);
+  const [serialNo, setSerialNo] = useAtom(serialNumberAtom);
+  const [doi, setDoi] = useAtom(doiAtom);
+  const [warrantyPeriod, setWarrantyPeriod] = useAtom(warrantyPeriodAtom);
+  const [unitPrice, setUnitPrice] = useAtom(unitPriceAtom);
+  const [dop, setDop] = useAtom(dopAtom);
+  const [assetHolder, setAssetHolder] = useAtom(assetHolderAtom);
+  const [status, setStatus] = useAtom(statusAtom);
+  const [supplier, setSupplier] = useAtom(supplierAtom);
+  const [branch, setBranch] = useAtom(branchAtom);
+  const [userType, setUserType] = useAtom(userTypeAtom);
+  //handlers
+  const handleAssetHolder = (opt) => {
+    setAssetHolder(opt);
+  };
+  const handleStatus = (opt) => {
+    setStatus(opt);
+  };
+  const handleSupplier = (opt) => {
+    setSupplier(opt);
+  };
+  const handleBranch = (opt) => {
+    setBranch(opt);
+  };
+  const handleUserType = (opt) => {
+    setUserType(opt);
+  };
   return (
     <div className='w-full flex flex-wrap p-1 gap-3'>
       <div className='w-full flex flex-wrap p-1 gap-3'>
@@ -45,18 +81,24 @@ const LaptopInputForms = ({
           type='number'
           label='FA CODE'
           value={faCode}
+          onChange={(e) => setFaCode(e.target.value)}
           size={"sm"}
           className='max-w-xs'
         />
 
         {itemStatusOption === "Active" && (
           <>
-            <EmployeeDropDown employeeOptions={employeeOptions} />
+            <EmployeeDropDown
+              employeeOptions={employeeOptions}
+              assetHolder={assetHolder}
+              setAssetHolder={handleAssetHolder}
+            />
             <Input
               type='date'
               size={"sm"}
               label='DOI Current User'
               value={doi}
+              onChange={(e) => setDoi(e.target.value)}
               className='max-w-xs'
             />
           </>
@@ -66,6 +108,7 @@ const LaptopInputForms = ({
           size={"sm"}
           label='Price'
           value={unitPrice}
+          onChange={(e) => setUnitPrice(e.target.value)}
           className='max-w-xs'
         />
         <Input
@@ -73,6 +116,15 @@ const LaptopInputForms = ({
           size={"sm"}
           label='DOP'
           value={dop}
+          onChange={(e) => setDop(e.target.value)}
+          className='max-w-xs'
+        />
+        <Input
+          type='number'
+          size={"sm"}
+          label='Warranty Period'
+          value={warrantyPeriod}
+          onChange={(e) => setWarrantyPeriod(e.target.value)}
           className='max-w-xs'
         />
       </div>
@@ -84,8 +136,13 @@ const LaptopInputForms = ({
         value={selectedType.toUpperCase()}
         className='max-w-xs'
       />
-      <LaptopSupplierDropDown />
-      <BranchDropDown />
+      <LaptopSupplierDropDown
+        supplier={supplier}
+        setSupplier={handleSupplier}
+      />
+      <BranchDropDown branch={branch} setBranch={handleBranch} />
+      <StatusOption status={status} setStatus={handleStatus} />
+      <UserRadioOption userType={userType} setUserType={handleUserType} />
     </div>
   );
 };

@@ -22,14 +22,14 @@ const ItemStatusOption = ({ itemStatusOption, setItemStatusOption }) => {
           disallowEmptySelection
           selectionMode='single'
         >
+          <DropdownItem key='SOH' onClick={() => setItemStatusOption("SOH")}>
+            SOH
+          </DropdownItem>
           <DropdownItem
             key='Active'
             onClick={() => setItemStatusOption("Active")}
           >
             Active
-          </DropdownItem>
-          <DropdownItem key='SOH' onClick={() => setItemStatusOption("SOH")}>
-            SOH
           </DropdownItem>
           <DropdownItem
             key='Repair'
@@ -48,6 +48,12 @@ const ItemStatusOption = ({ itemStatusOption, setItemStatusOption }) => {
             onClick={() => setItemStatusOption("Transfer")}
           >
             Transfers
+          </DropdownItem>
+          <DropdownItem
+            key='Update'
+            onClick={() => setItemStatusOption("Update")}
+          >
+            Update Asset
           </DropdownItem>
           <DropdownItem key='NONE' onClick={() => setItemStatusOption("NONE")}>
             NONE

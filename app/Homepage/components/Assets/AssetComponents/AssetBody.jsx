@@ -25,7 +25,7 @@ const AssetBody = () => {
         {actionStatus && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "24rem" }} // 24rem is equivalent to h-96 in Tailwind CSS
+            animate={{ opacity: 1, height: "" }} // 24rem is equivalent to h-96 in Tailwind CSS
             exit={{ opacity: 0, height: 0 }}
             className='border w-full overflow-hidden'
           >

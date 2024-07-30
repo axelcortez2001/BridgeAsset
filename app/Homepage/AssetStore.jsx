@@ -30,6 +30,14 @@ export const supplierData = atom([
     email: "email2@gmail.com",
     color: "bg-blue-500",
   },
+  {
+    id: supplierId++,
+    name: "Default",
+    address: "Default",
+    contact: "Default",
+    email: "Default@gmail.com",
+    color: "bg-blue-500",
+  },
 ]);
 export const addSupplier = atom(null, async (get, set, data) => {
   const oldSupplier = get(supplierData);
@@ -73,6 +81,7 @@ export const registerUser = atom(null, async (get, set) => {
     return { success: false };
   }
 });
+
 
 export const sideBarLocation = atom("dashboard");
 export const setSideBarLocation = atom(null, (get, set, location) => {

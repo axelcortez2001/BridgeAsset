@@ -2,6 +2,7 @@ import { get, post, del, put } from "aws-amplify/api";
 
 export async function restInsert(path, request) {
   try {
+    console.log("Request: ", request);
     const insertOperation = post({
       apiName: "BridgeAssetAPI",
       path: path,
@@ -9,7 +10,9 @@ export async function restInsert(path, request) {
         body: request,
       },
     });
+
     const { body } = await insertOperation.response;
+    console.log("Inserted: ", body);
     return await body.json();
   } catch (e) {
     console.log(e);

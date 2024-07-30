@@ -15,18 +15,11 @@ import {
 } from "@nextui-org/react";
 import { addSupplier, supplierData } from "@/app/Homepage/AssetStore";
 import { useAtomValue, useSetAtom } from "jotai";
-const LaptopSupplierDropDown = () => {
+const LaptopSupplierDropDown = ({ supplier, setSupplier }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const supplier = useAtomValue(supplierData);
+  const suppliers = useAtomValue(supplierData);
   const newSupplier = useSetAtom(addSupplier);
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["None"]));
-  const selectedValue = React.useMemo(
-    () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
-    [selectedKeys]
-  );
-  const handleSelectedKeys = (stat) => {
-    setSelectedKeys(stat);
-  };
+
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [contact, setContact] = useState("");
@@ -45,13 +38,16 @@ const LaptopSupplierDropDown = () => {
       alert("All fields are required");
     }
   };
+  const defaultSupplier = () => {
+    return suppliers.filter((sup) => sup.name === "Default");
+  };
   return (
     <div className='flex flex-col'>
       <p className='text-sm text-gray-500'>Supplier</p>
       <Dropdown>
         <DropdownTrigger>
           <Button variant='bordered' className='capitalize'>
-            {selectedKeys}
+            {supplier?.name}
           </Button>
         </DropdownTrigger>
         <DropdownMenu
@@ -59,14 +55,12 @@ const LaptopSupplierDropDown = () => {
           variant='flat'
           disallowEmptySelection
           selectionMode='single'
-          selectedKeys={selectedKeys}
-          onSelectionChange={setSelectedKeys}
         >
-          {supplier.map((supplier) => (
-            <DropdownItem key={supplier.name}>{supplier.name}</DropdownItem>
+          {suppliers.map((sup) => (
+            <DropdownItem key={sup.name} onClick={() => setSupplier(sup)}>
+              {sup.name}
+            </DropdownItem>
           ))}
-
-          <DropdownItem key='None'>None</DropdownItem>
           <DropdownItem textValue='Add New' key={" "} onClick={onOpen}>
             Add
           </DropdownItem>
@@ -121,7 +115,7 @@ const LaptopSupplierDropDown = () => {
                 <Button color='danger' variant='light' onPress={onClose}>
                   Close
                 </Button>
-                <Button color='primary' onPress={handleAddSupplier}>
+                <Button color='primary' onPress={() => handleAddSupplier()}>
                   Add
                 </Button>
               </ModalFooter>

@@ -3,19 +3,41 @@ import { Input } from "@nextui-org/react";
 import ItemStatusOption from "../DropDownComponents/ItemStatusOption";
 import LaptopInputForms from "../AssetComponents/LaptopInputForms";
 import { getUsers } from "@/app/utils";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   employeeOptionsAtom,
   fetchEmployeeAtom,
 } from "@/app/Homepage/AssetStore";
+import {
+  itemNameAtom,
+  itemStatusOptionAtom,
+  SaveLaptopAtom,
+  serialNumberAtom,
+} from "../Store/LaptopStore";
+import { toast } from "sonner";
 
 const AddLaptops = ({ selectedType, setActionStatus, actionStatus }) => {
   //for item selection Status
-  const [itemStatusOption, setItemStatusOption] = useState("NONE");
+  const [itemStatusOption, setItemStatusOption] = useAtom(itemStatusOptionAtom);
   const employeeOptions = useAtomValue(employeeOptionsAtom);
   const fetchEmployee = useSetAtom(fetchEmployeeAtom);
+  const saveLaptopData = useSetAtom(SaveLaptopAtom);
+  const itemName = useAtomValue(itemNameAtom);
+  const serial_No = useAtomValue(serialNumberAtom);
   const handleSetItemStatusOption = (opt) => {
     setItemStatusOption(opt);
+  };
+  const handlesave = async (e) => {
+    e.preventDefault();
+    try {
+      if (itemName !== "" && serial_No !== "") {
+        await saveLaptopData();
+      } else {
+        toast.error("Please fill up required fields.");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   //getUsers with validation
@@ -37,7 +59,10 @@ const AddLaptops = ({ selectedType, setActionStatus, actionStatus }) => {
   }, [employeeOptions, itemStatusOption]);
 
   return (
-    <div className='w-full flex flex-col h-full'>
+    <form
+      className='w-full flex flex-col h-full'
+      onSubmit={(e) => handlesave(e)}
+    >
       <div className='w-full flex flex-wrap p-1 gap-3'>
         <ItemStatusOption
           itemStatusOption={itemStatusOption}
@@ -54,12 +79,15 @@ const AddLaptops = ({ selectedType, setActionStatus, actionStatus }) => {
       <div className='w-full flex p-2 gap-2'>
         {itemStatusOption !== "NONE" && (
           <div className=''>
-            <button className='border p-2 rounded-md'>Save</button>
+            <button type='submit' className='border p-2 rounded-md'>
+              Save
+            </button>
           </div>
         )}
 
         <div className=''>
           <button
+            type='button'
             className='border p-2 rounded-md'
             onClick={() => setActionStatus(actionStatus)}
           >
@@ -67,7 +95,7 @@ const AddLaptops = ({ selectedType, setActionStatus, actionStatus }) => {
           </button>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 

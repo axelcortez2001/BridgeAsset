@@ -6,12 +6,12 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-const EmployeeDropDown = ({ employeeOptions }) => {
+const EmployeeDropDown = ({ employeeOptions, assetHolder, setAssetHolder }) => {
   return (
     <Dropdown>
       <DropdownTrigger>
         <Button variant='bordered' className='capitalize'>
-          Select Employee
+          {assetHolder === null ? "Select Employee" : assetHolder?.name}
         </Button>
       </DropdownTrigger>
 
@@ -24,7 +24,12 @@ const EmployeeDropDown = ({ employeeOptions }) => {
         {employeeOptions &&
           employeeOptions.length > 0 &&
           employeeOptions.map((employee) => (
-            <DropdownItem key={employee._id}>{employee.name}</DropdownItem>
+            <DropdownItem
+              key={employee._id}
+              onClick={() => setAssetHolder(employee)}
+            >
+              {employee.name}
+            </DropdownItem>
           ))}
       </DropdownMenu>
     </Dropdown>

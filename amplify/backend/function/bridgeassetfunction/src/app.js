@@ -42,21 +42,25 @@ mongoose.connect(mongoURI, {
 });
 const assetSchema = new mongoose.Schema({
   item: { type: String },
-  FA_code: { type: String },
+  fa_code: { type: String },
   serial_number: { type: String },
-  supplier: { type: String },
-  inventory_filed: { type: String },
+  supplier: {},
+  inventory_filed: { type: Date, default: Date.now() },
   last_updated: { type: Date, default: Date.now() },
   unit_price: { type: Number },
   doi: { type: String, default: Date.now() },
   dop: { type: String },
-  ytd: { type: String },
   warranty_period: { type: String },
-  lifespan_status: { type: String },
-  warranty_status: { type: String },
-  status: { type: String },
+  //ytd:  year to date, based from DOP
+  // lifespan_status: IF({YTD}>3, "FOR ASSESSMENT", "GOOD")
+  // warranty_status: IF({YTD}>warranty_period, "OUT OF WARRANTY", "WARRANTY")
+  status: {},
+  branch: { type: String },
   asset_holder: {},
+  asset_history: [],
   user_type: { type: String, default: "" },
+  category: { type: String },
+  item_stats: { type: String },
 });
 const AssetModel = mongoose.model("Assets", assetSchema);
 
@@ -76,13 +80,18 @@ app.get("/assets/*", function (req, res) {
  ****************************/
 
 app.post("/assets", async (req, res) => {
-  const { assetData } = req.body;
+  const assetData = req.body;
   try {
-    const asset = new AssetModel(assetData);
-    await asset.save();
-    res.status(200).json({ success: true, asset });
+    if (!assetData) {
+      return res
+        .status(400)
+        .json({ success: false, error: "No asset data provided" });
+    } else {
+      const asset = await AssetModel.create(assetData);
+      res.status(200).json({ success: true, response: asset });
+    }
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error", response: error });
   }
 });
 
