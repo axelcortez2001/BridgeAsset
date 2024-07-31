@@ -1,9 +1,11 @@
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
-import { getUsers, restInsert } from "../utils";
+import { getUsers, restGet, restInsert } from "../utils";
 
 export const selectedTypeAtom = atom("laptop");
 export const employeeOptionsAtom = atom([]);
+export const selectedAssetDataAtom = atom(null);
+export const assetDataAtom = atom(null);
 export const fetchEmployeeAtom = atom(null, async (get, set) => {
   try {
     const { user } = await getUsers("/users");
@@ -75,13 +77,22 @@ export const userDataAtom = atom(async () => {
 export const registerUser = atom(null, async (get, set) => {
   const data = get(userDataAtom);
   const userResponse = await restInsert("/users", data.value);
-  if (userResponse.success) {
+  if (userResponse?.success) {
     return { success: true, userResponse };
   } else {
     return { success: false };
   }
 });
 
+export const fetchAssetDataAtom = atom(null, async (get, set) => {
+  const response = await restGet("/assets");
+  console.log(response);
+  if (response?.success) {
+    return { success: true, response: response.response };
+  } else {
+    return { success: false };
+  }
+});
 
 export const sideBarLocation = atom("dashboard");
 export const setSideBarLocation = atom(null, (get, set, location) => {

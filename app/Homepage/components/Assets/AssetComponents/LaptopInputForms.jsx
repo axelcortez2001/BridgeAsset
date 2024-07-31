@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@nextui-org/react";
 import LaptopSupplierDropDown from "../DropDownComponents/LaptopSupplierDropDown";
 import BranchDropDown from "../DropDownComponents/BranchDropDown";
 import EmployeeDropDown from "../DropDownComponents/EmployeeDropDown";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   assetHolderAtom,
   branchAtom,
@@ -13,6 +13,7 @@ import {
   itemNameAtom,
   SaveLaptopAtom,
   serialNumberAtom,
+  setDataToDefaultAtom,
   statusAtom,
   supplierAtom,
   unitPriceAtom,
@@ -21,6 +22,7 @@ import {
 } from "../Store/LaptopStore";
 import StatusOption from "../DropDownComponents/StatusOption";
 import UserRadioOption from "../DropDownComponents/UserRadioOption";
+import { selectedAssetDataAtom } from "@/app/Homepage/AssetStore";
 
 const LaptopInputForms = ({
   selectedType,
@@ -40,6 +42,8 @@ const LaptopInputForms = ({
   const [supplier, setSupplier] = useAtom(supplierAtom);
   const [branch, setBranch] = useAtom(branchAtom);
   const [userType, setUserType] = useAtom(userTypeAtom);
+  const selectedAssetData = useAtomValue(selectedAssetDataAtom);
+  const setDataToDefault = useSetAtom(setDataToDefaultAtom);
   //handlers
   const handleAssetHolder = (opt) => {
     setAssetHolder(opt);
@@ -56,6 +60,14 @@ const LaptopInputForms = ({
   const handleUserType = (opt) => {
     setUserType(opt);
   };
+  useEffect(() => {
+    const handleResetInput = async () => {
+      if (itemStatusOption !== "Update") {
+        await setDataToDefault();
+      }
+    };
+    handleResetInput();
+  }, [itemStatusOption]);
   return (
     <div className='w-full flex flex-wrap p-1 gap-3'>
       <div className='w-full flex flex-wrap p-1 gap-3'>

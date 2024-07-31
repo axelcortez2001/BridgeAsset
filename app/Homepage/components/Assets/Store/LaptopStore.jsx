@@ -1,4 +1,8 @@
-import { selectedTypeAtom } from "@/app/Homepage/AssetStore";
+import {
+  assetDataAtom,
+  selectedAssetDataAtom,
+  selectedTypeAtom,
+} from "@/app/Homepage/AssetStore";
 import { restInsert } from "@/app/utils";
 import { atom } from "jotai";
 
@@ -32,9 +36,40 @@ export const statusAtom = atom({
   id: 0,
   color: "bg-green-500",
 });
-
+export const setDataToDefaultAtom = atom(null, async (get, set) => {
+  set(itemNameAtom, "");
+  set(serialNumberAtom, "");
+  set(FACodeAtom, "");
+  set(doiAtom, "");
+  set(supplierAtom, {});
+  set(unitPriceAtom, "");
+  set(dopAtom, "");
+  set(warrantyPeriodAtom, "");
+  set(assetHolderAtom, null);
+  set(assetHistoryAtom, []);
+  set(statusAtom, { name: "Working", id: 0, color: "bg-green-500" });
+  set(branchAtom, "Makati");
+  set(userTypeAtom, "Employee");
+});
+export const setDataFromSelectedAtom = atom(null, async (get, set) => {
+  const selectedAssetData = get(selectedAssetDataAtom);
+  set(itemNameAtom, selectedAssetData?.item);
+  set(serialNumberAtom, selectedAssetData?.serial_number);
+  set(FACodeAtom, selectedAssetData?.fa_code);
+  set(doiAtom, selectedAssetData?.doi);
+  set(supplierAtom, selectedAssetData?.supplier);
+  set(unitPriceAtom, selectedAssetData?.unit_price);
+  set(dopAtom, selectedAssetData?.dop);
+  set(warrantyPeriodAtom, selectedAssetData?.warranty_period);
+  set(assetHolderAtom, selectedAssetData?.asset_holder);
+  set(assetHistoryAtom, selectedAssetData?.asset_history);
+  set(statusAtom, selectedAssetData?.status);
+  set(branchAtom, selectedAssetData?.branch);
+  set(userTypeAtom, selectedAssetData?.user_type);
+});
 export const SaveLaptopAtom = atom(null, async (get, set) => {
   const selectedCategory = get(selectedTypeAtom);
+  let oldAsset = get(assetDataAtom);
   const assetData = {
     item: get(itemNameAtom),
     serial_number: get(serialNumberAtom),
@@ -50,13 +85,13 @@ export const SaveLaptopAtom = atom(null, async (get, set) => {
     branch: get(branchAtom),
     user_type: get(userTypeAtom),
     category: selectedCategory,
-    item_status: get(itemStatusOptionAtom),
+    item_stats: get(itemStatusOptionAtom),
   };
-  console.log("AssetData to be saved: ", assetData);
   try {
     const response = await restInsert("/assets", assetData);
-    console.log("Response: ", response);
     if (response?.success) {
+      const newAssetData = [...oldAsset, response.response];
+      set(assetDataAtom, newAssetData);
       return { success: true, response };
     } else {
       return { success: false };

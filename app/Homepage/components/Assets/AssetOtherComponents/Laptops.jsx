@@ -13,10 +13,11 @@ import {
   itemStatusOptionAtom,
   SaveLaptopAtom,
   serialNumberAtom,
+  setDataToDefaultAtom,
 } from "../Store/LaptopStore";
 import { toast } from "sonner";
 
-const AddLaptops = ({ selectedType, setActionStatus, actionStatus }) => {
+const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
   //for item selection Status
   const [itemStatusOption, setItemStatusOption] = useAtom(itemStatusOptionAtom);
   const employeeOptions = useAtomValue(employeeOptionsAtom);
@@ -24,14 +25,27 @@ const AddLaptops = ({ selectedType, setActionStatus, actionStatus }) => {
   const saveLaptopData = useSetAtom(SaveLaptopAtom);
   const itemName = useAtomValue(itemNameAtom);
   const serial_No = useAtomValue(serialNumberAtom);
+  const setDataToDefault = useSetAtom(setDataToDefaultAtom);
   const handleSetItemStatusOption = (opt) => {
     setItemStatusOption(opt);
   };
+  //close component
+  const handleClose = async () => {
+    await setDataToDefault();
+    setActionStatus(actionStatus);
+  };
+  //save new asset
   const handlesave = async (e) => {
     e.preventDefault();
     try {
       if (itemName !== "" && serial_No !== "") {
-        await saveLaptopData();
+        const res = await saveLaptopData();
+        console.log("res: ", res);
+        if (res.success) {
+          toast.success("Laptop saved successfully.");
+          await setDataToDefault();
+          setActionStatus(actionStatus);
+        }
       } else {
         toast.error("Please fill up required fields.");
       }
@@ -68,12 +82,20 @@ const AddLaptops = ({ selectedType, setActionStatus, actionStatus }) => {
           itemStatusOption={itemStatusOption}
           setItemStatusOption={handleSetItemStatusOption}
         />
-        {(itemStatusOption === "Active" || itemStatusOption === "SOH") && (
+        {itemStatusOption === "Active" || itemStatusOption === "SOH" ? (
           <LaptopInputForms
             selectedType={selectedType}
             itemStatusOption={itemStatusOption}
             employeeOptions={employeeOptions}
           />
+        ) : (
+          itemStatusOption === "Update" && (
+            <LaptopInputForms
+              selectedType={selectedType}
+              itemStatusOption={itemStatusOption}
+              employeeOptions={employeeOptions}
+            />
+          )
         )}
       </div>
       <div className='w-full flex p-2 gap-2'>
@@ -89,7 +111,7 @@ const AddLaptops = ({ selectedType, setActionStatus, actionStatus }) => {
           <button
             type='button'
             className='border p-2 rounded-md'
-            onClick={() => setActionStatus(actionStatus)}
+            onClick={handleClose}
           >
             Close
           </button>
@@ -99,4 +121,4 @@ const AddLaptops = ({ selectedType, setActionStatus, actionStatus }) => {
   );
 };
 
-export default AddLaptops;
+export default Laptops;

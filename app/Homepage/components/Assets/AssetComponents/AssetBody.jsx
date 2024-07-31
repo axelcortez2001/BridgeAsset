@@ -1,13 +1,33 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AddAsset from "../AssetOtherComponents/AddAsset";
+import { useAtom, useSetAtom } from "jotai";
+import { assetDataAtom, fetchAssetDataAtom } from "@/app/Homepage/AssetStore";
+import AssetBlockView from "../AssetBlockView/AssetBlockView";
 
 const AssetBody = () => {
   const [actionStatus, setActionStatus] = useState(false);
+  const [assetData, setAssetData] = useAtom(assetDataAtom);
+  const fetchAssetData = useSetAtom(fetchAssetDataAtom);
   const handleActionStatus = (stat) => {
     setActionStatus(!stat);
   };
+  useEffect(() => {
+    const handleFetchData = async () => {
+      try {
+        if (assetData === null) {
+          const asset = await fetchAssetData();
+          if (asset.success) {
+            setAssetData(asset.response);
+          }
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    handleFetchData();
+  }, [assetData]);
   return (
     <div>
       {!actionStatus ? (
@@ -37,8 +57,11 @@ const AssetBody = () => {
         )}
       </AnimatePresence>
       <div className='flex gap-x-5'>
-        <div>Block VIew</div>
-        <div>Table View</div>
+        <AssetBlockView
+          setActionStatus={handleActionStatus}
+          actionStatus={actionStatus}
+        />
+        {/* <div>Table View</div> */}
       </div>
     </div>
   );

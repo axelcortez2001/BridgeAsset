@@ -7,7 +7,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import AssetDropDown from "./AssetDropDown";
-import AddLaptops from "./AddLaptops";
+import Laptops from "./Laptops";
 import AddMonitors from "./AddMonitors";
 import { useAtom, useAtomValue } from "jotai";
 import { selectedTypeAtom } from "@/app/Homepage/AssetStore";
@@ -28,7 +28,7 @@ const AddAsset = ({ setActionStatus, actionStatus }) => {
         />
       </div>
       {selectedType === "laptop" ? (
-        <AddLaptops
+        <Laptops
           selectedType={selectedType}
           actionStatus={actionStatus}
           setActionStatus={setActionStatus}

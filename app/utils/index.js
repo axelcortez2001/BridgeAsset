@@ -11,17 +11,26 @@ export async function restInsert(path, request) {
       },
     });
 
-    const { body } = await insertOperation.response;
+    const { body } = await insertOperation?.response;
     console.log("Inserted: ", body);
     return await body.json();
   } catch (e) {
     console.log(e);
   }
 }
-export async function getAssets() {
+export async function restGet(path, request) {
   try {
+    const getOperation = get({
+      apiName: "BridgeAssetAPI",
+      path: path,
+      options: {
+        body: request,
+      },
+    });
+    const { body } = await getOperation.response;
+    return await body.json();
   } catch (e) {
-    console.log("GET call failed: ", JSON.parse(e.response.body));
+    console.log("GET call failed: ", e);
   }
 }
 

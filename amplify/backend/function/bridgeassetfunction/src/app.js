@@ -65,9 +65,19 @@ const assetSchema = new mongoose.Schema({
 const AssetModel = mongoose.model("Assets", assetSchema);
 
 // define a route handler for the default home page
-app.get("/assets", function (req, res) {
-  // Add your code here
-  res.json({ success: "get call succeed!", url: req.url });
+app.get("/assets", async (req, res) => {
+  try {
+    const asset = await AssetModel.find();
+    if (!asset) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Assets Unavailable" });
+    } else {
+      res.json({ success: true, message: "Assets Found", response: asset });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error", response: error });
+  }
 });
 
 app.get("/assets/*", function (req, res) {
