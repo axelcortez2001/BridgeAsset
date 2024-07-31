@@ -6,7 +6,14 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
+import { useSetAtom } from "jotai";
+import { selectedAssetDataAtom } from "@/app/Homepage/AssetStore";
 const ItemStatusOption = ({ itemStatusOption, setItemStatusOption }) => {
+  const setSelectedAssetData = useSetAtom(selectedAssetDataAtom);
+  const handleSelect = (opt) => {
+    setSelectedAssetData(null);
+    setItemStatusOption(opt);
+  };
   return (
     <div className='flex flex-row items-center gap-3'>
       <p className='text-sm text-gray-500'>Select Item Status</p>
@@ -22,40 +29,28 @@ const ItemStatusOption = ({ itemStatusOption, setItemStatusOption }) => {
           disallowEmptySelection
           selectionMode='single'
         >
-          <DropdownItem key='SOH' onClick={() => setItemStatusOption("SOH")}>
+          <DropdownItem key='SOH' onClick={() => handleSelect("SOH")}>
             SOH
           </DropdownItem>
-          <DropdownItem
-            key='Active'
-            onClick={() => setItemStatusOption("Active")}
-          >
+          <DropdownItem key='Active' onClick={() => handleSelect("Active")}>
             Active
           </DropdownItem>
-          <DropdownItem
-            key='Repair'
-            onClick={() => setItemStatusOption("Repair")}
-          >
+          <DropdownItem key='Repair' onClick={() => handleSelect("Repair")}>
             For Repair
           </DropdownItem>
           <DropdownItem
             key='Irreperable'
-            onClick={() => setItemStatusOption("Irreperable")}
+            onClick={() => handleSelect("Irreperable")}
           >
             Irreperable
           </DropdownItem>
-          <DropdownItem
-            key='Transfer'
-            onClick={() => setItemStatusOption("Transfer")}
-          >
+          <DropdownItem key='Transfer' onClick={() => handleSelect("Transfer")}>
             Transfers
           </DropdownItem>
-          <DropdownItem
-            key='Update'
-            onClick={() => setItemStatusOption("Update")}
-          >
+          <DropdownItem key='Update' onClick={() => handleSelect("Update")}>
             Update Asset
           </DropdownItem>
-          <DropdownItem key='NONE' onClick={() => setItemStatusOption("NONE")}>
+          <DropdownItem key='NONE' onClick={() => handleSelect("NONE")}>
             NONE
           </DropdownItem>
         </DropdownMenu>

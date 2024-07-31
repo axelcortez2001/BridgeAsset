@@ -3,7 +3,7 @@ import { RadioGroup, Radio } from "@nextui-org/react";
 const UserRadioOption = ({ userType, setUserType }) => {
   return (
     <RadioGroup
-      label='Select User Type'
+      label=' User Type'
       orientation='horizontal'
       value={userType}
       onValueChange={setUserType}

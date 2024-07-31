@@ -42,9 +42,9 @@ const LaptopSupplierDropDown = ({ supplier, setSupplier }) => {
     return suppliers.filter((sup) => sup.name === "Default");
   };
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col ml-2'>
       <p className='text-sm text-gray-500'>Supplier</p>
-      <Dropdown>
+      <Dropdown label='supplier'>
         <DropdownTrigger>
           <Button variant='bordered' className='capitalize'>
             {supplier?.name}

@@ -7,6 +7,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   employeeOptionsAtom,
   fetchEmployeeAtom,
+  selectedAssetDataAtom,
 } from "@/app/Homepage/AssetStore";
 import {
   itemNameAtom,
@@ -16,6 +17,7 @@ import {
   setDataToDefaultAtom,
 } from "../Store/LaptopStore";
 import { toast } from "sonner";
+import UpdateLaptopInputForms from "../AssetComponents/UpdateLaptopInputForms";
 
 const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
   //for item selection Status
@@ -26,6 +28,10 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
   const itemName = useAtomValue(itemNameAtom);
   const serial_No = useAtomValue(serialNumberAtom);
   const setDataToDefault = useSetAtom(setDataToDefaultAtom);
+  const [selectedAssetData, setSelectedAssetData] = useAtom(
+    selectedAssetDataAtom
+  );
+
   const handleSetItemStatusOption = (opt) => {
     setItemStatusOption(opt);
   };
@@ -33,14 +39,13 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
   const handleClose = async () => {
     await setDataToDefault();
     setActionStatus(actionStatus);
+    setSelectedAssetData(null);
   };
   //save new asset
-  const handlesave = async (e) => {
-    e.preventDefault();
+  const handlesave = async () => {
     try {
       if (itemName !== "" && serial_No !== "") {
         const res = await saveLaptopData();
-        console.log("res: ", res);
         if (res.success) {
           toast.success("Laptop saved successfully.");
           await setDataToDefault();
@@ -57,7 +62,9 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
   //getUsers with validation
   useEffect(() => {
     if (
-      (itemStatusOption === "Active" || itemStatusOption === "Transfer") &&
+      (itemStatusOption === "Active" ||
+        itemStatusOption === "Transfer" ||
+        itemStatusOption === "Update") &&
       employeeOptions &&
       employeeOptions.length === 0
     ) {
@@ -73,10 +80,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
   }, [employeeOptions, itemStatusOption]);
 
   return (
-    <form
-      className='w-full flex flex-col h-full'
-      onSubmit={(e) => handlesave(e)}
-    >
+    <div className='w-full flex flex-col h-full'>
       <div className='w-full flex flex-wrap p-1 gap-3'>
         <ItemStatusOption
           itemStatusOption={itemStatusOption}
@@ -90,7 +94,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
           />
         ) : (
           itemStatusOption === "Update" && (
-            <LaptopInputForms
+            <UpdateLaptopInputForms
               selectedType={selectedType}
               itemStatusOption={itemStatusOption}
               employeeOptions={employeeOptions}
@@ -99,12 +103,25 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
         )}
       </div>
       <div className='w-full flex p-2 gap-2'>
-        {itemStatusOption !== "NONE" && (
+        {itemStatusOption === "SOH" || itemStatusOption === "Active" ? (
           <div className=''>
-            <button type='submit' className='border p-2 rounded-md'>
+            <button
+              type='button'
+              onClick={() => handlesave()}
+              className='border p-2 rounded-md'
+            >
               Save
             </button>
           </div>
+        ) : (
+          itemStatusOption !== "NONE" &&
+          selectedAssetData !== null && (
+            <div className=''>
+              <button type='submit' className='border p-2 rounded-md'>
+                Update
+              </button>
+            </div>
+          )
         )}
 
         <div className=''>
@@ -117,7 +134,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
           </button>
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

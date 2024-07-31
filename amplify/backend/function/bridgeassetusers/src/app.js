@@ -10,13 +10,20 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const awsServerlessExpressMiddleware = require("aws-serverless-express/middleware");
 const mongoose = require("mongoose");
+const rateLimit = require("express-rate-limit");
 
 const mongoURI = process.env.MONGODB_URI;
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 500,
+  message: { error: "Too many requests, please try again later." },
+});
 
 // declare a new express app
 const app = express();
 app.use(bodyParser.json());
 app.use(awsServerlessExpressMiddleware.eventContext());
+app.use(limiter);
 
 // Enable CORS for all methods
 app.use(function (req, res, next) {
@@ -83,7 +90,7 @@ app.post("/users", async (req, res) => {
     return res.status(400).json({ error: "Username and email are required" });
   }
   try {
-    let user = await userModel.findOne({ email });
+    let user = await userModel.findOne({ email: { $eq: email } });
     if (!user) {
       user = new userModel({ email, sub, name, picture });
       await user.save();
