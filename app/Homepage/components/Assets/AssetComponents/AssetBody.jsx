@@ -9,12 +9,14 @@ import AssetBlockView from "../AssetBlockView/AssetBlockView";
 const AssetBody = () => {
   const [actionStatus, setActionStatus] = useState(false);
   const [assetData, setAssetData] = useAtom(assetDataAtom);
+  const [assetLoading, setAssetLoading] = useState(false);
   const fetchAssetData = useSetAtom(fetchAssetDataAtom);
   const handleActionStatus = (stat) => {
     setActionStatus(!stat);
   };
   useEffect(() => {
     const handleFetchData = async () => {
+      setAssetLoading(true);
       try {
         if (assetData === null) {
           const asset = await fetchAssetData();
@@ -24,6 +26,8 @@ const AssetBody = () => {
         }
       } catch (e) {
         console.log(e);
+      } finally {
+        setAssetLoading(false);
       }
     };
     handleFetchData();
@@ -60,6 +64,7 @@ const AssetBody = () => {
         <AssetBlockView
           setActionStatus={handleActionStatus}
           actionStatus={actionStatus}
+          assetLoading={assetLoading}
         />
         {/* <div>Table View</div> */}
       </div>

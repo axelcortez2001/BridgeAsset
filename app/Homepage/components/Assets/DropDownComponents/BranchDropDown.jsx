@@ -6,13 +6,17 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-const BranchDropDown = ({ branch, setBranch }) => {
+const BranchDropDown = ({ branch, setBranch, isDisabled }) => {
   return (
     <div className='flex flex-col'>
       <p className='text-sm text-gray-500'>Branch</p>
       <Dropdown>
         <DropdownTrigger>
-          <Button variant='bordered' className='capitalize'>
+          <Button
+            variant='bordered'
+            className='capitalize'
+            isDisabled={isDisabled}
+          >
             {branch}
           </Button>
         </DropdownTrigger>

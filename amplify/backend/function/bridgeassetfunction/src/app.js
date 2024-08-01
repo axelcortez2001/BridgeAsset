@@ -63,6 +63,7 @@ const assetSchema = new mongoose.Schema({
   branch: { type: String },
   asset_holder: {},
   asset_history: [],
+  asset_holder_history: [],
   user_type: { type: String, default: "" },
   category: { type: String },
   item_stats: { type: String },
@@ -118,10 +119,25 @@ app.post("/assets/*", function (req, res) {
 /****************************
  * Example put method *
  ****************************/
-
-app.put("/assets", function (req, res) {
-  // Add your code here
-  res.json({ success: "put call succeed!", url: req.url, body: req.body });
+app.put("/assets", async (req, res) => {
+  const assetData = req.body;
+  const id = assetData._id;
+  try {
+    if (!assetData) {
+      return res
+        .status(400)
+        .json({ success: false, error: "No asset data provided" });
+    } else {
+      const updatedAssetData = await AssetModel.findByIdAndUpdate(
+        id,
+        assetData,
+        { new: true }
+      );
+      res.status(200).json({ success: true, response: updatedAssetData });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error", response: error });
+  }
 });
 
 app.put("/assets/*", function (req, res) {

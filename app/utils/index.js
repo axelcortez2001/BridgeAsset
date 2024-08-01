@@ -41,8 +41,17 @@ export async function postAsset() {
   }
 }
 
-export async function updateAsset() {
+export async function restUpdate(path, request) {
   try {
+    const updateOperation = put({
+      apiName: "BridgeAssetAPI",
+      path: path,
+      options: {
+        body: request,
+      },
+    });
+    const { body } = await updateOperation.response;
+    return await body.json();
   } catch (e) {
     console.log("PUT call failed: ", JSON.parse(e.response.body));
   }

@@ -11,7 +11,9 @@ import { selectedAssetDataAtom } from "@/app/Homepage/AssetStore";
 const ItemStatusOption = ({ itemStatusOption, setItemStatusOption }) => {
   const setSelectedAssetData = useSetAtom(selectedAssetDataAtom);
   const handleSelect = (opt) => {
-    setSelectedAssetData(null);
+    if (opt === "SOH" || opt === "Active") {
+      setSelectedAssetData(null);
+    }
     setItemStatusOption(opt);
   };
   return (
@@ -35,7 +37,7 @@ const ItemStatusOption = ({ itemStatusOption, setItemStatusOption }) => {
           <DropdownItem key='Active' onClick={() => handleSelect("Active")}>
             Active
           </DropdownItem>
-          <DropdownItem key='Repair' onClick={() => handleSelect("Repair")}>
+          {/* <DropdownItem key='Repair' onClick={() => handleSelect("Repair")}>
             For Repair
           </DropdownItem>
           <DropdownItem
@@ -43,7 +45,7 @@ const ItemStatusOption = ({ itemStatusOption, setItemStatusOption }) => {
             onClick={() => handleSelect("Irreperable")}
           >
             Irreperable
-          </DropdownItem>
+          </DropdownItem> */}
           <DropdownItem key='Transfer' onClick={() => handleSelect("Transfer")}>
             Transfers
           </DropdownItem>

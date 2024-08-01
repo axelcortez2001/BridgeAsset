@@ -10,8 +10,9 @@ import {
   setDataFromSelectedAtom,
   setDataToDefaultAtom,
 } from "../Store/LaptopStore";
+import AssetLoading from "../../LoadingComponents/AssetLoading";
 
-const AssetBlockView = ({ setActionStatus, actionStatus }) => {
+const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
   const assetData = useAtomValue(assetDataAtom);
   const setSelectedType = useSetAtom(selectedTypeAtom);
   const setItemStatusOption = useSetAtom(itemStatusOptionAtom);
@@ -27,7 +28,9 @@ const AssetBlockView = ({ setActionStatus, actionStatus }) => {
     setItemStatusOption("Update");
     setActionStatus(false);
   };
-  return (
+  return assetLoading ? (
+    <AssetLoading />
+  ) : (
     <div className='w-full h-full flex items-center justify-center mt-2'>
       <div className='flex gap-2  w-full'>
         {assetData &&

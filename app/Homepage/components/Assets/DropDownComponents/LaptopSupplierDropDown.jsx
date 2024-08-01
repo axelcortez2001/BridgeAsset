@@ -15,7 +15,7 @@ import {
 } from "@nextui-org/react";
 import { addSupplier, supplierData } from "@/app/Homepage/AssetStore";
 import { useAtomValue, useSetAtom } from "jotai";
-const LaptopSupplierDropDown = ({ supplier, setSupplier }) => {
+const LaptopSupplierDropDown = ({ supplier, setSupplier, isDisabled }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const suppliers = useAtomValue(supplierData);
   const newSupplier = useSetAtom(addSupplier);
@@ -46,7 +46,11 @@ const LaptopSupplierDropDown = ({ supplier, setSupplier }) => {
       <p className='text-sm text-gray-500'>Supplier</p>
       <Dropdown label='supplier'>
         <DropdownTrigger>
-          <Button variant='bordered' className='capitalize'>
+          <Button
+            variant='bordered'
+            className='capitalize'
+            isDisabled={isDisabled}
+          >
             {supplier?.name}
           </Button>
         </DropdownTrigger>

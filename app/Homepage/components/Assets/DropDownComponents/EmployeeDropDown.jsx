@@ -6,12 +6,22 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-const EmployeeDropDown = ({ employeeOptions, assetHolder, setAssetHolder }) => {
+const EmployeeDropDown = ({
+  employeeOptions,
+  assetHolder,
+  setAssetHolder,
+  isDisabled,
+}) => {
+  console.log(isDisabled);
   return (
     <Dropdown>
       <DropdownTrigger>
-        <Button variant='bordered' className='capitalize'>
-          {assetHolder === null ? "Select Employee" : assetHolder?.name}
+        <Button
+          variant='bordered'
+          className='capitalize'
+          isDisabled={isDisabled}
+        >
+          {assetHolder === null ? "None" : assetHolder?.name}
         </Button>
       </DropdownTrigger>
 
@@ -31,6 +41,9 @@ const EmployeeDropDown = ({ employeeOptions, assetHolder, setAssetHolder }) => {
               {employee.name}
             </DropdownItem>
           ))}
+        <DropdownItem key='none' onClick={() => setAssetHolder(null)}>
+          None
+        </DropdownItem>
       </DropdownMenu>
     </Dropdown>
   );

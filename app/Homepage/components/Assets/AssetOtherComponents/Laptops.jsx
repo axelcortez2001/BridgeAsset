@@ -15,6 +15,7 @@ import {
   SaveLaptopAtom,
   serialNumberAtom,
   setDataToDefaultAtom,
+  updateLaptopAtom,
 } from "../Store/LaptopStore";
 import { toast } from "sonner";
 import UpdateLaptopInputForms from "../AssetComponents/UpdateLaptopInputForms";
@@ -25,6 +26,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
   const employeeOptions = useAtomValue(employeeOptionsAtom);
   const fetchEmployee = useSetAtom(fetchEmployeeAtom);
   const saveLaptopData = useSetAtom(SaveLaptopAtom);
+  const updateLaptopData = useSetAtom(updateLaptopAtom);
   const itemName = useAtomValue(itemNameAtom);
   const serial_No = useAtomValue(serialNumberAtom);
   const setDataToDefault = useSetAtom(setDataToDefaultAtom);
@@ -51,6 +53,22 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
           await setDataToDefault();
           setActionStatus(actionStatus);
         }
+      } else {
+        toast.error("Please fill up required fields.");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const handleUpdate = async () => {
+    try {
+      if (itemName !== "" && serial_No !== "") {
+        const res = await updateLaptopData();
+        // if (res.success) {
+        //   toast.success("Laptop saved successfully.");
+        //   await setDataToDefault();
+        //   setActionStatus(actionStatus);
+        // }
       } else {
         toast.error("Please fill up required fields.");
       }
@@ -93,7 +111,10 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
             employeeOptions={employeeOptions}
           />
         ) : (
-          itemStatusOption === "Update" && (
+          (itemStatusOption === "Update" ||
+            itemStatusOption === "Repair" ||
+            itemStatusOption === "Irreperable" ||
+            itemStatusOption === "Transfer") && (
             <UpdateLaptopInputForms
               selectedType={selectedType}
               itemStatusOption={itemStatusOption}
@@ -117,7 +138,11 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
           itemStatusOption !== "NONE" &&
           selectedAssetData !== null && (
             <div className=''>
-              <button type='submit' className='border p-2 rounded-md'>
+              <button
+                type='submit'
+                className='border p-2 rounded-md'
+                onClick={handleUpdate}
+              >
                 Update
               </button>
             </div>

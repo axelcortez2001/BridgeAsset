@@ -7,7 +7,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import { laptopStatusData } from "../Store/LaptopStore";
-const StatusOption = ({ status, setStatus }) => {
+const StatusOption = ({ status, setStatus, isDisabled }) => {
   const statusOption = laptopStatusData;
   return (
     <div className='flex flex-col'>
@@ -15,6 +15,7 @@ const StatusOption = ({ status, setStatus }) => {
       <Dropdown>
         <DropdownTrigger>
           <Button
+            isDisabled={isDisabled}
             variant='bordered'
             className={`${status.color} capitalize text-white`}
           >

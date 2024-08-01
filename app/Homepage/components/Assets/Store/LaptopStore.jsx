@@ -3,7 +3,8 @@ import {
   selectedAssetDataAtom,
   selectedTypeAtom,
 } from "@/app/Homepage/AssetStore";
-import { restInsert } from "@/app/utils";
+import { restInsert, restUpdate } from "@/app/utils";
+import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
 
 export const laptopStatusData = [
@@ -17,7 +18,7 @@ export const laptopStatusData = [
   { name: "NRD", id: 7, color: "bg-blue-400" },
   { name: "For Pull Out", id: 8, color: "bg-orange-700" },
 ];
-
+export const actionHistoryAtom = atom([]);
 export const itemStatusOptionAtom = atom("NONE");
 export const itemNameAtom = atom("");
 export const serialNumberAtom = atom("");
@@ -36,6 +37,8 @@ export const statusAtom = atom({
   id: 0,
   color: "bg-green-500",
 });
+export const item_statsAtom = atom("");
+export const viewAssetHistoryAtom = atom(false);
 export const setDataToDefaultAtom = atom(null, async (get, set) => {
   set(itemNameAtom, "");
   set(serialNumberAtom, "");
@@ -66,6 +69,7 @@ export const setDataFromSelectedAtom = atom(null, async (get, set) => {
   set(statusAtom, selectedAssetData?.status);
   set(branchAtom, selectedAssetData?.branch);
   set(userTypeAtom, selectedAssetData?.user_type);
+  set(item_statsAtom, selectedAssetData?.item_stats);
 });
 export const SaveLaptopAtom = atom(null, async (get, set) => {
   const selectedCategory = get(selectedTypeAtom);
@@ -91,6 +95,73 @@ export const SaveLaptopAtom = atom(null, async (get, set) => {
     const response = await restInsert("/assets", assetData);
     if (response?.success) {
       const newAssetData = [...oldAsset, response.response];
+      set(assetDataAtom, newAssetData);
+      return { success: true, response };
+    } else {
+      return { success: false };
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+});
+export const triggerAction = atom(null, async (get, set, action) => {
+  const user = await fetchUserAttributes();
+  const historyArray = get(actionHistoryAtom);
+  const actionDefinition = user.name + " " + action;
+  const newActionHistory = [...historyArray, actionDefinition];
+  set(actionHistoryAtom, newActionHistory);
+});
+export const updateLaptopAtom = atom(null, async (get, set) => {
+  const selectedCategory = get(selectedTypeAtom);
+  const oldAssetData = get(selectedAssetDataAtom);
+  const historyArray = get(actionHistoryAtom);
+  const oldUser = () => {
+    let oldUserData = null;
+    if (oldAssetData?.asset_holder !== null) {
+      oldUserData = {
+        ...oldAssetData?.asset_holder,
+        date_received: oldAssetData?.doi,
+        date_return: new Date(),
+      };
+      return [oldUserData, ...oldAssetData?.asset_holder_history];
+    } else {
+      return [...oldAssetData?.asset_holder_history];
+    }
+  };
+  const history = {
+    user_holder: oldAssetData?.asset_holder,
+    date_updated: new Date(),
+    actions_taken: historyArray,
+  };
+  console.log("History: ", history);
+  const assetData = {
+    _id: oldAssetData?._id,
+    item: get(itemNameAtom),
+    serial_number: get(serialNumberAtom),
+    supplier: get(supplierAtom),
+    last_updated: new Date(),
+    fa_code: get(FACodeAtom),
+    unit_price: get(unitPriceAtom),
+    doi: get(doiAtom),
+    dop: get(dopAtom),
+    warranty_period: get(warrantyPeriodAtom),
+    status: get(statusAtom),
+    asset_holder: get(assetHolderAtom),
+    branch: get(branchAtom),
+    user_type: get(userTypeAtom),
+    category: selectedCategory,
+    item_stats: get(item_statsAtom),
+    asset_history: [...oldAssetData.asset_history, history],
+    asset_holder_history: oldUser(),
+  };
+  try {
+    const response = await restUpdate("/assets", assetData);
+    if (response?.success) {
+      console.log("Response Update: ", response);
+      const newAssetData = get(assetDataAtom).map((asset) =>
+        asset._id === oldAssetData._id ? assetData : asset
+      );
+      console.log("New AssetData: ", newAssetData);
       set(assetDataAtom, newAssetData);
       return { success: true, response };
     } else {
