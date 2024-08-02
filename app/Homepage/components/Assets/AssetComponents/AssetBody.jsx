@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import AddAsset from "../AssetOtherComponents/AddAsset";
+import AddAsset from "./Asset";
 import { useAtom, useSetAtom } from "jotai";
 import { assetDataAtom, fetchAssetDataAtom } from "@/app/Homepage/AssetStore";
 import AssetBlockView from "../AssetBlockView/AssetBlockView";

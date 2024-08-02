@@ -1,5 +1,6 @@
 import {
   assetDataAtom,
+  handleReturnEmployeesDefaultAtom,
   selectedAssetDataAtom,
   selectedTypeAtom,
 } from "@/app/Homepage/AssetStore";
@@ -19,11 +20,12 @@ const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
   const setSelectedAssetData = useSetAtom(selectedAssetDataAtom);
   const setDataFromSelected = useSetAtom(setDataFromSelectedAtom);
   const setDataToDefault = useSetAtom(setDataToDefaultAtom);
+  const setEmployeesToDefault = useSetAtom(handleReturnEmployeesDefaultAtom);
   const handleSelectAsset = async (opt) => {
+    setEmployeesToDefault();
     await setDataToDefault();
     setSelectedAssetData(opt);
     await setDataFromSelected();
-    console.log("handleSelectAsset: ", opt);
     setSelectedType(opt.category);
     setItemStatusOption("Update");
     setActionStatus(false);

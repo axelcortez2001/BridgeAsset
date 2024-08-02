@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@nextui-org/react";
-import LaptopSupplierDropDown from "../DropDownComponents/LaptopSupplierDropDown";
-import BranchDropDown from "../DropDownComponents/BranchDropDown";
-import EmployeeDropDown from "../DropDownComponents/EmployeeDropDown";
+import LaptopSupplierDropDown from "../../DropDownComponents/LaptopSupplierDropDown";
+import BranchDropDown from "../../DropDownComponents/BranchDropDown";
+import EmployeeDropDown from "../../DropDownComponents/EmployeeDropDown";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   assetHolderAtom,
@@ -19,10 +19,11 @@ import {
   unitPriceAtom,
   userTypeAtom,
   warrantyPeriodAtom,
-} from "../Store/LaptopStore";
-import StatusOption from "../DropDownComponents/StatusOption";
-import UserRadioOption from "../DropDownComponents/UserRadioOption";
+} from "../../Store/LaptopStore";
+import StatusOption from "../../DropDownComponents/StatusOption";
+import UserRadioOption from "../../DropDownComponents/UserRadioOption";
 import { selectedAssetDataAtom } from "@/app/Homepage/AssetStore";
+import { format } from "date-fns";
 
 const LaptopInputForms = ({
   selectedType,
@@ -46,6 +47,13 @@ const LaptopInputForms = ({
   const setDataToDefault = useSetAtom(setDataToDefaultAtom);
   //handlers
   const handleAssetHolder = (opt) => {
+    console.log(opt);
+    if (opt !== null) {
+      const dateToday = new Date();
+      setDoi(format(dateToday, "yyyy-MM-dd"));
+    } else {
+      setDoi("");
+    }
     setAssetHolder(opt);
   };
   const handleStatus = (opt) => {

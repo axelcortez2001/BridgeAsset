@@ -1,6 +1,7 @@
 import {
   assetDataAtom,
   selectedAssetDataAtom,
+  setLogicAssetHolderAtom,
 } from "@/app/Homepage/AssetStore";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Input } from "@nextui-org/react";
@@ -20,22 +21,21 @@ import {
   setDataToDefaultAtom,
   statusAtom,
   supplierAtom,
-  triggerAction,
   unitPriceAtom,
   userTypeAtom,
   viewAssetHistoryAtom,
   warrantyPeriodAtom,
-} from "../Store/LaptopStore";
-import AssetDataSelection from "../DropDownComponents/AssetDataSelection";
-import EmployeeDropDown from "../DropDownComponents/EmployeeDropDown";
-import LaptopSupplierDropDown from "../DropDownComponents/LaptopSupplierDropDown";
-import BranchDropDown from "../DropDownComponents/BranchDropDown";
-import UserRadioOption from "../DropDownComponents/UserRadioOption";
-import StatusOption from "../DropDownComponents/StatusOption";
+} from "../../Store/LaptopStore";
+import AssetDataSelection from "../../DropDownComponents/AssetDataSelection";
+import EmployeeDropDown from "../../DropDownComponents/EmployeeDropDown";
+import LaptopSupplierDropDown from "../../DropDownComponents/LaptopSupplierDropDown";
+import BranchDropDown from "../../DropDownComponents/BranchDropDown";
+import UserRadioOption from "../../DropDownComponents/UserRadioOption";
+import StatusOption from "../../DropDownComponents/StatusOption";
 import { format } from "date-fns";
-import { historyActionfunction } from "../Functions/function";
-import AssetHistory from "./AssetHistory";
+import AssetHistory from "../../AssetComponents/AssetHistory";
 import { GrPowerReset } from "react-icons/gr";
+import { historyActionfunction } from "../../Functions/functionAtom";
 
 const UpdateLaptopInputForms = ({
   selectedType,
@@ -64,12 +64,18 @@ const UpdateLaptopInputForms = ({
   const [userType, setUserType] = useAtom(userTypeAtom);
   const [status, setStatus] = useAtom(statusAtom);
   const [item_stats, setItemStats] = useAtom(item_statsAtom);
-  const [isDisabled, setIsDisabled] = useState(false);
   const [actionHistory, setActionHistoryAtom] = useAtom(actionHistoryAtom);
-  const setActionHistory = useSetAtom(triggerAction);
   const [viewAssetHistory, setViewAssetHistory] = useAtom(viewAssetHistoryAtom);
+  const setLogicAssetHolder = useSetAtom(setLogicAssetHolderAtom);
+  const setHistory = useSetAtom(historyActionfunction);
 
   //handlers
+  const handleInput = (field, newData, oldData) => {
+    if (newData !== oldData) {
+      setHistory(field, newData, oldData);
+    }
+    console.log("History: ", actionHistory);
+  };
   const handleSelecData = async (opt) => {
     setSelectedAssetData(opt);
     setActionHistoryAtom([]);
@@ -85,6 +91,7 @@ const UpdateLaptopInputForms = ({
   };
   const handleAssetHolder = (opt) => {
     setAssetHolder(opt);
+    setLogicAssetHolder(selectedAssetData?.asset_holder);
     if (opt !== null) {
       if (selectedAssetData?.status?.id === 5) {
         setStatus(selectedAssetData?.status);
@@ -92,37 +99,43 @@ const UpdateLaptopInputForms = ({
         setStatus(laptopStatus[0]);
         setItemStats("Active");
       }
-      const dateToday = new Date();
-      setDoi(format(dateToday, "yyyy-MM-dd"));
+      if (selectedAssetData?.asset_holder?.name === opt.name) {
+        setDoi(selectedAssetData?.doi);
+      } else {
+        const dateToday = new Date();
+        setDoi(format(dateToday, "yyyy-MM-dd"));
+      }
     } else {
-      setStatus(selectedAssetData?.status);
-      setItemStats(selectedAssetData?.item_stats);
+      if (selectedAssetData?.status?.id === 0) {
+        setItemStats("SOH");
+      } else {
+        setStatus(selectedAssetData?.status);
+        setItemStats(selectedAssetData?.item_stats);
+      }
+      setDoi("");
     }
-    setActionHistory(
-      historyActionfunction(" asset holder ", opt?.name, assetHolder?.name)
-    );
+
+    handleInput(" Asset Holder ", opt?.name, assetHolder?.name);
   };
   const handleSupplier = (opt) => {
     setSupplier(opt);
-    setActionHistory(
-      historyActionfunction(" supplier ", opt?.name, supplier?.name)
-    );
+    handleInput(" Supplier ", opt?.name, supplier?.name);
   };
   const handleBranch = (opt) => {
     setBranch(opt);
+    handleInput(" Branch ", opt, branch);
   };
   const handleUserType = (opt) => {
     setUserType(opt);
+    handleInput(" User Type ", opt, userType);
   };
   const handleStatus = (opt) => {
     setStatus(opt);
-    console.log("OPT: ", opt);
-    if (opt.name === "Defective") {
-      setItemStats("For Repair");
+    handleInput(" Status ", opt?.name, status?.name);
+    if (opt.name === "Defective" || opt.name === "Irreparable") {
+      setItemStats(opt.name === "Defective" ? "For Repair" : opt.name);
       setAssetHolder(null);
       setDoi("");
-    } else if (opt.name === "Irreparable") {
-      setItemStats("Irreparable");
     } else if (opt.name === "Working") {
       if (selectedAssetData?.asset_holder !== null) {
         setAssetHolder(selectedAssetData?.asset_holder);
@@ -133,7 +146,7 @@ const UpdateLaptopInputForms = ({
       }
     } else if (opt.name === "Good to Issue") {
       setItemStats("SOH");
-    } else if (opt.name === "For Checking") {
+    } else if (opt.id === 4 || opt.id === 5) {
       if (selectedAssetData?.asset_holder !== null) {
         setAssetHolder(selectedAssetData?.asset_holder);
         setDoi(selectedAssetData?.doi);
@@ -141,6 +154,8 @@ const UpdateLaptopInputForms = ({
       } else {
         setItemStats("SOH");
       }
+    } else {
+      setItemStats("OTHERS");
     }
   };
   const checkDisabled = (opt) => {
@@ -192,6 +207,9 @@ const UpdateLaptopInputForms = ({
               size={"sm"}
               value={item}
               onChange={(e) => setItem(e.target.value)}
+              onBlur={() =>
+                handleInput(" Item ", item, selectedAssetData?.item)
+              }
               className='w-auto'
             />
             <Input
@@ -203,6 +221,13 @@ const UpdateLaptopInputForms = ({
               value={serialNo}
               onChange={(e) => setSerialNo(e.target.value)}
               className='max-w-xs'
+              onBlur={() =>
+                handleInput(
+                  " Serial Number ",
+                  serialNo,
+                  selectedAssetData?.serial_number
+                )
+              }
             />
             <Input
               type='number'
@@ -212,6 +237,9 @@ const UpdateLaptopInputForms = ({
               onChange={(e) => setFaCode(e.target.value)}
               size={"sm"}
               className='max-w-xs'
+              onBlur={() =>
+                handleInput(" FA Code ", faCode, selectedAssetData?.fa_code)
+              }
             />
             <Input
               type='number'
@@ -220,6 +248,13 @@ const UpdateLaptopInputForms = ({
               label='Price'
               value={unitPrice}
               onChange={(e) => setUnitPrice(e.target.value)}
+              onBlur={() =>
+                handleInput(
+                  " Unit Price ",
+                  unitPrice,
+                  selectedAssetData?.unit_price
+                )
+              }
               className='w-auto'
             />
             <Input
@@ -229,6 +264,7 @@ const UpdateLaptopInputForms = ({
               label='DOP'
               value={dop}
               onChange={(e) => setDop(e.target.value)}
+              onBlur={() => handleInput(" DOP ", dop, selectedAssetData?.dop)}
               className='max-w-xs'
             />
             <Input
@@ -238,6 +274,13 @@ const UpdateLaptopInputForms = ({
               label='Warranty Period'
               value={warrantyPeriod}
               onChange={(e) => setWarrantyPeriod(e.target.value)}
+              onBlur={() =>
+                handleInput(
+                  " Warranty Period ",
+                  warrantyPeriod,
+                  selectedAssetData?.warranty_period
+                )
+              }
               className='w-auto max-w-32'
             />
             <LaptopSupplierDropDown

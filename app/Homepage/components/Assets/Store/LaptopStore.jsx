@@ -30,6 +30,7 @@ export const dopAtom = atom("");
 export const warrantyPeriodAtom = atom("");
 export const assetHolderAtom = atom(null);
 export const assetHistoryAtom = atom([]);
+export const assetHolderHistoryAtom = atom([]);
 export const userTypeAtom = atom("Employee");
 export const branchAtom = atom("Makati");
 export const statusAtom = atom({
@@ -70,10 +71,18 @@ export const setDataFromSelectedAtom = atom(null, async (get, set) => {
   set(branchAtom, selectedAssetData?.branch);
   set(userTypeAtom, selectedAssetData?.user_type);
   set(item_statsAtom, selectedAssetData?.item_stats);
+  set(assetHolderHistoryAtom, selectedAssetData?.asset_holder_history);
 });
 export const SaveLaptopAtom = atom(null, async (get, set) => {
   const selectedCategory = get(selectedTypeAtom);
   let oldAsset = get(assetDataAtom);
+  const user = await fetchUserAttributes();
+  const action = user.name + " filed this asset.";
+  const history = {
+    user_holder: get(assetHolderAtom),
+    date_updated: new Date(),
+    actions_taken: [action],
+  };
   const assetData = {
     item: get(itemNameAtom),
     serial_number: get(serialNumberAtom),
@@ -90,6 +99,7 @@ export const SaveLaptopAtom = atom(null, async (get, set) => {
     user_type: get(userTypeAtom),
     category: selectedCategory,
     item_stats: get(itemStatusOptionAtom),
+    asset_history: history,
   };
   try {
     const response = await restInsert("/assets", assetData);
@@ -108,21 +118,26 @@ export const triggerAction = atom(null, async (get, set, action) => {
   const user = await fetchUserAttributes();
   const historyArray = get(actionHistoryAtom);
   const actionDefinition = user.name + " " + action;
-  const newActionHistory = [...historyArray, actionDefinition];
+  const newActionHistory = [actionDefinition, ...historyArray];
   set(actionHistoryAtom, newActionHistory);
 });
 export const updateLaptopAtom = atom(null, async (get, set) => {
   const selectedCategory = get(selectedTypeAtom);
   const oldAssetData = get(selectedAssetDataAtom);
   const historyArray = get(actionHistoryAtom);
+  const assetHolder = get(assetHolderAtom);
   const oldUser = () => {
     let oldUserData = null;
-    if (oldAssetData?.asset_holder !== null) {
+    if (
+      oldAssetData?.asset_holder !== null &&
+      oldAssetData?.asset_holder?.sub !== assetHolder?.sub
+    ) {
       oldUserData = {
         ...oldAssetData?.asset_holder,
         date_received: oldAssetData?.doi,
         date_return: new Date(),
       };
+
       return [oldUserData, ...oldAssetData?.asset_holder_history];
     } else {
       return [...oldAssetData?.asset_holder_history];
@@ -133,7 +148,6 @@ export const updateLaptopAtom = atom(null, async (get, set) => {
     date_updated: new Date(),
     actions_taken: historyArray,
   };
-  console.log("History: ", history);
   const assetData = {
     _id: oldAssetData?._id,
     item: get(itemNameAtom),
@@ -151,7 +165,7 @@ export const updateLaptopAtom = atom(null, async (get, set) => {
     user_type: get(userTypeAtom),
     category: selectedCategory,
     item_stats: get(item_statsAtom),
-    asset_history: [...oldAssetData.asset_history, history],
+    asset_history: [history, ...oldAssetData.asset_history],
     asset_holder_history: oldUser(),
   };
   try {

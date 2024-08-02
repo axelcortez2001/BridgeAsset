@@ -2,7 +2,6 @@ import { format } from "date-fns";
 import React from "react";
 
 const UserAssetHistory = ({ userHistory }) => {
-  console.log(userHistory);
   const formatDate = (opt) => {
     let formattedDate = format(new Date(opt), "MMM d, yyyy");
     return formattedDate;

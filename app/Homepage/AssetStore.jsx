@@ -4,16 +4,10 @@ import { getUsers, restGet, restInsert } from "../utils";
 
 export const selectedTypeAtom = atom("laptop");
 export const employeeOptionsAtom = atom([]);
+export const filteredEmployeesAtom = atom([]);
 export const selectedAssetDataAtom = atom(null);
 export const assetDataAtom = atom(null);
-export const fetchEmployeeAtom = atom(null, async (get, set) => {
-  try {
-    const { user } = await getUsers("/users");
-    set(employeeOptionsAtom, user);
-  } catch (e) {
-    console.log(e);
-  }
-});
+
 let supplierId = 0;
 export const supplierData = atom([
   {
@@ -97,4 +91,50 @@ export const fetchAssetDataAtom = atom(null, async (get, set) => {
 export const sideBarLocation = atom("dashboard");
 export const setSideBarLocation = atom(null, (get, set, location) => {
   set(sideBarLocation, location);
+});
+
+export const fetchEmployeeAtom = atom(null, async (get, set) => {
+  try {
+    const assetData = get(assetDataAtom);
+    const assetDataWithHolder = assetData
+      .flatMap((asset) => {
+        if (asset?.asset_holder !== null) {
+          return asset?.asset_holder.sub;
+        } else {
+          return null;
+        }
+      })
+      .filter((asset) => {
+        return asset !== null;
+      });
+    const { user } = await getUsers("/users");
+    const returnedUser = user.filter(
+      (user) => !assetDataWithHolder.includes(user.sub)
+    );
+    console.log("returnedUser: ", returnedUser);
+    set(filteredEmployeesAtom, returnedUser);
+    set(employeeOptionsAtom, returnedUser);
+  } catch (e) {
+    console.log(e);
+  }
+});
+export const setLogicAssetHolderAtom = atom(null, (get, set, assetHolder) => {
+  try {
+    const employees = get(filteredEmployeesAtom);
+    const foundEmployee = employees.find((employee) => {
+      return employee?.sub === assetHolder?.sub;
+    });
+    if (assetHolder !== null) {
+      if (foundEmployee === undefined) {
+        const newEmployeeOptions = [assetHolder, ...employees];
+        set(filteredEmployeesAtom, newEmployeeOptions);
+      }
+    }
+  } catch (e) {
+    console.log(e);
+  }
+});
+export const handleReturnEmployeesDefaultAtom = atom(null, (get, set) => {
+  const employees = get(employeeOptionsAtom);
+  set(filteredEmployeesAtom, employees);
 });

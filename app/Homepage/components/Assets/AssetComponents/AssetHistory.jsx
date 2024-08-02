@@ -3,6 +3,7 @@ import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import AssetHistoryData from "../AssetOtherComponents/AssetHistoryData";
 import UserAssetHistory from "../AssetOtherComponents/UserAssetHistory";
 const AssetHistory = ({ asset }) => {
+  console.log("Asset", asset);
   const history = asset?.asset_history;
   const userHistory = asset?.asset_holder_history;
   console.log(history);

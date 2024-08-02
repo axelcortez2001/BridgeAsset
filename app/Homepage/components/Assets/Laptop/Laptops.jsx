@@ -1,38 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@nextui-org/react";
 import ItemStatusOption from "../DropDownComponents/ItemStatusOption";
-import LaptopInputForms from "../AssetComponents/LaptopInputForms";
+import LaptopInputForms from "./Components/LaptopInputForms";
 import { getUsers } from "@/app/utils";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   employeeOptionsAtom,
   fetchEmployeeAtom,
+  filteredEmployeesAtom,
+  handleReturnEmployeesDefaultAtom,
   selectedAssetDataAtom,
 } from "@/app/Homepage/AssetStore";
 import {
+  assetHolderAtom,
+  doiAtom,
   itemNameAtom,
   itemStatusOptionAtom,
   SaveLaptopAtom,
   serialNumberAtom,
   setDataToDefaultAtom,
   updateLaptopAtom,
+  viewAssetHistoryAtom,
 } from "../Store/LaptopStore";
 import { toast } from "sonner";
-import UpdateLaptopInputForms from "../AssetComponents/UpdateLaptopInputForms";
+import UpdateLaptopInputForms from "./Components/UpdateLaptopInputForms";
 
 const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
   //for item selection Status
   const [itemStatusOption, setItemStatusOption] = useAtom(itemStatusOptionAtom);
-  const employeeOptions = useAtomValue(employeeOptionsAtom);
+  const employeeOptions = useAtomValue(filteredEmployeesAtom);
   const fetchEmployee = useSetAtom(fetchEmployeeAtom);
   const saveLaptopData = useSetAtom(SaveLaptopAtom);
   const updateLaptopData = useSetAtom(updateLaptopAtom);
   const itemName = useAtomValue(itemNameAtom);
   const serial_No = useAtomValue(serialNumberAtom);
   const setDataToDefault = useSetAtom(setDataToDefaultAtom);
+  const assetHolder = useAtomValue(assetHolderAtom);
+  const doi = useAtomValue(doiAtom);
   const [selectedAssetData, setSelectedAssetData] = useAtom(
     selectedAssetDataAtom
   );
+  const viewAssetHistory = useAtomValue(viewAssetHistoryAtom);
+  const setEmployeesToDefault = useSetAtom(handleReturnEmployeesDefaultAtom);
 
   const handleSetItemStatusOption = (opt) => {
     setItemStatusOption(opt);
@@ -42,11 +51,17 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
     await setDataToDefault();
     setActionStatus(actionStatus);
     setSelectedAssetData(null);
+    setEmployeesToDefault();
   };
   //save new asset
   const handlesave = async () => {
     try {
       if (itemName !== "" && serial_No !== "") {
+        if (itemStatusOption === "Active") {
+          if (assetHolder === null && doi === "") {
+            return toast.error("Please Select an asset holder and DOI");
+          }
+        }
         const res = await saveLaptopData();
         if (res.success) {
           toast.success("Laptop saved successfully.");
@@ -64,11 +79,12 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
     try {
       if (itemName !== "" && serial_No !== "") {
         const res = await updateLaptopData();
-        // if (res.success) {
-        //   toast.success("Laptop saved successfully.");
-        //   await setDataToDefault();
-        //   setActionStatus(actionStatus);
-        // }
+        await fetchEmployee();
+        if (res.success) {
+          toast.success("Laptop saved successfully.");
+          await setDataToDefault();
+          setActionStatus(actionStatus);
+        }
       } else {
         toast.error("Please fill up required fields.");
       }
@@ -79,6 +95,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
 
   //getUsers with validation
   useEffect(() => {
+    console.log("employeeOptions: ", employeeOptions);
     if (
       (itemStatusOption === "Active" ||
         itemStatusOption === "Transfer" ||
@@ -88,6 +105,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
     ) {
       const getAllUsers = async () => {
         try {
+          console.log("Trigger");
           await fetchEmployee();
         } catch (e) {
           console.log("Error getting users");
@@ -135,6 +153,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
             </button>
           </div>
         ) : (
+          !viewAssetHistory &&
           itemStatusOption !== "NONE" &&
           selectedAssetData !== null && (
             <div className=''>

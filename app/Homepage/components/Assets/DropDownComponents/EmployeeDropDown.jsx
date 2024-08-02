@@ -12,7 +12,6 @@ const EmployeeDropDown = ({
   setAssetHolder,
   isDisabled,
 }) => {
-  console.log(isDisabled);
   return (
     <Dropdown>
       <DropdownTrigger>

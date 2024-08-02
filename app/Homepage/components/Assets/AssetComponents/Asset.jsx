@@ -1,16 +1,10 @@
-import React, { useState } from "react";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Button,
-} from "@nextui-org/react";
-import AssetDropDown from "./AssetDropDown";
-import Laptops from "./Laptops";
-import AddMonitors from "./AddMonitors";
+import React from "react";
+import AssetDropDown from "../AssetOtherComponents/AssetDropDown";
+import Laptops from "../Laptop/Laptops";
+
 import { useAtom, useAtomValue } from "jotai";
 import { selectedTypeAtom } from "@/app/Homepage/AssetStore";
+import Monitor from "../Monitor/Monitor";
 
 const AddAsset = ({ setActionStatus, actionStatus }) => {
   //category selection state management
@@ -34,9 +28,8 @@ const AddAsset = ({ setActionStatus, actionStatus }) => {
           setActionStatus={setActionStatus}
         />
       ) : (
-        <AddMonitors />
+        <Monitor />
       )}
-      {/* Close Button */}
     </div>
   );
 };
