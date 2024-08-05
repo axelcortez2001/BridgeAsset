@@ -12,6 +12,7 @@
     "@aws-amplify/adapter-nextjs": "^1.2.4",
     "@aws-amplify/ui-react": "^6.1.12",
     "@nextui-org/react": "^2.4.2",
+    "@tanstack/react-table": "^8.20.1",
     "aws-amplify": "^6.3.6",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.2.10",

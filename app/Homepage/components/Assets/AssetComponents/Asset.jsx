@@ -2,14 +2,19 @@ import React from "react";
 import AssetDropDown from "../AssetOtherComponents/AssetDropDown";
 import Laptops from "../Laptop/Laptops";
 
-import { useAtom, useAtomValue } from "jotai";
-import { selectedTypeAtom } from "@/app/Homepage/AssetStore";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import {
+  handleReturnEmployeesDefaultAtom,
+  selectedTypeAtom,
+} from "@/app/Homepage/AssetStore";
 import Monitor from "../Monitor/Monitor";
 
 const AddAsset = ({ setActionStatus, actionStatus }) => {
   //category selection state management
   const [selectedType, setSelectedType] = useAtom(selectedTypeAtom);
+  const setEmployeesToDefault = useSetAtom(handleReturnEmployeesDefaultAtom);
   const handleSelectedType = (opt) => {
+    setEmployeesToDefault();
     setSelectedType(opt);
   };
 
@@ -27,8 +32,14 @@ const AddAsset = ({ setActionStatus, actionStatus }) => {
           actionStatus={actionStatus}
           setActionStatus={setActionStatus}
         />
+      ) : selectedType === "monitor" ? (
+        <Monitor
+          selectedType={selectedType}
+          actionStatus={actionStatus}
+          setActionStatus={setActionStatus}
+        />
       ) : (
-        <Monitor />
+        <div></div>
       )}
     </div>
   );

@@ -1,30 +1,38 @@
 import { format } from "date-fns";
 import React from "react";
+import HistoryTable from "./HistoryTable";
 
 const AssetHistoryData = ({ history }) => {
   const formatDate = (opt) => {
     let formattedDate = format(new Date(opt), "MMM d, yyyy");
     return formattedDate;
   };
+  const columns = [
+    {
+      Header: "Date Updated",
+      id: "date_updated",
+      accessorKey: "date_updated",
+      size: 10,
+      cell: ({ row }) => (
+        <div className='text-center'>
+          {formatDate(row?.original?.date_updated)}
+        </div>
+      ),
+    },
+    {
+      Header: "Actions Taken",
+      id: "actions_taken",
+      accessorKey: "actions_taken",
+      cell: ({ row }) => <div>{row?.original?.actions_taken[0]}</div>,
+    },
+  ];
   return (
     <div className='p-2 text-sm'>
-      {history && history.length > 0 ? (
-        history.map((item, index) => (
-          <div
-            className='border rounded-md p-2 flex  max-w-full gap-4 hover:cursor-pointer hover:bg-gray-200'
-            key={index}
-          >
-            <div className='min-w-24 w-32 border-r'>
-              {formatDate(item?.date_updated)}
-            </div>
-            <div className='whitespace-nowrap overflow-hidden text-ellipsis'>
-              {item.actions_taken[0]}
-            </div>
-          </div>
-        ))
-      ) : (
-        <p>No Asset History</p>
-      )}
+      <HistoryTable
+        history={history}
+        columns={columns}
+        basedFrom='AssetHistory'
+      />
     </div>
   );
 };

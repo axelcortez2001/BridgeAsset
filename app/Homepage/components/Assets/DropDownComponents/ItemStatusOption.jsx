@@ -6,9 +6,13 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-import { useSetAtom } from "jotai";
-import { selectedAssetDataAtom } from "@/app/Homepage/AssetStore";
+import { useAtomValue, useSetAtom } from "jotai";
+import {
+  selectedAssetDataAtom,
+  selectedTypeAtom,
+} from "@/app/Homepage/AssetStore";
 const ItemStatusOption = ({ itemStatusOption, setItemStatusOption }) => {
+  const selectedType = useAtomValue(selectedTypeAtom);
   const setSelectedAssetData = useSetAtom(selectedAssetDataAtom);
   const handleSelect = (opt) => {
     if (opt === "SOH" || opt === "Active") {
@@ -32,22 +36,19 @@ const ItemStatusOption = ({ itemStatusOption, setItemStatusOption }) => {
           selectionMode='single'
         >
           <DropdownItem key='SOH' onClick={() => handleSelect("SOH")}>
-            SOH
+            Add SOH
           </DropdownItem>
           <DropdownItem key='Active' onClick={() => handleSelect("Active")}>
-            Active
+            Add Active
           </DropdownItem>
-          {/* <DropdownItem key='Repair' onClick={() => handleSelect("Repair")}>
-            For Repair
-          </DropdownItem>
-          <DropdownItem
-            key='Irreperable'
-            onClick={() => handleSelect("Irreperable")}
-          >
-            Irreperable
-          </DropdownItem> */}
+          {selectedType !== "laptop" && (
+            <DropdownItem key='Issued' onClick={() => handleSelect("Issued")}>
+              Issued(WFH)
+            </DropdownItem>
+          )}
+
           <DropdownItem key='Transfer' onClick={() => handleSelect("Transfer")}>
-            Transfers
+            Transfer Asset
           </DropdownItem>
           <DropdownItem key='Update' onClick={() => handleSelect("Update")}>
             Update Asset

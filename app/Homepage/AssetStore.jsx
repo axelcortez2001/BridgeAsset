@@ -5,6 +5,7 @@ import { getUsers, restGet, restInsert } from "../utils";
 export const selectedTypeAtom = atom("laptop");
 export const employeeOptionsAtom = atom([]);
 export const filteredEmployeesAtom = atom([]);
+export const filteredEmployeesForMonitorAtom = atom([]);
 export const selectedAssetDataAtom = atom(null);
 export const assetDataAtom = atom(null);
 
@@ -80,9 +81,18 @@ export const registerUser = atom(null, async (get, set) => {
 
 export const fetchAssetDataAtom = atom(null, async (get, set) => {
   const response = await restGet("/assets");
-  console.log(response);
+  const selectedType = get(selectedTypeAtom);
   if (response?.success) {
-    return { success: true, response: response.response };
+    const willReturn = response?.response;
+    if (response && response?.response?.length > 0) {
+      const finalReturn = willReturn.filter((asset) => {
+        return asset?.category === selectedType;
+      });
+      console.log("FInal: ", finalReturn);
+      return { success: true, response: finalReturn };
+    } else {
+      return [];
+    }
   } else {
     return { success: false };
   }
@@ -93,10 +103,15 @@ export const setSideBarLocation = atom(null, (get, set, location) => {
   set(sideBarLocation, location);
 });
 
-export const fetchEmployeeAtom = atom(null, async (get, set) => {
+export const fetchEmployeeAtom = atom(null, async (get, set, category) => {
   try {
     const assetData = get(assetDataAtom);
-    const assetDataWithHolder = assetData
+    console.log("Category: ", category);
+    const filteredAssetData = assetData.filter((asset) => {
+      return asset?.category === category;
+    });
+    console.log("filteredAssetData: ", filteredAssetData);
+    const assetDataWithHolder = filteredAssetData
       .flatMap((asset) => {
         if (asset?.asset_holder !== null) {
           return asset?.asset_holder.sub;
@@ -111,7 +126,6 @@ export const fetchEmployeeAtom = atom(null, async (get, set) => {
     const returnedUser = user.filter(
       (user) => !assetDataWithHolder.includes(user.sub)
     );
-    console.log("returnedUser: ", returnedUser);
     set(filteredEmployeesAtom, returnedUser);
     set(employeeOptionsAtom, returnedUser);
   } catch (e) {

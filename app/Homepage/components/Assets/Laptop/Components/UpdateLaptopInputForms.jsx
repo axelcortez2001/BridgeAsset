@@ -188,7 +188,7 @@ const UpdateLaptopInputForms = ({
               onClick={() => setViewAssetHistory(false)}
               className='border rounded-md p-2 text-sm ml-2 hover:cursor-pointer hover:bg-slate-500 hover:text-white transition-all'
             >
-              Update Asset Component
+              Back to Asset Component
             </div>
           )}
         </div>

@@ -79,7 +79,8 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
     try {
       if (itemName !== "" && serial_No !== "") {
         const res = await updateLaptopData();
-        await fetchEmployee();
+        const category = "laptop";
+        await fetchEmployee({ category });
         if (res.success) {
           toast.success("Laptop saved successfully.");
           await setDataToDefault();
@@ -95,7 +96,6 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
 
   //getUsers with validation
   useEffect(() => {
-    console.log("employeeOptions: ", employeeOptions);
     if (
       (itemStatusOption === "Active" ||
         itemStatusOption === "Transfer" ||
@@ -106,7 +106,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
       const getAllUsers = async () => {
         try {
           console.log("Trigger");
-          await fetchEmployee();
+          await fetchEmployee("laptop");
         } catch (e) {
           console.log("Error getting users");
         }

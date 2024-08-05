@@ -2,15 +2,21 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AddAsset from "./Asset";
-import { useAtom, useSetAtom } from "jotai";
-import { assetDataAtom, fetchAssetDataAtom } from "@/app/Homepage/AssetStore";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import {
+  assetDataAtom,
+  fetchAssetDataAtom,
+  selectedTypeAtom,
+} from "@/app/Homepage/AssetStore";
 import AssetBlockView from "../AssetBlockView/AssetBlockView";
 
 const AssetBody = () => {
   const [actionStatus, setActionStatus] = useState(false);
   const [assetData, setAssetData] = useAtom(assetDataAtom);
+  const selectedType = useAtomValue(selectedTypeAtom);
   const [assetLoading, setAssetLoading] = useState(false);
   const fetchAssetData = useSetAtom(fetchAssetDataAtom);
+  const [selected, setSelected] = useState(selectedType);
   const handleActionStatus = (stat) => {
     setActionStatus(!stat);
   };
@@ -18,7 +24,8 @@ const AssetBody = () => {
     const handleFetchData = async () => {
       setAssetLoading(true);
       try {
-        if (assetData === null) {
+        if (assetData === null || selected !== selectedType) {
+          setSelected(selectedType);
           const asset = await fetchAssetData();
           if (asset.success) {
             setAssetData(asset.response);
@@ -31,7 +38,7 @@ const AssetBody = () => {
       }
     };
     handleFetchData();
-  }, [assetData]);
+  }, [assetData, selectedType]);
   return (
     <div>
       {!actionStatus ? (
