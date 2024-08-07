@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Input, Textarea } from "@nextui-org/react";
 import EmployeeDropDown from "../../DropDownComponents/EmployeeDropDown";
 import { format } from "date-fns";
+import { useAtom } from "jotai";
+import { branchAtom, supplierAtom } from "../../Store/LaptopStore";
+import LaptopSupplierDropDown from "../../DropDownComponents/LaptopSupplierDropDown";
+import BranchDropDown from "../../DropDownComponents/BranchDropDown";
+import MonitorStatus from "../../DropDownComponents/MonitorStatus";
+import { statusAtom } from "../../Store/MonitorStore";
 const MonitorInputForms = ({ selectedType, employeeOptions }) => {
   const [item, setItem] = useState("");
   const [serialNo, setSerialNo] = useState("");
@@ -12,6 +18,9 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
   const [doi, setDoi] = useState("");
   const [unitPrice, setUnitPrice] = useState("");
   const [dop, setDop] = useState("");
+  const [branch, setBranch] = useAtom(branchAtom);
+  const [supplier, setSupplier] = useAtom(supplierAtom);
+  const [status, setStatus] = useAtom(statusAtom);
   //handlers
   const handleAssetHolder = (opt) => {
     console.log(opt);
@@ -22,6 +31,15 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
       setDoi("");
     }
     setAssetHolder(opt);
+  };
+  const handleBranch = (opt) => {
+    setBranch(opt);
+  };
+  const handleSupplier = (opt) => {
+    setSupplier(opt);
+  };
+  const handleStatus = (opt) => {
+    setStatus(opt);
   };
   return (
     <div className='w-full flex flex-wrap p-1 gap-3'>
@@ -86,6 +104,10 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             value={selectedType.toUpperCase()}
             className='max-w-xs'
           />
+          <LaptopSupplierDropDown
+            supplier={supplier}
+            setSupplier={handleSupplier}
+          />
           <Textarea
             type='text'
             label='Remarks'
@@ -110,6 +132,11 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             onChange={(e) => setDoi(e.target.value)}
             className='max-w-xs'
           />
+        </div>
+        <p className='p-1 font-bold'>Status</p>
+        <div className='w-full flex flex-wrap p-1 gap-3'>
+          <BranchDropDown branch={branch} setBranch={handleBranch} />
+          <MonitorStatus status={status} setStatus={handleStatus} />
         </div>
       </div>
     </div>
