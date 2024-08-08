@@ -11,7 +11,7 @@ const StatusOption = ({ status, setStatus, isDisabled }) => {
   const statusOption = laptopStatusData;
   return (
     <div className='flex flex-col'>
-      <p className='text-sm text-gray-500'>Status</p>
+      <p className='text-sm text-gray-500 bg'>Status</p>
       <Dropdown>
         <DropdownTrigger>
           <Button

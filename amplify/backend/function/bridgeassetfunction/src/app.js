@@ -67,6 +67,8 @@ const assetSchema = new mongoose.Schema({
   user_type: { type: String, default: "" },
   category: { type: String },
   item_stats: { type: String },
+  remarks: { type: String },
+  tagCode: { type: String },
 });
 const AssetModel = mongoose.model("Assets", assetSchema);
 

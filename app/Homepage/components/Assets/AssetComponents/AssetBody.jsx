@@ -8,7 +8,8 @@ import {
   fetchAssetDataAtom,
   selectedTypeAtom,
 } from "@/app/Homepage/AssetStore";
-import AssetBlockView from "../AssetBlockView/AssetBlockView";
+import LaptopBlockView from "../AssetBlockView/LaptopBlockView";
+import MonitorBlockView from "../AssetBlockView/MonitorBlockView";
 
 const AssetBody = () => {
   const [actionStatus, setActionStatus] = useState(false);
@@ -68,11 +69,20 @@ const AssetBody = () => {
         )}
       </AnimatePresence>
       <div className='flex gap-x-5'>
-        <AssetBlockView
-          setActionStatus={handleActionStatus}
-          actionStatus={actionStatus}
-          assetLoading={assetLoading}
-        />
+        {selectedType === "laptop" ? (
+          <LaptopBlockView
+            setActionStatus={handleActionStatus}
+            actionStatus={actionStatus}
+            assetLoading={assetLoading}
+          />
+        ) : (
+          <MonitorBlockView
+            setActionStatus={handleActionStatus}
+            actionStatus={actionStatus}
+            assetLoading={assetLoading}
+          />
+        )}
+
         {/* <div>Table View</div> */}
       </div>
     </div>

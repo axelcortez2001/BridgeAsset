@@ -38,6 +38,7 @@ export const statusAtom = atom({
   id: 0,
   color: "bg-green-500",
 });
+export const remarksAtom = atom("");
 export const item_statsAtom = atom("");
 export const viewAssetHistoryAtom = atom(false);
 export const setDataToDefaultAtom = atom(null, async (get, set) => {

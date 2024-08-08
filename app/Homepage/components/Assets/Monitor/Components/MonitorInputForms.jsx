@@ -7,17 +7,28 @@ import { branchAtom, supplierAtom } from "../../Store/LaptopStore";
 import LaptopSupplierDropDown from "../../DropDownComponents/LaptopSupplierDropDown";
 import BranchDropDown from "../../DropDownComponents/BranchDropDown";
 import MonitorStatus from "../../DropDownComponents/MonitorStatus";
-import { statusAtom } from "../../Store/MonitorStore";
+import {
+  assetHolderAtom,
+  doiAtom,
+  dopAtom,
+  FACodeAtom,
+  itemNameAtom,
+  remarksAtom,
+  serialNumberAtom,
+  statusAtom,
+  tagCodeAtom,
+  unitPriceAtom,
+} from "../../Store/MonitorStore";
 const MonitorInputForms = ({ selectedType, employeeOptions }) => {
-  const [item, setItem] = useState("");
-  const [serialNo, setSerialNo] = useState("");
-  const [faCode, setFaCode] = useState("");
-  const [tagCode, setTagCode] = useState("");
-  const [remarks, setRemarks] = useState("");
-  const [assetHolder, setAssetHolder] = useState(null);
-  const [doi, setDoi] = useState("");
-  const [unitPrice, setUnitPrice] = useState("");
-  const [dop, setDop] = useState("");
+  const [item, setItem] = useAtom(itemNameAtom);
+  const [serialNo, setSerialNo] = useAtom(serialNumberAtom);
+  const [faCode, setFaCode] = useAtom(FACodeAtom);
+  const [tagCode, setTagCode] = useAtom(tagCodeAtom);
+  const [remarks, setRemarks] = useAtom(remarksAtom);
+  const [assetHolder, setAssetHolder] = useAtom(assetHolderAtom);
+  const [doi, setDoi] = useAtom(doiAtom);
+  const [unitPrice, setUnitPrice] = useAtom(unitPriceAtom);
+  const [dop, setDop] = useAtom(dopAtom);
   const [branch, setBranch] = useAtom(branchAtom);
   const [supplier, setSupplier] = useAtom(supplierAtom);
   const [status, setStatus] = useAtom(statusAtom);

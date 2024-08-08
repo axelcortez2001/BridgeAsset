@@ -149,7 +149,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
               onClick={() => handlesave()}
               className='border p-2 rounded-md'
             >
-              Save
+              Add
             </button>
           </div>
         ) : (

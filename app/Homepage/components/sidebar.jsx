@@ -3,10 +3,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { signOut } from "aws-amplify/auth";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
+  selectedAssetDataAtom,
   selectedTypeAtom,
   setSideBarLocation,
   sideBarLocation,
 } from "../AssetStore";
+import { setDataToDefaultAtom } from "./Assets/Store/LaptopStore";
+import { setMonitorDataToDefaultAtom } from "./Assets/Store/MonitorStore";
 
 const Sidebar = () => {
   const dashboardLocation = useAtomValue(sideBarLocation);
@@ -14,10 +17,15 @@ const Sidebar = () => {
   const [selectedType, setSelectedType] = useAtom(selectedTypeAtom);
 
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-
+  const setSelectedAssetData = useSetAtom(selectedAssetDataAtom);
+  const setLaptopToDefault = useSetAtom(setDataToDefaultAtom);
+  const setMonitorToDefault = useSetAtom(setMonitorDataToDefaultAtom);
   const handleNavigation = (location, type) => {
     setDashboardLocation(location);
     setSelectedType(type);
+    setSelectedAssetData(null);
+    setLaptopToDefault();
+    setMonitorToDefault();
   };
 
   const toggleAccordion = () => {

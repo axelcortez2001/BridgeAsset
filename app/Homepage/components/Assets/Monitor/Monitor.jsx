@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ItemStatusOption from "../DropDownComponents/ItemStatusOption";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
@@ -12,14 +12,24 @@ import {
   handleReturnEmployeesDefaultAtom,
   selectedAssetDataAtom,
 } from "@/app/Homepage/AssetStore";
+import {
+  handleAddNewMonitorAtom,
+  itemNameAtom,
+  setMonitorDataToDefaultAtom,
+} from "../Store/MonitorStore";
+import { toast } from "sonner";
+import { GrPowerReset } from "react-icons/gr";
 
 const Monitor = ({ selectedType, setActionStatus, actionStatus }) => {
+  const [loading, setLoading] = useState(false);
   const [itemStatusOption, setItemStatusOption] = useAtom(itemStatusOptionAtom);
   const employeeOptions = useAtomValue(filteredEmployeesAtom);
   const fetchEmployee = useSetAtom(fetchEmployeeAtom);
   const setEmployeesToDefault = useSetAtom(handleReturnEmployeesDefaultAtom);
   const setDataToDefault = useSetAtom(setDataToDefaultAtom);
-  const setSelectedAssetData = useSetAtom(selectedAssetDataAtom);
+  const [selectedAssetData, setSelectedAssetData] = useAtom(
+    selectedAssetDataAtom
+  );
   const handleSetItemStatusOption = (opt) => {
     setItemStatusOption(opt);
   };
@@ -30,6 +40,36 @@ const Monitor = ({ selectedType, setActionStatus, actionStatus }) => {
     setEmployeesToDefault();
   };
 
+  //add new monitor
+  const addNewMonitor = useSetAtom(handleAddNewMonitorAtom);
+  const setMonitorToDefault = useSetAtom(setMonitorDataToDefaultAtom);
+  const itemName = useAtomValue(itemNameAtom);
+  const handleAddMonitor = async () => {
+    setLoading(true);
+    try {
+      if (itemName !== "") {
+        const res = await addNewMonitor();
+        if (res?.success) {
+          toast.success("Monitor Saved.");
+          await setMonitorToDefault();
+        }
+      } else {
+        toast.error("Please enter a item name");
+      }
+    } catch (e) {
+      toast.error("Server Error");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleReset = async () => {
+    if (window.confirm("Are you sure you want to change current selected?")) {
+      await setDataToDefault();
+      setActionStatus(actionStatus);
+      setSelectedAssetData(null);
+      setEmployeesToDefault();
+    }
+  };
   //get users for monitor
   useEffect(() => {
     if (employeeOptions && employeeOptions.length === 0) {
@@ -46,11 +86,33 @@ const Monitor = ({ selectedType, setActionStatus, actionStatus }) => {
   return (
     <div className='w-full flex flex-col h-full'>
       <div className='w-full flex flex-wrap p-1 gap-3'>
-        <p>Add Monitor</p>
+        {selectedAssetData !== null && (
+          <div
+            className='border rounded-md p-2 text-sm ml-2 hover:cursor-pointer hover:bg-slate-500 hover:text-white transition-all'
+            onClick={handleReset}
+          >
+            <GrPowerReset size={18} />
+          </div>
+        )}
         <MonitorInputForms
           selectedType={selectedType}
           employeeOptions={employeeOptions}
         />
+        <div className=''>
+          {selectedAssetData !== null ? (
+            <button type='button' className='border p-2 rounded-md'>
+              Update
+            </button>
+          ) : (
+            <button
+              type='button'
+              className='border p-2 rounded-md'
+              onClick={handleAddMonitor}
+            >
+              Add
+            </button>
+          )}
+        </div>
         <div className=''>
           <button
             type='button'
