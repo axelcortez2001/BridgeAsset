@@ -3,13 +3,23 @@ import { motion, AnimatePresence } from "framer-motion";
 import { signOut } from "aws-amplify/auth";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
+  assetDataAtom,
+  fetchEmployeeAtom,
+  filteredEmployeesAtom,
+  handleReturnEmployeesDefaultAtom,
   selectedAssetDataAtom,
   selectedTypeAtom,
   setSideBarLocation,
   sideBarLocation,
 } from "../AssetStore";
-import { setDataToDefaultAtom } from "./Assets/Store/LaptopStore";
-import { setMonitorDataToDefaultAtom } from "./Assets/Store/MonitorStore";
+import {
+  actionHistoryAtom,
+  setDataToDefaultAtom,
+} from "./Assets/Store/LaptopStore";
+import {
+  actionMonitorHistoryAtom,
+  setMonitorDataToDefaultAtom,
+} from "./Assets/Store/MonitorStore";
 
 const Sidebar = () => {
   const dashboardLocation = useAtomValue(sideBarLocation);
@@ -19,13 +29,24 @@ const Sidebar = () => {
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const setSelectedAssetData = useSetAtom(selectedAssetDataAtom);
   const setLaptopToDefault = useSetAtom(setDataToDefaultAtom);
+  const setEmployeesToDefault = useSetAtom(filteredEmployeesAtom);
   const setMonitorToDefault = useSetAtom(setMonitorDataToDefaultAtom);
-  const handleNavigation = (location, type) => {
+  const setAssetData = useSetAtom(assetDataAtom);
+  const setLaptopHistory = useSetAtom(actionHistoryAtom);
+  const setMonitorHistory = useSetAtom(actionMonitorHistoryAtom);
+  const setHistoryDefault = () => {
+    setLaptopHistory([]);
+    setMonitorHistory([]);
+  };
+  const handleNavigation = async (location, type) => {
+    setEmployeesToDefault([]);
+    setAssetData(null);
     setDashboardLocation(location);
     setSelectedType(type);
     setSelectedAssetData(null);
     setLaptopToDefault();
     setMonitorToDefault();
+    setHistoryDefault();
   };
 
   const toggleAccordion = () => {

@@ -1,6 +1,6 @@
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
-import { getUsers, restGet, restInsert } from "../utils";
+import { getUsers, restDelete, restGet, restInsert } from "../utils";
 
 export const selectedTypeAtom = atom("laptop");
 export const employeeOptionsAtom = atom([]);
@@ -138,9 +138,10 @@ export const setLogicAssetHolderAtom = atom(null, (get, set, assetHolder) => {
     const foundEmployee = employees.find((employee) => {
       return employee?.sub === assetHolder?.sub;
     });
-    if (assetHolder !== null) {
+    if (assetHolder !== null && assetHolder !== undefined) {
       if (foundEmployee === undefined) {
         const newEmployeeOptions = [assetHolder, ...employees];
+
         set(filteredEmployeesAtom, newEmployeeOptions);
       }
     }
@@ -151,4 +152,23 @@ export const setLogicAssetHolderAtom = atom(null, (get, set, assetHolder) => {
 export const handleReturnEmployeesDefaultAtom = atom(null, (get, set) => {
   const employees = get(employeeOptionsAtom);
   set(filteredEmployeesAtom, employees);
+});
+
+export const deleteAssetDataAtom = atom(null, async (get, set, _id) => {
+  console.log("Id: ", _id);
+  try {
+    const response = await restDelete("/assets", { _id });
+    if (response?.success) {
+      console.log("Response: ", response);
+      const newAssetData = get(assetDataAtom).filter(
+        (asset) => asset._id !== _id
+      );
+      set(assetDataAtom, newAssetData);
+      return { success: true, response };
+    } else {
+      return { success: false };
+    }
+  } catch (e) {
+    console.log("Error: ", e);
+  }
 });

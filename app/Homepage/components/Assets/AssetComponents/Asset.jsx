@@ -20,12 +20,6 @@ const AddAsset = ({ setActionStatus, actionStatus }) => {
 
   return (
     <div className='h-full w-full flex flex-col relative p-2'>
-      <div>
-        <AssetDropDown
-          selectedType={selectedType}
-          setSelectedType={handleSelectedType}
-        />
-      </div>
       {selectedType === "laptop" ? (
         <Laptops
           selectedType={selectedType}

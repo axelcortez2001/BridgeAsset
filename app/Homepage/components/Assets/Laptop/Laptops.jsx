@@ -5,6 +5,8 @@ import LaptopInputForms from "./Components/LaptopInputForms";
 import { getUsers } from "@/app/utils";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
+  assetDataAtom,
+  deleteAssetDataAtom,
   employeeOptionsAtom,
   fetchEmployeeAtom,
   filteredEmployeesAtom,
@@ -42,7 +44,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
   );
   const viewAssetHistory = useAtomValue(viewAssetHistoryAtom);
   const setEmployeesToDefault = useSetAtom(handleReturnEmployeesDefaultAtom);
-
+  const assetData = useAtomValue(assetDataAtom);
   const handleSetItemStatusOption = (opt) => {
     setItemStatusOption(opt);
   };
@@ -94,15 +96,30 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
     }
   };
 
+  const deleteAssetData = useSetAtom(deleteAssetDataAtom);
+  const handleDeleteAsset = async () => {
+    if (window.confirm("Are you sure you want to change current selected?")) {
+      if (selectedAssetData !== null) {
+        const _id = selectedAssetData._id;
+        const res = await deleteAssetData(_id);
+        if (res?.success === true) {
+          await setDataToDefault();
+          setActionStatus(actionStatus);
+          setSelectedAssetData(null);
+          await fetchEmployee("laptop");
+          toast.success("Asset deleted successfully.");
+        } else {
+          toast.error("Failed to delete asset.");
+        }
+      } else {
+        toast.error("No asset selected to delete.");
+      }
+    }
+  };
+
   //getUsers with validation
   useEffect(() => {
-    if (
-      (itemStatusOption === "Active" ||
-        itemStatusOption === "Transfer" ||
-        itemStatusOption === "Update") &&
-      employeeOptions &&
-      employeeOptions.length === 0
-    ) {
+    if (employeeOptions && employeeOptions.length === 0 && assetData !== null) {
       const getAllUsers = async () => {
         try {
           console.log("Trigger");
@@ -113,7 +130,7 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
       };
       getAllUsers();
     }
-  }, [employeeOptions, itemStatusOption]);
+  }, [employeeOptions, itemStatusOption, assetData]);
 
   return (
     <div className='w-full flex flex-col h-full'>
@@ -156,13 +173,20 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
           !viewAssetHistory &&
           itemStatusOption !== "NONE" &&
           selectedAssetData !== null && (
-            <div className=''>
+            <div className='flex'>
               <button
                 type='submit'
                 className='border p-2 rounded-md'
                 onClick={handleUpdate}
               >
                 Update
+              </button>
+              <button
+                type='button'
+                className='border p-2 rounded-md bg-red-400'
+                onClick={handleDeleteAsset}
+              >
+                Delete
               </button>
             </div>
           )

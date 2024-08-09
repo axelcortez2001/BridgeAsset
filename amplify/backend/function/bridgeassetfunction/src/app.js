@@ -69,6 +69,7 @@ const assetSchema = new mongoose.Schema({
   item_stats: { type: String },
   remarks: { type: String },
   tagCode: { type: String },
+  //data
 });
 const AssetModel = mongoose.model("Assets", assetSchema);
 
@@ -150,10 +151,26 @@ app.put("/assets/*", function (req, res) {
 /****************************
  * Example delete method *
  ****************************/
-
-app.delete("/assets", function (req, res) {
-  // Add your code here
-  res.json({ success: "delete call succeed!", url: req.url });
+app.delete("/assets", async (req, res) => {
+  const _id = req.query;
+  if (!_id) {
+    return res
+      .status(400)
+      .json({ success: false, error: "No asset data or ID provided" });
+  }
+  try {
+    const deletedAssetData = await AssetModel.deleteOne({ _id: _id });
+    if (!deletedAssetData) {
+      return res.status(404).json({ success: false, error: "Asset not found" });
+    }
+    res.status(200).json({ success: true, response: deletedAssetData });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Internal server error",
+      response: error.message,
+    });
+  }
 });
 
 app.delete("/assets/*", function (req, res) {

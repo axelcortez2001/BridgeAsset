@@ -54,6 +54,22 @@ export async function restUpdate(path, request) {
     console.log("PUT call failed: ", JSON.parse(e.response.body));
   }
 }
+export async function restDelete(path, request) {
+  try {
+    console.log("Request: ", request);
+    const deleteOperation = del({
+      apiName: "BridgeAssetAPI",
+      path: path,
+      options: {
+        queryParams: request,
+      },
+    });
+    const { body } = await deleteOperation.response;
+    return await body.json();
+  } catch (e) {
+    console.log("PUT call failed: ", JSON.parse(e.response.body));
+  }
+}
 
 export async function deleteAsset() {
   try {

@@ -34,10 +34,10 @@ const EmployeeDropDown = ({
           employeeOptions.length > 0 &&
           employeeOptions.map((employee) => (
             <DropdownItem
-              key={employee._id}
+              key={employee?._id}
               onClick={() => setAssetHolder(employee)}
             >
-              {employee.name}
+              {employee?.name}
             </DropdownItem>
           ))}
         <DropdownItem key='none' onClick={() => setAssetHolder(null)}>

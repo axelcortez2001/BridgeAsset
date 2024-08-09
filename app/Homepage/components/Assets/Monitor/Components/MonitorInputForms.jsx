@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Input, Textarea } from "@nextui-org/react";
 import EmployeeDropDown from "../../DropDownComponents/EmployeeDropDown";
 import { format } from "date-fns";
-import { useAtom } from "jotai";
-import { branchAtom, supplierAtom } from "../../Store/LaptopStore";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import LaptopSupplierDropDown from "../../DropDownComponents/LaptopSupplierDropDown";
 import BranchDropDown from "../../DropDownComponents/BranchDropDown";
 import MonitorStatus from "../../DropDownComponents/MonitorStatus";
@@ -18,7 +17,15 @@ import {
   statusAtom,
   tagCodeAtom,
   unitPriceAtom,
+  viewMonitorHistoryAtom,
+  supplierAtom,
+  branchAtom,
 } from "../../Store/MonitorStore";
+import {
+  selectedAssetDataAtom,
+  setLogicAssetHolderAtom,
+} from "@/app/Homepage/AssetStore";
+import { historyMonitorActionFunction } from "../../Functions/functionAtom";
 const MonitorInputForms = ({ selectedType, employeeOptions }) => {
   const [item, setItem] = useAtom(itemNameAtom);
   const [serialNo, setSerialNo] = useAtom(serialNumberAtom);
@@ -32,9 +39,16 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
   const [branch, setBranch] = useAtom(branchAtom);
   const [supplier, setSupplier] = useAtom(supplierAtom);
   const [status, setStatus] = useAtom(statusAtom);
+  const [viewMonitorHistory, setViewMonitorHistory] = useAtom(
+    viewMonitorHistoryAtom
+  );
+  const setLogicAssetHolder = useSetAtom(setLogicAssetHolderAtom);
+  const selectedAssetData = useAtomValue(selectedAssetDataAtom);
+  const setHistory = useSetAtom(historyMonitorActionFunction);
   //handlers
   const handleAssetHolder = (opt) => {
-    console.log(opt);
+    console.log("Holder: ", opt);
+    setLogicAssetHolder(selectedAssetData?.asset_holder);
     if (opt !== null) {
       const dateToday = new Date();
       setDoi(format(dateToday, "yyyy-MM-dd"));
@@ -42,15 +56,26 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
       setDoi("");
     }
     setAssetHolder(opt);
+    handleInput(" Asset Holder ", opt?.name, assetHolder?.name);
   };
   const handleBranch = (opt) => {
     setBranch(opt);
+    handleInput(" Branch ", opt, branch);
   };
   const handleSupplier = (opt) => {
     setSupplier(opt);
+    handleInput(" Supplier ", opt?.name, supplier?.name);
   };
   const handleStatus = (opt) => {
     setStatus(opt);
+    handleInput(" Status ", opt?.name, status?.name);
+  };
+  const handleInput = (field, newData, oldData) => {
+    if (selectedAssetData !== null) {
+      if (newData !== oldData) {
+        setHistory(field, newData, oldData);
+      }
+    }
   };
   return (
     <div className='w-full flex flex-wrap p-1 gap-3'>
@@ -63,6 +88,7 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             label='Item'
             size={"sm"}
             value={item}
+            onBlur={() => handleInput(" Item ", item, selectedAssetData?.item)}
             onChange={(e) => setItem(e.target.value)}
             className='max-w-[500px]'
           />
@@ -71,6 +97,9 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             type='number'
             label='FA CODE'
             value={faCode}
+            onBlur={() =>
+              handleInput(" FA Code ", faCode, selectedAssetData?.fa_code)
+            }
             onChange={(e) => setFaCode(e.target.value)}
             size={"sm"}
             className='max-w-40'
@@ -79,6 +108,9 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             type='text'
             label='Tag Code'
             value={tagCode}
+            onBlur={() =>
+              handleInput(" Tag Code ", tagCode, selectedAssetData?.tagCode)
+            }
             onChange={(e) => setTagCode(e.target.value)}
             size={"sm"}
             className='max-w-40'
@@ -88,6 +120,13 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             size={"sm"}
             label='Serial Number'
             value={serialNo}
+            onBlur={() =>
+              handleInput(
+                " Serial Number ",
+                serialNo,
+                selectedAssetData?.serial_number
+              )
+            }
             onChange={(e) => setSerialNo(e.target.value)}
             className='max-w-xs'
           />
@@ -96,6 +135,13 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             label='Unit Price'
             value={unitPrice}
             onChange={(e) => setUnitPrice(e.target.value)}
+            onBlur={() =>
+              handleInput(
+                " Unit Price ",
+                unitPrice,
+                selectedAssetData?.unit_price
+              )
+            }
             size={"sm"}
             className='max-w-40'
           />
@@ -105,6 +151,7 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             label='DOP'
             value={dop}
             onChange={(e) => setDop(e.target.value)}
+            onBlur={() => handleInput(" DOP ", dop, selectedAssetData?.dop)}
             className='w-auto'
           />
           <Input
@@ -125,6 +172,9 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             size={"sm"}
             value={remarks}
             onChange={(e) => setRemarks(e.target.value)}
+            onBlur={() =>
+              handleInput(" Remarks ", remarks, selectedAssetData?.remarks)
+            }
             className='w-full'
           />
         </div>

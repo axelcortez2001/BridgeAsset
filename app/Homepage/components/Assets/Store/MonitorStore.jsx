@@ -3,7 +3,7 @@ import {
   selectedAssetDataAtom,
   selectedTypeAtom,
 } from "@/app/Homepage/AssetStore";
-import { restInsert } from "@/app/utils";
+import { restInsert, restUpdate } from "@/app/utils";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
 
@@ -14,7 +14,7 @@ export const monitorStatusData = [
   { name: "Defective", id: 3, color: "bg-red-500" },
   { name: "Archive", id: 4, color: "bg-amber-900" },
 ];
-export const actionHistoryAtom = atom([]);
+export const actionMonitorHistoryAtom = atom([]);
 export const itemStatusOptionAtom = atom("NONE");
 export const itemNameAtom = atom("");
 export const serialNumberAtom = atom("");
@@ -36,9 +36,8 @@ export const statusAtom = atom({
   id: 2,
   color: "bg-green-500",
 });
-
+export const viewMonitorHistoryAtom = atom(false);
 const monitorDataAtom = atom([]);
-
 export const setMonitorDataToDefaultAtom = atom(null, async (get, set) => {
   set(itemNameAtom, "");
   set(serialNumberAtom, "");
@@ -72,7 +71,7 @@ export const setMonitorDataFromSelectedAtom = atom(null, async (get, set) => {
   set(branchAtom, selectedAssetData?.branch);
   set(userTypeAtom, selectedAssetData?.user_type);
   set(assetHolderHistoryAtom, selectedAssetData?.asset_holder_history);
-  set(tagCodeAtom, selectedAssetData?.tag_code);
+  set(tagCodeAtom, selectedAssetData?.tagCode);
   set(remarksAtom, selectedAssetData?.remarks);
 });
 
@@ -103,16 +102,86 @@ export const handleAddNewMonitorAtom = atom(null, async (get, set) => {
     user_type: get(userTypeAtom),
     category: selectedCategory,
     item_stats: get(itemStatusOptionAtom),
+    remarks: get(remarksAtom),
+    tagCode: get(tagCodeAtom),
     asset_history: history,
   };
+  console.log("Data before added: ", assetData);
   try {
     const response = await restInsert("/assets", assetData);
     if (response?.success) {
       const newAssetData = [response.response, ...oldAsset];
+      console.log("data after added: ", response.response);
       set(assetDataAtom, newAssetData);
       return { success: true, response };
     }
   } catch (e) {
     console.log("Error: ", e);
+  }
+});
+
+export const updateMonitorAtom = atom(null, async (get, set, action) => {
+  const user = await fetchUserAttributes();
+  const selectedCategory = get(selectedTypeAtom);
+  const historyArray = get(actionMonitorHistoryAtom);
+  const oldAssetData = get(selectedAssetDataAtom);
+  const assetHolder = get(assetHolderAtom);
+  const oldUser = () => {
+    let oldUserData = null;
+    if (
+      oldAssetData?.asset_holder !== null &&
+      oldAssetData?.asset_holder?.sub !== assetHolder?.sub
+    ) {
+      oldUserData = {
+        ...oldAssetData?.asset_holder,
+        date_received: oldAssetData?.doi,
+        date_return: new Date(),
+      };
+
+      return [oldUserData, ...oldAssetData?.asset_holder_history];
+    } else {
+      return [...oldAssetData?.asset_holder_history];
+    }
+  };
+  const history = {
+    user_holder: oldAssetData?.asset_holder,
+    date_updated: new Date(),
+    actions_taken: historyArray,
+  };
+  const assetData = {
+    _id: oldAssetData?._id,
+    item: get(itemNameAtom),
+    serial_number: get(serialNumberAtom),
+    supplier: get(supplierAtom),
+    last_updated: new Date(),
+    fa_code: get(FACodeAtom),
+    unit_price: get(unitPriceAtom),
+    doi: get(doiAtom),
+    dop: get(dopAtom),
+    warranty_period: get(warrantyPeriodAtom),
+    status: get(statusAtom),
+    asset_holder: get(assetHolderAtom),
+    branch: get(branchAtom),
+    user_type: get(userTypeAtom),
+    category: selectedCategory,
+    asset_history: [history, ...oldAssetData.asset_history],
+    asset_holder_history: oldUser(),
+    tagCode: get(tagCodeAtom),
+    remarks: get(remarksAtom),
+  };
+  try {
+    const response = await restUpdate("/assets", assetData);
+    if (response?.success) {
+      const newAssetData = get(assetDataAtom).map((asset) =>
+        asset._id === oldAssetData._id ? assetData : asset
+      );
+      set(assetDataAtom, newAssetData);
+      return { success: true, response };
+    } else {
+      return { success: false };
+    }
+  } catch (e) {
+    console.log("Error: ", e);
+    return { success: false };
   }
 });
