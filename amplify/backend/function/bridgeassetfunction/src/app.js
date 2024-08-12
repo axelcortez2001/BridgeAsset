@@ -137,7 +137,7 @@ app.put("/assets", async (req, res) => {
       const finalAssetData = assetData.assetData;
       const updatedAssetData = await AssetModel.updateOne(
         { _id: id },
-        assetData,
+        { $set: assetData },
         { new: true }
       );
       res.status(200).json({
