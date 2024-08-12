@@ -132,7 +132,7 @@ app.put("/assets", async (req, res) => {
         .json({ success: false, error: "No asset data provided" });
     } else {
       const updatedAssetData = await AssetModel.findByIdAndUpdate(
-        { _id: id },
+        { _id: { $eq: id } },
         assetData,
         { new: true }
       );
