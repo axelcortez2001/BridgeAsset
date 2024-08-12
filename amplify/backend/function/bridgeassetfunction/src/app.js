@@ -135,7 +135,7 @@ app.put("/assets", async (req, res) => {
       return res.status(400).json({ error: "Invalid ID" });
     } else {
       const finalAssetData = assetData.assetData;
-      const updatedAssetData = await AssetModel.findByIdAndUpdate(
+      const updatedAssetData = await AssetModel.updateOne(
         { _id: id },
         assetData,
         { new: true }
