@@ -123,23 +123,30 @@ app.post("/assets/*", function (req, res) {
  * Example put method *
  ****************************/
 app.put("/assets", async (req, res) => {
-  const assetData = req.body.assetData;
+  const { assetData } = req.body;
   const id = assetData._id;
   console.log("req: ", assetData, req.body);
   try {
-    if (!assetData) {
+    if (!assetData && typeof assetData !== "object") {
       return res
         .status(400)
-        .json({ success: false, error: "No asset data provided" });
+        .json({ success: false, error: "Asset Data Invalid" });
     } else if (typeof id !== "string") {
       return res.status(400).json({ error: "Invalid ID" });
     } else {
+      const finalAssetData = assetData.assetData;
       const updatedAssetData = await AssetModel.findByIdAndUpdate(
         { _id: id },
-        { assetData },
+        assetData,
         { new: true }
       );
-      res.status(200).json({ success: true, response: updatedAssetData });
+      res.status(200).json({
+        success: true,
+        response: updatedAssetData,
+        id: id,
+        assets: assetData,
+        finalAssetData: finalAssetData,
+      });
     }
   } catch (error) {
     res.status(500).json({ error: "Internal server error", response: error });
