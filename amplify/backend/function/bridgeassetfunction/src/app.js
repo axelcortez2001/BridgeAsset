@@ -123,8 +123,9 @@ app.post("/assets/*", function (req, res) {
  * Example put method *
  ****************************/
 app.put("/assets", async (req, res) => {
-  const assetData = req.body;
+  const assetData = req.body.assetData;
   const id = assetData._id;
+  console.log("req: ", assetData, req.body);
   try {
     if (!assetData) {
       return res

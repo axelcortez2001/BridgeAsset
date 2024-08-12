@@ -170,7 +170,7 @@ export const updateLaptopAtom = atom(null, async (get, set) => {
     asset_holder_history: oldUser(),
   };
   try {
-    const response = await restUpdate("/assets", assetData);
+    const response = await restUpdate("/assets", { assetData });
     if (response?.success) {
       console.log("Response Update: ", response);
       const newAssetData = get(assetDataAtom).map((asset) =>
