@@ -130,10 +130,12 @@ app.put("/assets", async (req, res) => {
       return res
         .status(400)
         .json({ success: false, error: "No asset data provided" });
+    } else if (typeof id !== "string") {
+      return res.status(400).json({ error: "Invalid ID" });
     } else {
       const updatedAssetData = await AssetModel.findByIdAndUpdate(
-        { $eq: id },
-        assetData,
+        { _id: id },
+        { $set: assetData },
         { new: true }
       );
       res.status(200).json({ success: true, response: updatedAssetData });
