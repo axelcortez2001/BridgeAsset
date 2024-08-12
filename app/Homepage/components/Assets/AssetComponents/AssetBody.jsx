@@ -10,6 +10,7 @@ import {
 } from "@/app/Homepage/AssetStore";
 import LaptopBlockView from "../AssetBlockView/LaptopBlockView";
 import MonitorBlockView from "../AssetBlockView/MonitorBlockView";
+import PeripheralBlockVIew from "../AssetBlockView/PeripheralBlockVIew";
 
 const AssetBody = () => {
   const [actionStatus, setActionStatus] = useState(false);
@@ -75,8 +76,14 @@ const AssetBody = () => {
             actionStatus={actionStatus}
             assetLoading={assetLoading}
           />
-        ) : (
+        ) : selectedType === "monitor" ? (
           <MonitorBlockView
+            setActionStatus={handleActionStatus}
+            actionStatus={actionStatus}
+            assetLoading={assetLoading}
+          />
+        ) : (
+          <PeripheralBlockVIew
             setActionStatus={handleActionStatus}
             actionStatus={actionStatus}
             assetLoading={assetLoading}

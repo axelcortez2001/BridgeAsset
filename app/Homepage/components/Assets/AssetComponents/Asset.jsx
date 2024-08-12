@@ -8,6 +8,7 @@ import {
   selectedTypeAtom,
 } from "@/app/Homepage/AssetStore";
 import Monitor from "../Monitor/Monitor";
+import Peripherals from "../Peripherals/Peripherals";
 
 const AddAsset = ({ setActionStatus, actionStatus }) => {
   //category selection state management
@@ -33,7 +34,11 @@ const AddAsset = ({ setActionStatus, actionStatus }) => {
           setActionStatus={setActionStatus}
         />
       ) : (
-        <div></div>
+        <Peripherals
+          selectedType={selectedType}
+          actionStatus={actionStatus}
+          setActionStatus={setActionStatus}
+        />
       )}
     </div>
   );
