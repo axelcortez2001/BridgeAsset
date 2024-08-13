@@ -136,6 +136,7 @@ const Monitor = ({ selectedType, setActionStatus, actionStatus }) => {
   };
   //get users for monitor
   useEffect(() => {
+    console.log("AssetData: ", assetData);
     if (employeeOptions && employeeOptions.length === 0 && assetData !== null) {
       const getAllUsers = async () => {
         try {

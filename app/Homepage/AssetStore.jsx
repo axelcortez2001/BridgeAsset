@@ -82,13 +82,14 @@ export const registerUser = atom(null, async (get, set) => {
 export const fetchAssetDataAtom = atom(null, async (get, set) => {
   const response = await restGet("/assets");
   const selectedType = get(selectedTypeAtom);
+  console.log(response);
   if (response?.success) {
     const willReturn = response?.response;
     if (response && response?.response?.length > 0) {
       const finalReturn = willReturn.filter((asset) => {
         return asset?.category === selectedType;
       });
-      console.log("FInal: ", finalReturn);
+      
       return { success: true, response: finalReturn };
     } else {
       return [];
