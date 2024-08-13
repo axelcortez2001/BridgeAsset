@@ -16,7 +16,7 @@
       "function": {
         "bridgeassetfunction": {
           "deploymentBucketName": "amplify-bridgeasset-dev-2f238-deployment",
-          "s3Key": "amplify-builds/bridgeassetfunction-73326e2f7570626c474d-build.zip",
+          "s3Key": "amplify-builds/bridgeassetfunction-327466424e716e785375-build.zip",
           "mongodbUri": "mongodb+srv://axelcortez:are-text2024@are-text.kye05rk.mongodb.net/BridgeAssets"
         },
         "bridgeassetusers": {
