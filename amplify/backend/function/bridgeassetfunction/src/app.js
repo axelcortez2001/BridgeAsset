@@ -123,22 +123,47 @@ app.post("/assets/*", function (req, res) {
  * Example put method *
  ****************************/
 app.put("/assets", async (req, res) => {
-  const assetData = req.body;
+  const { assetData } = req.body;
   const id = assetData._id;
   try {
-    if (!assetData) {
+    if (!assetData && typeof assetData !== "object") {
       return res
         .status(400)
-        .json({ success: false, error: "No asset data provided" });
+        .json({ success: false, error: "Asset Data Invalid" });
     } else if (typeof id !== "string") {
       return res.status(400).json({ error: "Invalid ID" });
     } else {
-      const updatedAssetData = await AssetModel.findByIdAndUpdate(
+      const newAssetData = {
+        item: assetData?.item,
+        fa_code: assetData?.fa_code,
+        serial_number: assetData?.serial_number,
+        supplier: assetData?.supplier,
+        last_updated: assetData?.last_updated,
+        unit_price: assetData?.unit_price,
+        doi: assetData?.doi,
+        dop: assetData?.dop,
+        warranty_period: assetData?.warranty_period,
+        status: assetData?.status,
+        branch: assetData?.branch,
+        asset_holder: assetData?.asset_holder,
+        asset_history: assetData?.asset_history,
+        asset_holder_history: assetData?.asset_holder_history,
+        user_type: assetData?.user_type,
+        category: assetData?.category,
+        item_stats: assetData?.item_stats,
+        remarks: assetData?.remarks,
+        tagCode: assetData?.tagCode,
+        _id: assetData?._id,
+      };
+      const updatedAssetData = await AssetModel.updateOne(
         { _id: id },
-        { $set: assetData },
+        { $set: newAssetData },
         { new: true }
       );
-      res.status(200).json({ success: true, response: updatedAssetData });
+      res.status(200).json({
+        success: true,
+        response: updatedAssetData,
+      });
     }
   } catch (error) {
     res.status(500).json({ error: "Internal server error", response: error });

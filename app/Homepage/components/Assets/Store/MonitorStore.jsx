@@ -170,7 +170,7 @@ export const updateMonitorAtom = atom(null, async (get, set, action) => {
     remarks: get(remarksAtom),
   };
   try {
-    const response = await restUpdate("/assets", assetData);
+    const response = await restUpdate("/assets", { assetData });
     if (response?.success) {
       const newAssetData = get(assetDataAtom).map((asset) =>
         asset._id === oldAssetData._id ? assetData : asset

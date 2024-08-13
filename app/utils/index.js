@@ -40,6 +40,7 @@ export async function postAsset() {
 }
 
 export async function restUpdate(path, request) {
+  console.log("RequesT: ", request);
   try {
     const updateOperation = put({
       apiName: "BridgeAssetAPI",
