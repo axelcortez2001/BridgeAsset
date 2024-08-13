@@ -31,6 +31,8 @@ const AssetBody = () => {
           const asset = await fetchAssetData();
           if (asset.success) {
             setAssetData(asset.response);
+          } else {
+            setAssetData([]);
           }
         }
       } catch (e) {

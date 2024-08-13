@@ -105,7 +105,9 @@ export const SaveLaptopAtom = atom(null, async (get, set) => {
   try {
     const response = await restInsert("/assets", assetData);
     if (response?.success) {
-      const newAssetData = [...oldAsset, response.response];
+      const newAssetData = oldAsset?.length
+        ? [...oldAsset, response.response]
+        : [response.response];
       set(assetDataAtom, newAssetData);
       return { success: true, response };
     } else {
