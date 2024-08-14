@@ -4,7 +4,6 @@ import { signOut } from "aws-amplify/auth";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   assetDataAtom,
-  fetchEmployeeAtom,
   filteredEmployeesAtom,
   handleReturnEmployeesDefaultAtom,
   selectedAssetDataAtom,
@@ -20,6 +19,10 @@ import {
   actionMonitorHistoryAtom,
   setMonitorDataToDefaultAtom,
 } from "./Assets/Store/MonitorStore";
+import {
+  actionPeripheralHistoryAtom,
+  setPeripheralToDefault,
+} from "./Assets/Store/PeripheralStore";
 
 const Sidebar = () => {
   const dashboardLocation = useAtomValue(sideBarLocation);
@@ -34,10 +37,13 @@ const Sidebar = () => {
   const setAssetData = useSetAtom(assetDataAtom);
   const setLaptopHistory = useSetAtom(actionHistoryAtom);
   const setMonitorHistory = useSetAtom(actionMonitorHistoryAtom);
+  const setPeripheralHistory = useSetAtom(actionPeripheralHistoryAtom);
   const setHistoryDefault = () => {
     setLaptopHistory([]);
     setMonitorHistory([]);
+    setPeripheralHistory([]);
   };
+  const setPeripheralDefault = useSetAtom(setPeripheralToDefault);
   const handleNavigation = async (location, type) => {
     setEmployeesToDefault([]);
     setAssetData(null);
@@ -47,6 +53,7 @@ const Sidebar = () => {
     setLaptopToDefault();
     setMonitorToDefault();
     setHistoryDefault();
+    setPeripheralDefault();
   };
 
   const toggleAccordion = () => {

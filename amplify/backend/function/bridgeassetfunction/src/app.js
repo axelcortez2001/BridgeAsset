@@ -69,6 +69,7 @@ const assetSchema = new mongoose.Schema({
   item_stats: { type: String },
   remarks: { type: String },
   tagCode: { type: String },
+  peripheral_type: { type: String },
   //data
 });
 const AssetModel = mongoose.model("Assets", assetSchema);
@@ -154,6 +155,7 @@ app.put("/assets", async (req, res) => {
         remarks: assetData?.remarks,
         tagCode: assetData?.tagCode,
         _id: assetData?._id,
+        peripheral_type: assetData?.peripheral_type,
       };
       const updatedAssetData = await AssetModel.updateOne(
         { _id: id },

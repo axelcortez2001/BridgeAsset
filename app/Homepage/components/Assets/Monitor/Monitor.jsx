@@ -112,6 +112,7 @@ const Monitor = ({ selectedType, setActionStatus, actionStatus }) => {
       setHistoryToDefault([]);
     }
   };
+  //delete
   const deleteAssetData = useSetAtom(deleteAssetDataAtom);
   const handleDeleteAsset = async () => {
     if (window.confirm("Are you sure you want to change current selected?")) {

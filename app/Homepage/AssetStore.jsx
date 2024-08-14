@@ -1,6 +1,7 @@
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
 import { getUsers, restDelete, restGet, restInsert } from "../utils";
+import { peripheralTypeAtom } from "./components/Assets/Store/PeripheralStore";
 
 export const selectedTypeAtom = atom("laptop");
 export const employeeOptionsAtom = atom([]);
@@ -82,14 +83,12 @@ export const registerUser = atom(null, async (get, set) => {
 export const fetchAssetDataAtom = atom(null, async (get, set) => {
   const response = await restGet("/assets");
   const selectedType = get(selectedTypeAtom);
-  console.log(response);
   if (response?.success) {
     const willReturn = response?.response;
     if (response && response?.response?.length > 0) {
       const finalReturn = willReturn.filter((asset) => {
         return asset?.category === selectedType;
       });
-      
       return { success: true, response: finalReturn };
     } else {
       return [];
@@ -108,27 +107,55 @@ export const fetchEmployeeAtom = atom(null, async (get, set, category) => {
   try {
     const assetData = get(assetDataAtom);
     console.log("Category: ", category);
-    const filteredAssetData = assetData.filter((asset) => {
-      return asset?.category === category;
-    });
-    console.log("filteredAssetData: ", filteredAssetData);
-    const assetDataWithHolder = filteredAssetData
-      .flatMap((asset) => {
-        if (asset?.asset_holder !== null) {
-          return asset?.asset_holder.sub;
-        } else {
-          return null;
-        }
-      })
-      .filter((asset) => {
-        return asset !== null;
-      });
     const { user } = await getUsers("/users");
-    const returnedUser = user.filter(
-      (user) => !assetDataWithHolder.includes(user.sub)
-    );
-    set(filteredEmployeesAtom, returnedUser);
-    set(employeeOptionsAtom, returnedUser);
+    if (category === "peripheral") {
+      const peripheralType = get(peripheralTypeAtom);
+      if (peripheralType === "others") {
+        set(filteredEmployeesAtom, user);
+        set(employeeOptionsAtom, user);
+      } else if (peripheralType !== "") {
+        const peripheralAssets = assetData.filter((asset) => {
+          return asset?.peripheral_type === peripheralType;
+        });
+        const assetDataWithHolder = peripheralAssets
+          .flatMap((asset) => {
+            if (asset?.asset_holder !== null) {
+              return asset?.asset_holder.sub;
+            } else {
+              return null;
+            }
+          })
+          .filter((asset) => {
+            return asset !== null;
+          });
+        const returnedUser = user.filter(
+          (user) => !assetDataWithHolder.includes(user.sub)
+        );
+        set(filteredEmployeesAtom, returnedUser);
+        set(employeeOptionsAtom, returnedUser);
+      } else {
+        set(filteredEmployeesAtom, []);
+        set(employeeOptionsAtom, []);
+      }
+    } else {
+      const assetDataWithHolder = assetData
+        .flatMap((asset) => {
+          if (asset?.asset_holder !== null) {
+            return asset?.asset_holder.sub;
+          } else {
+            return null;
+          }
+        })
+        .filter((asset) => {
+          return asset !== null;
+        });
+
+      const returnedUser = user.filter(
+        (user) => !assetDataWithHolder.includes(user.sub)
+      );
+      set(filteredEmployeesAtom, returnedUser);
+      set(employeeOptionsAtom, returnedUser);
+    }
   } catch (e) {
     console.log(e);
   }
@@ -136,14 +163,18 @@ export const fetchEmployeeAtom = atom(null, async (get, set, category) => {
 export const setLogicAssetHolderAtom = atom(null, (get, set, assetHolder) => {
   try {
     const employees = get(filteredEmployeesAtom);
+    console.log("Asset Holder: ", assetHolder);
+    console.log("employees: ", employees);
     const foundEmployee = employees.find((employee) => {
       return employee?.sub === assetHolder?.sub;
     });
+    console.log("foundEmployee: ", foundEmployee);
     if (assetHolder !== null && assetHolder !== undefined) {
       if (foundEmployee === undefined) {
         const newEmployeeOptions = [assetHolder, ...employees];
 
         set(filteredEmployeesAtom, newEmployeeOptions);
+        console.log("New: ", newEmployeeOptions);
       }
     }
   } catch (e) {

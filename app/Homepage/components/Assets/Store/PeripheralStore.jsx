@@ -6,16 +6,27 @@ import {
 import { restInsert, restUpdate } from "@/app/utils";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
-
-export const monitorStatusData = [
+import { v4 as uuidV4 } from "uuid";
+export const peripheralStatusData = [
   { name: "Stock", id: 0, color: "bg-amber-500" },
   { name: "Issued", id: 1, color: "bg-blue-400" },
   { name: "Active", id: 2, color: "bg-green-500" },
   { name: "Defective", id: 3, color: "bg-red-500" },
   { name: "Archive", id: 4, color: "bg-amber-900" },
 ];
-export const actionMonitorHistoryAtom = atom([]);
-export const itemStatusOptionAtom = atom("NONE");
+export const peripheralTypeData = [
+  { name: "Mouse", id: 0, color: "bg-orange-500", img: "/mouse.png" },
+  {
+    name: "Keyboard",
+    id: 1,
+    color: "bg-purple-500",
+    img: "/keyboard.png",
+  },
+  { name: "Headset", id: 2, color: "bg-pink-500", img: "/headset.png" },
+  { name: "Others", id: 3, color: "bg-blue-500", img: "/ellipsis.png" },
+];
+
+export const actionPeripheralHistoryAtom = atom([]);
 export const itemNameAtom = atom("");
 export const serialNumberAtom = atom("");
 export const FACodeAtom = atom("");
@@ -36,9 +47,11 @@ export const statusAtom = atom({
   id: 2,
   color: "bg-green-500",
 });
+export const peripheralTypeAtom = atom("");
 export const viewMonitorHistoryAtom = atom(false);
-const monitorDataAtom = atom([]);
-export const setMonitorDataToDefaultAtom = atom(null, async (get, set) => {
+
+//setting peripheral input to default
+export const setPeripheralToDefault = atom(null, async (get, set) => {
   set(itemNameAtom, "");
   set(serialNumberAtom, "");
   set(FACodeAtom, "");
@@ -49,65 +62,59 @@ export const setMonitorDataToDefaultAtom = atom(null, async (get, set) => {
   set(warrantyPeriodAtom, "");
   set(assetHolderAtom, null);
   set(assetHistoryAtom, []);
-  set(statusAtom, { name: "Active", id: 2, color: "bg-green-500" });
-  set(branchAtom, "Makati");
+  set(assetHolderHistoryAtom, []);
   set(userTypeAtom, "Employee");
-  set(remarksAtom, "");
+  set(branchAtom, "Makati");
   set(tagCodeAtom, "");
-});
-export const setMonitorDataFromSelectedAtom = atom(null, async (get, set) => {
-  const selectedAssetData = get(selectedAssetDataAtom);
-  set(itemNameAtom, selectedAssetData?.item);
-  set(serialNumberAtom, selectedAssetData?.serial_number);
-  set(FACodeAtom, selectedAssetData?.fa_code);
-  set(doiAtom, selectedAssetData?.doi);
-  set(supplierAtom, selectedAssetData?.supplier);
-  set(unitPriceAtom, selectedAssetData?.unit_price);
-  set(dopAtom, selectedAssetData?.dop);
-  set(warrantyPeriodAtom, selectedAssetData?.warranty_period);
-  set(assetHolderAtom, selectedAssetData?.asset_holder);
-  set(assetHistoryAtom, selectedAssetData?.asset_history);
-  set(statusAtom, selectedAssetData?.status);
-  set(branchAtom, selectedAssetData?.branch);
-  set(userTypeAtom, selectedAssetData?.user_type);
-  set(assetHolderHistoryAtom, selectedAssetData?.asset_holder_history);
-  set(tagCodeAtom, selectedAssetData?.tagCode);
-  set(remarksAtom, selectedAssetData?.remarks);
+  set(remarksAtom, "");
+  set(statusAtom, {
+    name: "Active",
+    id: 2,
+    color: "bg-green-500",
+  });
+  set(peripheralTypeAtom, "");
+  set(viewMonitorHistoryAtom, false);
 });
 
-export const handleAddNewMonitorAtom = atom(null, async (get, set) => {
-  const selectedCategory = get(selectedTypeAtom);
-  let oldAsset = get(assetDataAtom);
+//adding peripheral handler
+export const handleAddPeripheralAtom = atom(null, async (get, set) => {
+  const oldAsset = get(assetDataAtom);
+  let FaCode = uuidV4();
+  if (
+    oldAsset.includes((asset) => {
+      return asset?.fa_code === FaCode;
+    })
+  ) {
+    return (FaCode = uuidV4());
+  }
   const user = await fetchUserAttributes();
-  const action = user.name + " filed this asset.";
+  const action = user?.name + " filed this asset!";
   const history = {
     user_holder: get(assetHolderAtom),
     date_updated: new Date(),
     actions_taken: [action],
   };
-  const assetData = {
-    item: get(itemNameAtom),
-    serial_number: get(serialNumberAtom),
-    supplier: get(supplierAtom),
-    last_updated: new Date(),
-    fa_code: get(FACodeAtom),
-    tagCode: get(tagCodeAtom),
-    unit_price: get(unitPriceAtom),
-    doi: get(doiAtom),
-    dop: get(dopAtom),
-    warranty_period: get(warrantyPeriodAtom),
-    status: get(statusAtom),
-    asset_holder: get(assetHolderAtom),
-    branch: get(branchAtom),
-    user_type: get(userTypeAtom),
-    category: selectedCategory,
-    item_stats: get(itemStatusOptionAtom),
-    remarks: get(remarksAtom),
-    tagCode: get(tagCodeAtom),
-    asset_history: history,
-  };
-  console.log("Data before added: ", assetData);
   try {
+    const assetData = {
+      item: get(itemNameAtom),
+      serial_number: get(serialNumberAtom),
+      fa_code: FaCode,
+      unit_price: get(unitPriceAtom),
+      doi: get(doiAtom),
+      dop: get(dopAtom),
+      warranty_period: get(warrantyPeriodAtom),
+      status: get(statusAtom),
+      branch: get(branchAtom),
+      asset_holder: get(assetHolderAtom),
+      asset_history: history,
+      user_type: get(userTypeAtom),
+      category: get(selectedTypeAtom),
+      supplier: get(supplierAtom),
+      remarks: get(remarksAtom),
+      peripheral_type: get(peripheralTypeAtom),
+      warranty_period: get(warrantyPeriodAtom),
+    };
+    console.log("will be added: ", assetData);
     const response = await restInsert("/assets", assetData);
     if (response?.success) {
       const newAssetData = oldAsset?.length
@@ -116,16 +123,39 @@ export const handleAddNewMonitorAtom = atom(null, async (get, set) => {
       set(assetDataAtom, newAssetData);
       return { success: true, response };
     }
-  } catch (e) {
-    console.log("Error: ", e);
+  } catch (error) {
+    console.log("Error: ", error);
     return { success: false, error: error };
   }
 });
 
-export const updateMonitorAtom = atom(null, async (get, set, action) => {
+export const setPeripheralFromDataSelectedAtom = atom(
+  null,
+  async (get, set) => {
+    const selectedAssetData = get(selectedAssetDataAtom);
+    set(itemNameAtom, selectedAssetData?.item);
+    set(serialNumberAtom, selectedAssetData?.serial_number);
+    set(doiAtom, selectedAssetData?.doi);
+    set(supplierAtom, selectedAssetData?.supplier);
+    set(unitPriceAtom, selectedAssetData?.unit_price);
+    set(dopAtom, selectedAssetData?.dop);
+    set(warrantyPeriodAtom, selectedAssetData?.warranty_period);
+    set(assetHolderAtom, selectedAssetData?.asset_holder);
+    set(assetHistoryAtom, selectedAssetData?.asset_history);
+    set(statusAtom, selectedAssetData?.status);
+    set(branchAtom, selectedAssetData?.branch);
+    set(userTypeAtom, selectedAssetData?.user_type);
+    set(assetHolderHistoryAtom, selectedAssetData?.asset_holder_history);
+    set(tagCodeAtom, selectedAssetData?.tagCode);
+    set(remarksAtom, selectedAssetData?.remarks);
+    set(peripheralTypeAtom, selectedAssetData?.peripheral_type);
+  }
+);
+
+export const updatePeripheralAtom = atom(null, async (get, set) => {
   const user = await fetchUserAttributes();
   const selectedCategory = get(selectedTypeAtom);
-  const historyArray = get(actionMonitorHistoryAtom);
+  const historyArray = get(actionPeripheralHistoryAtom);
   const oldAssetData = get(selectedAssetDataAtom);
   const assetHolder = get(assetHolderAtom);
   const oldUser = () => {
@@ -156,7 +186,6 @@ export const updateMonitorAtom = atom(null, async (get, set, action) => {
     serial_number: get(serialNumberAtom),
     supplier: get(supplierAtom),
     last_updated: new Date(),
-    fa_code: get(FACodeAtom),
     unit_price: get(unitPriceAtom),
     doi: get(doiAtom),
     dop: get(dopAtom),
@@ -170,7 +199,9 @@ export const updateMonitorAtom = atom(null, async (get, set, action) => {
     asset_holder_history: oldUser(),
     tagCode: get(tagCodeAtom),
     remarks: get(remarksAtom),
+    peripheral_type: get(peripheralTypeAtom),
   };
+  console.log("Will be updated: ", assetData);
   try {
     const response = await restUpdate("/assets", { assetData });
     if (response?.success) {
@@ -180,10 +211,10 @@ export const updateMonitorAtom = atom(null, async (get, set, action) => {
       set(assetDataAtom, newAssetData);
       return { success: true, response };
     } else {
-      return { success: false };
+      return { success: false, error: response.error };
     }
-  } catch (e) {
-    console.log("Error: ", e);
-    return { success: false };
+  } catch (error) {
+    console.log("Error: ", error);
+    return { success: false, error: error };
   }
 });
