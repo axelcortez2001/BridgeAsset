@@ -7,6 +7,7 @@ import { restInsert, restUpdate } from "@/app/utils";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
 import { v4 as uuidV4 } from "uuid";
+
 export const peripheralStatusData = [
   { name: "Stock", id: 0, color: "bg-amber-500" },
   { name: "Issued", id: 1, color: "bg-blue-400" },
@@ -48,7 +49,7 @@ export const statusAtom = atom({
   color: "bg-green-500",
 });
 export const peripheralTypeAtom = atom("");
-export const viewMonitorHistoryAtom = atom(false);
+export const viewPeripheralHistoryAtom = atom(false);
 
 //setting peripheral input to default
 export const setPeripheralToDefault = atom(null, async (get, set) => {
@@ -73,7 +74,7 @@ export const setPeripheralToDefault = atom(null, async (get, set) => {
     color: "bg-green-500",
   });
   set(peripheralTypeAtom, "");
-  set(viewMonitorHistoryAtom, false);
+  set(viewPeripheralHistoryAtom, false);
 });
 
 //adding peripheral handler

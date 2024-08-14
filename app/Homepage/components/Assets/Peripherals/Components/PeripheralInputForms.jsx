@@ -27,6 +27,7 @@ import {
   setLogicAssetHolderAtom,
 } from "@/app/Homepage/AssetStore";
 import { format } from "date-fns";
+import { historyPeripheralActionFunction } from "../../Functions/functionAtom";
 
 const PeripheralInputForms = ({ employeeOptions }) => {
   const [item, setItem] = useAtom(itemNameAtom);
@@ -47,20 +48,33 @@ const PeripheralInputForms = ({ employeeOptions }) => {
   const selectedAssetData = useAtomValue(selectedAssetDataAtom);
   //set atoms
   const setLogicAssetHolder = useSetAtom(setLogicAssetHolderAtom);
+  const setHistory = useSetAtom(historyPeripheralActionFunction);
 
   //handlers
+  //for history
+  const handleInput = (field, newData, oldData) => {
+    if (selectedAssetData !== null) {
+      if (newData !== oldData) {
+        setHistory(field, newData, oldData);
+      }
+    }
+  };
   const handleSupplier = (opt) => {
     setSupplier(opt);
+    handleInput(" Supplier ", opt?.name, supplier?.name);
   };
   const handleBranch = (opt) => {
     setBranch(opt);
+    handleInput(" Branch ", opt, branch);
   };
   const handleStatus = (opt) => {
     setStatus(opt);
+    handleInput(" Status ", opt?.name, status?.name);
   };
   const handlePeripheral = (opt) => {
     console.log(opt);
     setPeripheralType(opt);
+    handleInput(" Peripheral Type ", opt, peripheralType);
   };
   const handleAssetHolder = (opt) => {
     console.log("beofre: ", employeeOptions);
@@ -72,7 +86,7 @@ const PeripheralInputForms = ({ employeeOptions }) => {
       setDoi("");
     }
     setAssetHolder(opt);
-    console.log("After: ", employeeOptions);
+    handleInput(" Asset Holder ", opt?.name, assetHolder?.name);
   };
   return (
     <div className='w-full flex flex-wrap p-1 gap-3'>
@@ -92,6 +106,9 @@ const PeripheralInputForms = ({ employeeOptions }) => {
                 size={"sm"}
                 value={item}
                 onChange={(e) => setItem(e.target.value)}
+                onBlur={() =>
+                  handleInput(" Item ", item, selectedAssetData?.item)
+                }
                 className='max-w-[500px]'
               />
               <Input
@@ -99,6 +116,9 @@ const PeripheralInputForms = ({ employeeOptions }) => {
                 label='Tag Code'
                 value={tagCode}
                 onChange={(e) => setTagCode(e.target.value)}
+                onBlur={() =>
+                  handleInput(" Tag Code ", tagCode, selectedAssetData?.tagCode)
+                }
                 size={"sm"}
                 className='max-w-40'
               />{" "}
@@ -108,6 +128,13 @@ const PeripheralInputForms = ({ employeeOptions }) => {
                 label='Serial Number'
                 value={serialNo}
                 onChange={(e) => setSerialNo(e.target.value)}
+                onBlur={() =>
+                  handleInput(
+                    " Serial Number ",
+                    serialNo,
+                    selectedAssetData?.serial_number
+                  )
+                }
                 className='max-w-xs'
               />
               <Input
@@ -115,6 +142,13 @@ const PeripheralInputForms = ({ employeeOptions }) => {
                 label='Unit Price'
                 value={unitPrice}
                 onChange={(e) => setUnitPrice(e.target.value)}
+                onBlur={() =>
+                  handleInput(
+                    " Unit Price ",
+                    unitPrice,
+                    selectedAssetData?.unit_price
+                  )
+                }
                 size={"sm"}
                 className='max-w-40'
               />
@@ -123,6 +157,13 @@ const PeripheralInputForms = ({ employeeOptions }) => {
                 label='Warranty Period'
                 value={warrantyPeriod}
                 onChange={(e) => setWarrantyPeriod(e.target.value)}
+                onBlur={() =>
+                  handleInput(
+                    " Warranty Period ",
+                    warrantyPeriod,
+                    selectedAssetData?.warranty_period
+                  )
+                }
                 size={"sm"}
                 className='max-w-40'
               />
@@ -131,6 +172,7 @@ const PeripheralInputForms = ({ employeeOptions }) => {
                 size={"sm"}
                 label='DOP'
                 value={dop}
+                onBlur={() => handleInput(" DOP ", dop, selectedAssetData?.dop)}
                 onChange={(e) => setDop(e.target.value)}
                 className='w-auto'
               />

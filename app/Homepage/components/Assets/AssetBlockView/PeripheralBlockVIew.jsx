@@ -1,5 +1,6 @@
 import {
   assetDataAtom,
+  fetchEmployeeAtom,
   selectedAssetDataAtom,
 } from "@/app/Homepage/AssetStore";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -17,6 +18,7 @@ const PeripheralBlockVIew = ({
 }) => {
   //get atom
   const assetData = useAtomValue(assetDataAtom);
+  const fetchEmployee = useSetAtom(fetchEmployeeAtom);
   //set atom
   const setSelectedAssetData = useSetAtom(selectedAssetDataAtom);
   const setPeripheralDataFromSelected = useSetAtom(
@@ -30,6 +32,7 @@ const PeripheralBlockVIew = ({
     setSelectedAssetData(item);
     await setPeripheralDataFromSelected();
     setActionStatus(false);
+    await fetchEmployee("peripheral");
   };
   return assetLoading ? (
     <AssetLoading />

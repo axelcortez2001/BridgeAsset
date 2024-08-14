@@ -9,6 +9,7 @@ import {
   peripheralTypeAtom,
   setPeripheralToDefault,
   updatePeripheralAtom,
+  viewPeripheralHistoryAtom,
 } from "../Store/PeripheralStore";
 import { toast } from "sonner";
 import {
@@ -20,6 +21,7 @@ import {
   handleReturnEmployeesDefaultAtom,
   selectedAssetDataAtom,
 } from "@/app/Homepage/AssetStore";
+import AssetHistory from "../AssetComponents/AssetHistory";
 
 const Peripherals = ({ selectedType, setActionStatus, actionStatus }) => {
   const [loading, setLoading] = useState(false);
@@ -30,6 +32,9 @@ const Peripherals = ({ selectedType, setActionStatus, actionStatus }) => {
   const [peripheralState, setPeripheralState] = useState(peripheralType);
   const [selectedAssetData, setSelectedAssetData] = useAtom(
     selectedAssetDataAtom
+  );
+  const [viewPeripheralHistory, setViewPeripheralHistory] = useAtom(
+    viewPeripheralHistoryAtom
   );
 
   //setatoms
@@ -109,14 +114,10 @@ const Peripherals = ({ selectedType, setActionStatus, actionStatus }) => {
   //get users with validation
   useEffect(() => {
     console.log("ASsetData :", assetData);
-    if (
-      (employeeOptions && employeeOptions.length === 0 && assetData !== null) ||
-      peripheralState !== peripheralType
-    ) {
+    if (employeeOptions && employeeOptions.length === 0 && assetData !== null) {
       const getAllUsers = async () => {
         console.log("EmployeeL", employeeOptions);
         try {
-          setPeripheralState(peripheralType);
           await fetchEmployee("peripheral");
         } catch (e) {
           console.log("Error getting users");
@@ -139,7 +140,27 @@ const Peripherals = ({ selectedType, setActionStatus, actionStatus }) => {
         <AssetLoading />
       ) : (
         <div className='w-full flex flex-wrap p-1 gap-3'>
-          <PeripheralInputForms employeeOptions={employeeOptions} />
+          {!viewPeripheralHistory ? (
+            <div
+              onClick={() => setViewPeripheralHistory(true)}
+              className='border rounded-md p-2 text-sm ml-2 hover:cursor-pointer hover:bg-slate-500 hover:text-white transition-all'
+            >
+              View Asset History
+            </div>
+          ) : (
+            <div
+              onClick={() => setViewPeripheralHistory(false)}
+              className='border rounded-md p-2 text-sm ml-2 hover:cursor-pointer hover:bg-slate-500 hover:text-white transition-all'
+            >
+              Back to Asset Component
+            </div>
+          )}
+          {selectedAssetData !== null && viewPeripheralHistory === true ? (
+            <AssetHistory asset={selectedAssetData} />
+          ) : (
+            <PeripheralInputForms employeeOptions={employeeOptions} />
+          )}
+
           <div className=''>
             {selectedAssetData === null ? (
               <button
