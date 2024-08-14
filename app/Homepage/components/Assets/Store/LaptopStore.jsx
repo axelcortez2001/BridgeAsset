@@ -6,6 +6,7 @@ import {
 import { restInsert, restUpdate } from "@/app/utils";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
+import { v4 as uuidV4 } from "uuid";
 
 export const laptopStatusData = [
   { name: "Working", id: 0, color: "bg-green-500" },
@@ -55,6 +56,7 @@ export const setDataToDefaultAtom = atom(null, async (get, set) => {
   set(statusAtom, { name: "Working", id: 0, color: "bg-green-500" });
   set(branchAtom, "Makati");
   set(userTypeAtom, "Employee");
+  set(remarksAtom, "");
 });
 export const setDataFromSelectedAtom = atom(null, async (get, set) => {
   const selectedAssetData = get(selectedAssetDataAtom);
@@ -73,10 +75,19 @@ export const setDataFromSelectedAtom = atom(null, async (get, set) => {
   set(userTypeAtom, selectedAssetData?.user_type);
   set(item_statsAtom, selectedAssetData?.item_stats);
   set(assetHolderHistoryAtom, selectedAssetData?.asset_holder_history);
+  set(remarksAtom, selectedAssetData?.remarks);
 });
 export const SaveLaptopAtom = atom(null, async (get, set) => {
   const selectedCategory = get(selectedTypeAtom);
   let oldAsset = get(assetDataAtom);
+  let FaCode = uuidV4();
+  if (
+    oldAsset.includes((asset) => {
+      return asset?.fa_code === FaCode;
+    })
+  ) {
+    return (FaCode = uuidV4());
+  }
   const user = await fetchUserAttributes();
   const action = user.name + " filed this asset.";
   const history = {
@@ -89,7 +100,7 @@ export const SaveLaptopAtom = atom(null, async (get, set) => {
     serial_number: get(serialNumberAtom),
     supplier: get(supplierAtom),
     last_updated: new Date(),
-    fa_code: get(FACodeAtom),
+    fa_code: FaCode,
     unit_price: get(unitPriceAtom),
     doi: get(doiAtom),
     dop: get(dopAtom),
@@ -101,6 +112,7 @@ export const SaveLaptopAtom = atom(null, async (get, set) => {
     category: selectedCategory,
     item_stats: get(itemStatusOptionAtom),
     asset_history: history,
+    remarks: get(remarksAtom),
   };
   try {
     const response = await restInsert("/assets", assetData);
@@ -170,6 +182,7 @@ export const updateLaptopAtom = atom(null, async (get, set) => {
     item_stats: get(item_statsAtom),
     asset_history: [history, ...oldAssetData.asset_history],
     asset_holder_history: oldUser(),
+    remarks: get(remarksAtom),
   };
   try {
     const response = await restUpdate("/assets", { assetData });

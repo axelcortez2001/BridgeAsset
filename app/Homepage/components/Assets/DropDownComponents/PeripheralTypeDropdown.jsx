@@ -4,8 +4,15 @@ import {
   peripheralStatusData,
   peripheralTypeData,
 } from "../Store/PeripheralStore";
+import { useSetAtom } from "jotai";
+import { fetchEmployeeAtom } from "@/app/Homepage/AssetStore";
 const PeripheralTypeDropdown = ({ peripheralType, setPeripheralType }) => {
   const peripheralData = peripheralTypeData;
+  const fetchEmployee = useSetAtom(fetchEmployeeAtom);
+  const handleSelectItem = async (opt) => {
+    setPeripheralType(opt);
+    await fetchEmployee("peripheral");
+  };
   return (
     <Select
       variant='bordered'
@@ -17,7 +24,7 @@ const PeripheralTypeDropdown = ({ peripheralType, setPeripheralType }) => {
       <SelectItem
         key='Mouse'
         textValue='Mouse'
-        onClick={() => setPeripheralType("Mouse")}
+        onClick={() => handleSelectItem("Mouse")}
       >
         <div className='flex'>
           <img
@@ -33,7 +40,7 @@ const PeripheralTypeDropdown = ({ peripheralType, setPeripheralType }) => {
       <SelectItem
         key='Keyboard'
         textValue='Keyboard'
-        onClick={() => setPeripheralType("Keyboard")}
+        onClick={() => handleSelectItem("Keyboard")}
       >
         <div className='flex'>
           <img
@@ -49,7 +56,7 @@ const PeripheralTypeDropdown = ({ peripheralType, setPeripheralType }) => {
       <SelectItem
         key='Headset'
         textValue='Headset'
-        onClick={() => setPeripheralType("Headset")}
+        onClick={() => handleSelectItem("Headset")}
       >
         <div className='flex'>
           <img
@@ -65,7 +72,7 @@ const PeripheralTypeDropdown = ({ peripheralType, setPeripheralType }) => {
       <SelectItem
         key='Others'
         textValue='Others'
-        onClick={() => setPeripheralType("Others")}
+        onClick={() => handleSelectItem("Others")}
       >
         <div className='flex'>
           <img

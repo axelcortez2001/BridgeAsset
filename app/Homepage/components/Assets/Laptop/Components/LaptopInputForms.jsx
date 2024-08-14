@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input } from "@nextui-org/react";
+import { Input, Textarea } from "@nextui-org/react";
 import LaptopSupplierDropDown from "../../DropDownComponents/LaptopSupplierDropDown";
 import BranchDropDown from "../../DropDownComponents/BranchDropDown";
 import EmployeeDropDown from "../../DropDownComponents/EmployeeDropDown";
@@ -11,6 +11,7 @@ import {
   dopAtom,
   FACodeAtom,
   itemNameAtom,
+  remarksAtom,
   SaveLaptopAtom,
   serialNumberAtom,
   setDataToDefaultAtom,
@@ -43,6 +44,7 @@ const LaptopInputForms = ({
   const [supplier, setSupplier] = useAtom(supplierAtom);
   const [branch, setBranch] = useAtom(branchAtom);
   const [userType, setUserType] = useAtom(userTypeAtom);
+  const [remarks, setRemarks] = useAtom(remarksAtom);
   const selectedAssetData = useAtomValue(selectedAssetDataAtom);
   const setDataToDefault = useSetAtom(setDataToDefaultAtom);
   //handlers
@@ -146,6 +148,14 @@ const LaptopInputForms = ({
           value={warrantyPeriod}
           onChange={(e) => setWarrantyPeriod(e.target.value)}
           className='max-w-xs'
+        />
+        <Textarea
+          type='text'
+          label='Remarks'
+          size={"sm"}
+          value={remarks}
+          onChange={(e) => setRemarks(e.target.value)}
+          className='w-full'
         />
       </div>
       <Input

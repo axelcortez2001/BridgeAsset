@@ -4,7 +4,7 @@ import {
   setLogicAssetHolderAtom,
 } from "@/app/Homepage/AssetStore";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { Input } from "@nextui-org/react";
+import { Input, Textarea } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import {
   actionHistoryAtom,
@@ -16,6 +16,7 @@ import {
   item_statsAtom,
   itemNameAtom,
   laptopStatusData,
+  remarksAtom,
   serialNumberAtom,
   setDataFromSelectedAtom,
   setDataToDefaultAtom,
@@ -66,6 +67,7 @@ const UpdateLaptopInputForms = ({
   const [item_stats, setItemStats] = useAtom(item_statsAtom);
   const [actionHistory, setActionHistoryAtom] = useAtom(actionHistoryAtom);
   const [viewAssetHistory, setViewAssetHistory] = useAtom(viewAssetHistoryAtom);
+  const [remarks, setRemarks] = useAtom(remarksAtom);
   const setLogicAssetHolder = useSetAtom(setLogicAssetHolderAtom);
   const setHistory = useSetAtom(historyActionfunction);
 
@@ -297,6 +299,17 @@ const UpdateLaptopInputForms = ({
               userType={userType}
               setUserType={handleUserType}
               isDisabled={checkDisabled(["Update"])}
+            />
+            <Textarea
+              type='text'
+              label='Remarks'
+              size={"sm"}
+              value={remarks}
+              onChange={(e) => setRemarks(e.target.value)}
+              onBlur={() =>
+                handleInput(" Remarks ", remarks, selectedAssetData?.remarks)
+              }
+              className='w-full'
             />
           </div>
           <div className='flex flex-col'>

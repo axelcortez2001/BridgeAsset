@@ -6,6 +6,7 @@ import {
 import { restInsert, restUpdate } from "@/app/utils";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
+import { v4 as uuidV4 } from "uuid";
 
 export const monitorStatusData = [
   { name: "Stock", id: 0, color: "bg-amber-500" },
@@ -78,6 +79,14 @@ export const setMonitorDataFromSelectedAtom = atom(null, async (get, set) => {
 export const handleAddNewMonitorAtom = atom(null, async (get, set) => {
   const selectedCategory = get(selectedTypeAtom);
   let oldAsset = get(assetDataAtom);
+  let FaCode = uuidV4();
+  if (
+    oldAsset.includes((asset) => {
+      return asset?.fa_code === FaCode;
+    })
+  ) {
+    return (FaCode = uuidV4());
+  }
   const user = await fetchUserAttributes();
   const action = user.name + " filed this asset.";
   const history = {
@@ -90,7 +99,7 @@ export const handleAddNewMonitorAtom = atom(null, async (get, set) => {
     serial_number: get(serialNumberAtom),
     supplier: get(supplierAtom),
     last_updated: new Date(),
-    fa_code: get(FACodeAtom),
+    fa_code: FaCode,
     tagCode: get(tagCodeAtom),
     unit_price: get(unitPriceAtom),
     doi: get(doiAtom),

@@ -10,7 +10,6 @@ import {
   assetHolderAtom,
   doiAtom,
   dopAtom,
-  FACodeAtom,
   itemNameAtom,
   remarksAtom,
   serialNumberAtom,
@@ -29,7 +28,6 @@ import { historyMonitorActionFunction } from "../../Functions/functionAtom";
 const MonitorInputForms = ({ selectedType, employeeOptions }) => {
   const [item, setItem] = useAtom(itemNameAtom);
   const [serialNo, setSerialNo] = useAtom(serialNumberAtom);
-  const [faCode, setFaCode] = useAtom(FACodeAtom);
   const [tagCode, setTagCode] = useAtom(tagCodeAtom);
   const [remarks, setRemarks] = useAtom(remarksAtom);
   const [assetHolder, setAssetHolder] = useAtom(assetHolderAtom);
@@ -91,18 +89,6 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             onBlur={() => handleInput(" Item ", item, selectedAssetData?.item)}
             onChange={(e) => setItem(e.target.value)}
             className='max-w-[500px]'
-          />
-
-          <Input
-            type='number'
-            label='FA CODE'
-            value={faCode}
-            onBlur={() =>
-              handleInput(" FA Code ", faCode, selectedAssetData?.fa_code)
-            }
-            onChange={(e) => setFaCode(e.target.value)}
-            size={"sm"}
-            className='max-w-40'
           />
           <Input
             type='text'
