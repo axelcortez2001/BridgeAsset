@@ -163,12 +163,9 @@ export const fetchEmployeeAtom = atom(null, async (get, set, category) => {
 export const setLogicAssetHolderAtom = atom(null, (get, set, assetHolder) => {
   try {
     const employees = get(filteredEmployeesAtom);
-    console.log("Asset Holder: ", assetHolder);
-    console.log("employees: ", employees);
     const foundEmployee = employees.find((employee) => {
       return employee?.sub === assetHolder?.sub;
     });
-    console.log("foundEmployee: ", foundEmployee);
     if (assetHolder !== null && assetHolder !== undefined) {
       if (foundEmployee === undefined) {
         const newEmployeeOptions = [assetHolder, ...employees];
