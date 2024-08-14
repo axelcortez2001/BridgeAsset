@@ -6,7 +6,7 @@ import {
 import { restInsert, restUpdate } from "@/app/utils";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
-// import { v4 as uuidV4 } from "uuid";
+import { v4 as uuidV4 } from "uuid";
 export const peripheralStatusData = [
   { name: "Stock", id: 0, color: "bg-amber-500" },
   { name: "Issued", id: 1, color: "bg-blue-400" },
@@ -79,14 +79,14 @@ export const setPeripheralToDefault = atom(null, async (get, set) => {
 //adding peripheral handler
 export const handleAddPeripheralAtom = atom(null, async (get, set) => {
   const oldAsset = get(assetDataAtom);
-  // let FaCode = uuidV4();
-  // if (
-  //   oldAsset.includes((asset) => {
-  //     return asset?.fa_code === FaCode;
-  //   })
-  // ) {
-  //   return (FaCode = uuidV4());
-  // }
+  let FaCode = uuidV4();
+  if (
+    oldAsset.includes((asset) => {
+      return asset?.fa_code === FaCode;
+    })
+  ) {
+    return (FaCode = uuidV4());
+  }
   const user = await fetchUserAttributes();
   const action = user?.name + " filed this asset!";
   const history = {
@@ -98,7 +98,7 @@ export const handleAddPeripheralAtom = atom(null, async (get, set) => {
     const assetData = {
       item: get(itemNameAtom),
       serial_number: get(serialNumberAtom),
-      // fa_code: FaCode,
+      fa_code: FaCode,
       unit_price: get(unitPriceAtom),
       doi: get(doiAtom),
       dop: get(dopAtom),
