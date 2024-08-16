@@ -11,8 +11,7 @@ import {
   Input,
 } from "@nextui-org/react";
 
-const UserCard = ({ user, checkStat, tabLoc, tabSelect }) => {
-  console.log(tabSelect);
+const UserCard = ({ key, user, checkStat, tabLoc, tabSelect }) => {
   const locationData = ["Laptop", "Monitor", "Peripheral"];
   const summaryData = (loc) => {
     if (loc === "All") {
@@ -43,7 +42,6 @@ const UserCard = ({ user, checkStat, tabLoc, tabSelect }) => {
     const stat = checkStat(user, tabLoc.toLocaleLowerCase())
       ? "Active"
       : "No Issued";
-    console.log(stat);
     if (tabSelect !== "All") {
       if (stat.toLocaleLowerCase() !== tabSelect.toLocaleLowerCase()) {
         return "hidden";
@@ -52,7 +50,7 @@ const UserCard = ({ user, checkStat, tabLoc, tabSelect }) => {
   };
   return (
     <Card
-    
+      key={key}
       className={`
     ${checkVisibility()} hover:cursor-pointer`}
     >
