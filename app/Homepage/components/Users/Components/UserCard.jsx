@@ -16,7 +16,7 @@ const UserCard = ({ key, user, checkStat, tabLoc, tabSelect }) => {
   const summaryData = (loc) => {
     if (loc === "All") {
       return locationData.map((data) => (
-        <div className='flex  gap-2 flex-row'>
+        <div key={data._id} className='flex  gap-2 flex-row'>
           <p>{data}:</p>
           {checkStat(user, data.toLocaleLowerCase()) ? (
             <p className='text-green-500'>Active</p>
