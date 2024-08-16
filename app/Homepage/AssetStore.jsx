@@ -115,7 +115,6 @@ export const setSideBarLocation = atom(null, (get, set, location) => {
 export const fetchEmployeeAtom = atom(null, async (get, set, category) => {
   try {
     const assetData = get(assetDataAtom);
-    console.log("Category: ", category);
     const { user } = await getUsers("/users");
     if (category === "peripheral") {
       const peripheralType = get(peripheralTypeAtom);
@@ -226,6 +225,7 @@ export const fetchUserAtom = atom(null, async (get, set) => {
           asset_name: asset?.item,
           category: asset?.category,
           peripheral_type: asset?.peripheral_type,
+          date_received: asset?.doi,
         };
         if (assetHolderActive.length > 0) {
           assetHolderActive = [...assetHolderActive, dataHolder];
@@ -268,7 +268,7 @@ export const fetchUserAtom = atom(null, async (get, set) => {
         }
       });
       set(userAtom, userData);
-      return { success: true, message: "Users Found!" };
+      return { success: true, message: "Users Found!", user: userData };
     } else {
       return { success: true, message: "User Not Found" };
     }
