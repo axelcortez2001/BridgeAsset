@@ -127,6 +127,12 @@ const Sidebar = () => {
             )}
           </AnimatePresence>
         </div>
+        <div
+          onClick={() => handleNavigation("user")}
+          className='border text-left p-2 w-full rounded-md mt-3 hover:cursor-pointer'
+        >
+          Users
+        </div>
       </div>
       <button
         className='absolute bottom-2 p-2 border rounded-md'
