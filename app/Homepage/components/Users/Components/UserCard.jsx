@@ -11,7 +11,7 @@ import {
   Input,
 } from "@nextui-org/react";
 
-const UserCard = ({ user, index, checkStat, tabLoc, tabSelect }) => {
+const UserCard = ({ user, key, checkStat, tabLoc, tabSelect }) => {
   console.log(tabSelect);
   const locationData = ["Laptop", "Monitor", "Peripheral"];
   const summaryData = (loc) => {
@@ -52,7 +52,7 @@ const UserCard = ({ user, index, checkStat, tabLoc, tabSelect }) => {
   };
   return (
     <Card
-      key={index}
+      key={key}
       className={`
     ${checkVisibility()} hover:cursor-pointer`}
     >
