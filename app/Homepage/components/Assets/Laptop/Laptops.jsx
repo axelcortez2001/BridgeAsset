@@ -66,8 +66,10 @@ const Laptops = ({ selectedType, setActionStatus, actionStatus }) => {
         }
         const res = await saveLaptopData();
         if (res.success) {
+          const category = "laptop";
           toast.success("Laptop saved successfully.");
           await setDataToDefault();
+          await fetchEmployee({ category });
           setActionStatus(actionStatus);
         }
       } else {

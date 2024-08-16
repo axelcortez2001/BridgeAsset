@@ -9,6 +9,8 @@ export const filteredEmployeesAtom = atom([]);
 export const filteredEmployeesForMonitorAtom = atom([]);
 export const selectedAssetDataAtom = atom(null);
 export const assetDataAtom = atom(null);
+export const allAssetDataAtom = atom(null);
+export const userAtom = atom(null);
 
 let supplierId = 0;
 export const supplierData = atom([
@@ -80,18 +82,25 @@ export const registerUser = atom(null, async (get, set) => {
   }
 });
 
-export const fetchAssetDataAtom = atom(null, async (get, set) => {
+export const fetchAssetDataAtom = atom(null, async (get, set, loc) => {
   const response = await restGet("/assets");
   const selectedType = get(selectedTypeAtom);
+  console.log("response: ", response);
   if (response?.success) {
-    const willReturn = response?.response;
-    if (response && response?.response?.length > 0) {
-      const finalReturn = willReturn.filter((asset) => {
-        return asset?.category === selectedType;
-      });
-      return { success: true, response: finalReturn };
+    if (loc === "users") {
+      console.log("trigger");
+      set(allAssetDataAtom, response?.response);
+      return { success: true, message: "Fetched Asset Data" };
     } else {
-      return [];
+      const willReturn = response?.response;
+      if (response && response?.response?.length > 0) {
+        const finalReturn = willReturn.filter((asset) => {
+          return asset?.category === selectedType;
+        });
+        return { success: true, response: finalReturn };
+      } else {
+        return [];
+      }
     }
   } else {
     return { success: false };
@@ -199,5 +208,73 @@ export const deleteAssetDataAtom = atom(null, async (get, set, _id) => {
     }
   } catch (e) {
     console.log("Error: ", e);
+  }
+});
+
+//get users for user page
+export const fetchUserAtom = atom(null, async (get, set) => {
+  try {
+    let assetHolderHistory = [];
+    let assetHolderActive = [];
+    const assetData = get(allAssetDataAtom);
+    assetData.map((asset) => {
+      if (asset.asset_holder !== null) {
+        const assetHolder = asset.asset_holder;
+        const dataHolder = {
+          ...assetHolder,
+          asset_id: asset?._id,
+          asset_name: asset?.item,
+          category: asset?.category,
+          peripheral_type: asset?.peripheral_type,
+        };
+        if (assetHolderActive.length > 0) {
+          assetHolderActive = [...assetHolderActive, dataHolder];
+        } else {
+          assetHolderActive = [dataHolder];
+        }
+      }
+      asset?.asset_holder_history.map((history) => {
+        const historyData = {
+          ...history,
+          asset_id: asset?._id,
+          asset_name: asset?.item,
+          category: asset?.category,
+          peripheral_type: asset?.peripheral_type,
+        };
+        if (assetHolderHistory.length > 0) {
+          assetHolderHistory = [...assetHolderHistory, historyData];
+        } else {
+          assetHolderHistory = [historyData];
+        }
+      });
+    });
+    const { user } = await getUsers("/users");
+    if (user) {
+      let userData = [];
+      user.map((user) => {
+        const returnedUser = {
+          ...user,
+          asset_holder_history: assetHolderHistory?.filter((history) => {
+            return history.sub === user.sub;
+          }),
+          asset_holder_active: assetHolderActive?.filter(
+            (active) => active.sub === user.sub
+          ),
+        };
+        if (userData.length === 0) {
+          userData = [returnedUser];
+        } else {
+          userData = [...userData, returnedUser];
+        }
+      });
+      console.log("User data: ", userData);
+      set(userAtom, userData);
+      return { success: true, message: "Users Found!" };
+    } else {
+      return { success: true, message: "User Not Found" };
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+    return { success: false, message: error };
   }
 });

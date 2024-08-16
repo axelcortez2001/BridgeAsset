@@ -65,8 +65,11 @@ const Monitor = ({ selectedType, setActionStatus, actionStatus }) => {
       if (itemName !== "") {
         const res = await addNewMonitor();
         if (res?.success) {
+          const category = "monitor";
           toast.success("Monitor Saved.");
           await setMonitorToDefault();
+          await fetchEmployee({ category });
+          setActionStatus(actionStatus);
         }
       } else {
         toast.error("Please enter a item name");

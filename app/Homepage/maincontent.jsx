@@ -4,6 +4,7 @@ import { useAtomValue } from "jotai";
 import { sideBarLocation } from "./AssetStore";
 import Dashboard from "./components/Dashboard/page";
 import Assets from "./components/Assets/page";
+import UserPage from "./components/Users/UserPage";
 
 const MainContent = () => {
   const location = useAtomValue(sideBarLocation);
@@ -12,8 +13,10 @@ const MainContent = () => {
       <Sidebar />
       {location && location === "dashboard" ? (
         <Dashboard />
+      ) : location === "assets" ? (
+        <Assets />
       ) : (
-        location === "assets" && <Assets />
+        <UserPage />
       )}
     </div>
   );
