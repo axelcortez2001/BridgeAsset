@@ -267,7 +267,6 @@ export const fetchUserAtom = atom(null, async (get, set) => {
           userData = [...userData, returnedUser];
         }
       });
-      console.log("User data: ", userData);
       set(userAtom, userData);
       return { success: true, message: "Users Found!" };
     } else {

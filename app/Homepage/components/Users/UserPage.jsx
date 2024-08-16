@@ -110,21 +110,9 @@ const UserPage = () => {
           <Tab key={tab} title={tab}>
             {tab !== "All" && (
               <Tabs onSelectionChange={setTabSelect}>
-                <Tab
-                  key='All'
-                  title='All'
-                  onPress={() => setTabSelect("All")}
-                />
-                <Tab
-                  key='Active'
-                  title='Active'
-                  onPress={() => setTabSelect("Active")}
-                />
-                <Tab
-                  key='No Issued'
-                  title='No Issued'
-                  onPress={() => setTabSelect("No Issued")}
-                />
+                <Tab key='All' title='All' />
+                <Tab key='Active' title='Active' />
+                <Tab key='No Issued' title='No Issued' />
               </Tabs>
             )}
             {filteredUsers && filteredUsers?.length > 0 ? (
@@ -132,7 +120,7 @@ const UserPage = () => {
                 {filteredUsers.map((user, index) => (
                   <UserCard
                     user={user}
-                    index={index}
+                    key={index}
                     checkStat={IsAssetActive}
                     tabLoc={tab}
                     tabSelect={tabSelect}
