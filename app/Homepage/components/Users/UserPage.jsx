@@ -1,6 +1,11 @@
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import React, { useEffect, useState } from "react";
-import { fetchAssetDataAtom, fetchUserAtom, userAtom } from "../../AssetStore";
+import {
+  assetDataAtom,
+  fetchAssetDataAtom,
+  fetchUserAtom,
+  userAtom,
+} from "../../AssetStore";
 import AssetLoading from "../LoadingComponents/AssetLoading";
 import { Tabs, Tab, Input } from "@nextui-org/react";
 import UserCard from "./Components/UserCard";
@@ -8,8 +13,9 @@ import UserCard from "./Components/UserCard";
 const UserPage = () => {
   const [loading, setLoading] = useState(false);
   const userData = useAtomValue(userAtom);
+  const assetData = useAtomValue(assetDataAtom);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState(userData);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [tabSelect, setTabSelect] = useState("All");
 
   const tabSelection = ["All", "Laptop", "Monitor", "Peripheral"];
@@ -20,23 +26,27 @@ const UserPage = () => {
   //handler
   useEffect(() => {
     const userHandler = async () => {
-      setLoading(true);
-      try {
-        const assets = await fetchAssetData("users");
-        if (assets?.success === true) {
-          const res = await fetchUsers();
-          if (res?.success) {
-            console.log(res.message);
+      if (userData === null) {
+        setLoading(true);
+        try {
+          console.log("Tigger use effect");
+          const assets = await fetchAssetData("users");
+          if (assets?.success === true) {
+            const res = await fetchUsers();
+            if (res?.success) {
+              setFilteredUsers(res.user);
+              console.log(res.message);
+            }
           }
+        } catch (error) {
+          console.log("Error: ", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.log("Error: ", error);
-      } finally {
-        setLoading(false);
       }
     };
     userHandler();
-  }, []);
+  }, [assetData, userData]);
 
   useEffect(() => {
     if (searchQuery === "") {

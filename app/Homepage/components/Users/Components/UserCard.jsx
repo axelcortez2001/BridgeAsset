@@ -1,18 +1,20 @@
 import React from "react";
 import {
-  Tabs,
-  Tab,
   Avatar,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
   Divider,
-  Input,
+  Button,
+  useDisclosure,
 } from "@nextui-org/react";
+import ViewUserModal from "./ViewUserModal";
 
 const UserCard = ({ key, user, checkStat, tabLoc, tabSelect }) => {
   const locationData = ["Laptop", "Monitor", "Peripheral"];
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   const summaryData = (loc) => {
     if (loc === "All") {
       return locationData.map((data) => (
@@ -65,7 +67,10 @@ const UserCard = ({ key, user, checkStat, tabLoc, tabSelect }) => {
         <div className='flex flex-col'>{summaryData(tabLoc)}</div>
       </CardBody>
       <Divider />
-      <CardFooter>See more</CardFooter>
+      <CardFooter>
+        <Button onPress={onOpen}>See more</Button>
+      </CardFooter>
+      <ViewUserModal isOpen={isOpen} user={user} onOpenChange={onOpenChange} />
     </Card>
   );
 };
