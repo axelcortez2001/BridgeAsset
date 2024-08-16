@@ -48,7 +48,6 @@ const UserPage = () => {
       setFilteredUsers(filtered);
     }
   }, [searchQuery]);
-  console.log("TabSelect", tabSelect);
   //check if user have an asset based from category
   const IsAssetActive = (opt, category) => {
     let returnedAsset = null;
@@ -92,7 +91,7 @@ const UserPage = () => {
           placeholder='Search asset holder...'
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-        ></Input>
+        />
       </div>
       <div className='w-full border my-4'></div>
       <Tabs>
@@ -107,9 +106,9 @@ const UserPage = () => {
             )}
             {filteredUsers && filteredUsers?.length > 0 ? (
               <div className='grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4'>
-                {filteredUsers.map((user, index) => (
+                {filteredUsers.map((user) => (
                   <UserCard
-                    key={index}
+                    key={user._id}
                     user={user}
                     checkStat={IsAssetActive}
                     tabLoc={tab}
