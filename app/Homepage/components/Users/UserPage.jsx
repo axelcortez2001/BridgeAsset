@@ -95,8 +95,8 @@ const UserPage = () => {
       </div>
       <div className='w-full border my-4'></div>
       <Tabs>
-        {tabSelection.map((tab) => (
-          <Tab key={tab} title={tab}>
+        {tabSelection.map((tab, index) => (
+          <Tab key={index} title={tab}>
             {tab !== "All" && (
               <Tabs onSelectionChange={setTabSelect}>
                 <Tab key='All' title='All' />
