@@ -2,17 +2,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import React, { useEffect, useState } from "react";
 import { fetchAssetDataAtom, fetchUserAtom, userAtom } from "../../AssetStore";
 import AssetLoading from "../LoadingComponents/AssetLoading";
-import {
-  Tabs,
-  Tab,
-  Avatar,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Input,
-} from "@nextui-org/react";
+import { Tabs, Tab, Input } from "@nextui-org/react";
 import UserCard from "./Components/UserCard";
 
 const UserPage = () => {
@@ -119,8 +109,8 @@ const UserPage = () => {
               <div className='grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4'>
                 {filteredUsers.map((user, index) => (
                   <UserCard
-                    user={user}
                     key={index}
+                    user={user}
                     checkStat={IsAssetActive}
                     tabLoc={tab}
                     tabSelect={tabSelect}
