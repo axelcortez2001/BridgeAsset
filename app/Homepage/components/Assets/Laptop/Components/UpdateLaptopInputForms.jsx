@@ -54,7 +54,6 @@ const UpdateLaptopInputForms = ({
   //asset data holder
   const [item, setItem] = useAtom(itemNameAtom);
   const [serialNo, setSerialNo] = useAtom(serialNumberAtom);
-  const [faCode, setFaCode] = useAtom(FACodeAtom);
   const [unitPrice, setUnitPrice] = useAtom(unitPriceAtom);
   const [dop, setDop] = useAtom(dopAtom);
   const [warrantyPeriod, setWarrantyPeriod] = useAtom(warrantyPeriodAtom);
@@ -231,18 +230,7 @@ const UpdateLaptopInputForms = ({
                 )
               }
             />
-            <Input
-              type='number'
-              disabled={checkDisabled(["Update"])}
-              label='FA CODE'
-              value={faCode}
-              onChange={(e) => setFaCode(e.target.value)}
-              size={"sm"}
-              className='max-w-xs'
-              onBlur={() =>
-                handleInput(" FA Code ", faCode, selectedAssetData?.fa_code)
-              }
-            />
+
             <Input
               type='number'
               disabled={checkDisabled(["Update"])}

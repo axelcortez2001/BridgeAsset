@@ -33,7 +33,6 @@ const LaptopInputForms = ({
 }) => {
   const dateToday = new Date();
   const [item, setItem] = useAtom(itemNameAtom);
-  const [faCode, setFaCode] = useAtom(FACodeAtom);
   const [serialNo, setSerialNo] = useAtom(serialNumberAtom);
   const [doi, setDoi] = useAtom(doiAtom);
   const [warrantyPeriod, setWarrantyPeriod] = useAtom(warrantyPeriodAtom);
@@ -99,15 +98,6 @@ const LaptopInputForms = ({
           onChange={(e) => setSerialNo(e.target.value)}
           className='max-w-xs'
         />
-        <Input
-          type='number'
-          label='FA CODE'
-          value={faCode}
-          onChange={(e) => setFaCode(e.target.value)}
-          size={"sm"}
-          className='max-w-xs'
-        />
-
         {itemStatusOption === "Active" && (
           <>
             <EmployeeDropDown

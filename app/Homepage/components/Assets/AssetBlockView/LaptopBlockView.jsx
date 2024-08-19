@@ -1,5 +1,7 @@
 import {
   assetDataAtom,
+  deleteAssetDataAtom,
+  fetchEmployeeAtom,
   handleReturnEmployeesDefaultAtom,
   selectedAssetDataAtom,
   selectedTypeAtom,
@@ -12,6 +14,8 @@ import {
   setDataToDefaultAtom,
 } from "../Store/LaptopStore";
 import AssetLoading from "../../LoadingComponents/AssetLoading";
+import Blocks from "../AssetOtherComponents/Blocks";
+import { toast } from "sonner";
 
 const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
   const assetData = useAtomValue(assetDataAtom);
@@ -30,21 +34,41 @@ const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
     setItemStatusOption("Update");
     setActionStatus(false);
   };
+
+  //delete asset handler
+  const fetchEmployees = useSetAtom(fetchEmployeeAtom);
+  const deleteAssetData = useSetAtom(deleteAssetDataAtom);
+  const handleDelete = async (asset) => {
+    if (window.confirm("Are you sure you want to change current selected?")) {
+      if (asset !== null) {
+        const _id = asset._id;
+        const res = await deleteAssetData(_id);
+        if (res?.success === true) {
+          await setDataToDefault();
+          setSelectedAssetData(null);
+          await fetchEmployees("laptop");
+          toast.success("Asset deleted successfully.");
+        } else {
+          toast.success("Failed to delete asset.");
+        }
+      }
+    }
+  };
+  console.log("Asset Data: ", assetData);
   return assetLoading ? (
     <AssetLoading />
   ) : (
     <div className='w-full h-full flex items-center justify-center mt-2'>
-      <div className='flex gap-2  w-full'>
+      <div className='grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2 w-full'>
         {assetData &&
           assetData?.length > 0 &&
           assetData.map((asset, index) => (
-            <div
-              className='border rounded-md p-2 hover:cursor-pointer'
+            <Blocks
               key={index}
-              onClick={() => handleSelectAsset(asset)}
-            >
-              {asset.item}
-            </div>
+              selectAsset={handleSelectAsset}
+              asset={asset}
+              delAsset={handleDelete}
+            />
           ))}
       </div>
     </div>
