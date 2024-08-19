@@ -11,6 +11,9 @@ import {
 import LaptopBlockView from "../AssetBlockView/LaptopBlockView";
 import MonitorBlockView from "../AssetBlockView/MonitorBlockView";
 import PeripheralBlockVIew from "../AssetBlockView/PeripheralBlockVIew";
+import { IoAddSharp } from "react-icons/io5";
+import { Tab, Tabs } from "@nextui-org/react";
+import LaptopTable from "../TableComponents.jsx/LaptopTable";
 
 const AssetBody = () => {
   const [actionStatus, setActionStatus] = useState(false);
@@ -19,9 +22,15 @@ const AssetBody = () => {
   const [assetLoading, setAssetLoading] = useState(false);
   const fetchAssetData = useSetAtom(fetchAssetDataAtom);
   const [selected, setSelected] = useState(selectedType);
+  const [tabState, setTabState] = useState("Block");
+
   const handleActionStatus = (stat) => {
     setActionStatus(!stat);
   };
+  const handleTabChange = (tab) => {
+    setTabState(tab);
+  };
+
   useEffect(() => {
     const handleFetchData = async () => {
       setAssetLoading(true);
@@ -44,18 +53,7 @@ const AssetBody = () => {
     handleFetchData();
   }, [assetData, selectedType]);
   return (
-    <div>
-      {!actionStatus ? (
-        <div>
-          <button
-            className='border rounded-md p-2'
-            onClick={() => handleActionStatus(actionStatus)}
-          >
-            Add
-          </button>
-        </div>
-      ) : null}
-
+    <div className='p-2'>
       <AnimatePresence>
         {actionStatus && (
           <motion.div
@@ -71,29 +69,52 @@ const AssetBody = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className='flex gap-x-5'>
-        {selectedType === "laptop" ? (
-          <LaptopBlockView
-            setActionStatus={handleActionStatus}
-            actionStatus={actionStatus}
-            assetLoading={assetLoading}
-          />
-        ) : selectedType === "monitor" ? (
-          <MonitorBlockView
-            setActionStatus={handleActionStatus}
-            actionStatus={actionStatus}
-            assetLoading={assetLoading}
-          />
-        ) : (
-          <PeripheralBlockVIew
-            setActionStatus={handleActionStatus}
-            actionStatus={actionStatus}
-            assetLoading={assetLoading}
-          />
-        )}
-
-        {/* <div>Table View</div> */}
+      <div className='flex items-center gap-2'>
+        {!actionStatus ? (
+          <div>
+            <button
+              className='border rounded-md p-2 bg-amber-500'
+              onClick={() => handleActionStatus(actionStatus)}
+            >
+              <IoAddSharp />
+            </button>
+          </div>
+        ) : null}
+        <div>
+          <Tabs selectedKey={tabState} onSelectionChange={handleTabChange}>
+            <Tab key='Block' title='Block' />
+            <Tab key='Table' title='Table' />
+          </Tabs>
+        </div>
+        <div>Filtering here...</div>
       </div>
+      {tabState === "Block" ? (
+        <div className='flex gap-x-5'>
+          {selectedType === "laptop" ? (
+            <LaptopBlockView
+              setActionStatus={handleActionStatus}
+              actionStatus={actionStatus}
+              assetLoading={assetLoading}
+            />
+          ) : selectedType === "monitor" ? (
+            <MonitorBlockView
+              setActionStatus={handleActionStatus}
+              actionStatus={actionStatus}
+              assetLoading={assetLoading}
+            />
+          ) : (
+            <PeripheralBlockVIew
+              setActionStatus={handleActionStatus}
+              actionStatus={actionStatus}
+              assetLoading={assetLoading}
+            />
+          )}
+        </div>
+      ) : (
+        <div className='flex gap-x-5'>
+          {selectedType === "laptop" && <LaptopTable assetData={assetData} />}
+        </div>
+      )}
     </div>
   );
 };
