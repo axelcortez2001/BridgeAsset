@@ -13,7 +13,8 @@ import UserCard from "./Components/UserCard";
 const UserPage = () => {
   const [loading, setLoading] = useState(false);
   const userData = useAtomValue(userAtom);
-  const assetData = useAtomValue(assetDataAtom);
+  const oldassetData = useAtomValue(assetDataAtom);
+  const [assetData, setAssetData] = useState(oldassetData);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [tabSelect, setTabSelect] = useState("All");
@@ -26,27 +27,26 @@ const UserPage = () => {
   //handler
   useEffect(() => {
     const userHandler = async () => {
-      if (userData === null) {
-        setLoading(true);
-        try {
-          console.log("Tigger use effect");
-          const assets = await fetchAssetData("users");
-          if (assets?.success === true) {
-            const res = await fetchUsers();
-            if (res?.success) {
-              setFilteredUsers(res.user);
-              console.log(res.message);
-            }
+      setLoading(true);
+      try {
+        console.log("Tigger use effect");
+        const assets = await fetchAssetData("users");
+        if (assets?.success === true) {
+          const res = await fetchUsers();
+          if (res?.success) {
+            setFilteredUsers(res.user);
+            console.log(res.message);
           }
-        } catch (error) {
-          console.log("Error: ", error);
-        } finally {
-          setLoading(false);
         }
+      } catch (error) {
+        console.log("Error: ", error);
+      } finally {
+        setLoading(false);
       }
     };
+
     userHandler();
-  }, [assetData, userData]);
+  }, []);
 
   useEffect(() => {
     if (searchQuery === "") {

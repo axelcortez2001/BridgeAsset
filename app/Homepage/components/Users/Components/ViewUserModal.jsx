@@ -1,11 +1,6 @@
 import React from "react";
 import {
   Avatar,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
   Modal,
   ModalContent,
   ModalHeader,
@@ -20,7 +15,7 @@ import UserDetails from "./UserDetails";
 import UserHistory from "./UserHistory";
 const ViewUserModal = ({ isOpen, onOpenChange, user }) => {
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='lg'>
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='xl'>
       <ModalContent>
         {(onClose) => (
           <>
