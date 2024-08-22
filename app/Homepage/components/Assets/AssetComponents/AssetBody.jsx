@@ -13,7 +13,7 @@ import MonitorBlockView from "../AssetBlockView/MonitorBlockView";
 import PeripheralBlockVIew from "../AssetBlockView/PeripheralBlockVIew";
 import { IoAddSharp } from "react-icons/io5";
 import { Tab, Tabs } from "@nextui-org/react";
-import LaptopTable from "../TableComponents.jsx/LaptopTable";
+import Table from "../TableComponents/Table";
 
 const AssetBody = () => {
   const [actionStatus, setActionStatus] = useState(false);
@@ -33,6 +33,7 @@ const AssetBody = () => {
 
   useEffect(() => {
     const handleFetchData = async () => {
+      console.log(selected);
       setAssetLoading(true);
       try {
         if (assetData === null || selected !== selectedType) {
@@ -52,6 +53,7 @@ const AssetBody = () => {
     };
     handleFetchData();
   }, [assetData, selectedType]);
+  console.log("Asset: ", assetData);
   return (
     <div className='p-2'>
       <AnimatePresence>
@@ -112,7 +114,7 @@ const AssetBody = () => {
         </div>
       ) : (
         <div className='flex gap-x-5'>
-          {selectedType === "laptop" && <LaptopTable assetData={assetData} />}
+          <Table assetData={assetData} />
         </div>
       )}
     </div>
