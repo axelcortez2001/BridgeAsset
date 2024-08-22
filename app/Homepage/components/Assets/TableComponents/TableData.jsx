@@ -32,9 +32,10 @@ const checkWarrantyPeriod = (opt, dop) => {
 };
 const checkWarrantStatus = (opt, dop) => {
   if (opt && dop) {
+    const dateToday = new Date();
     const oldDop = new Date(dop);
     const newDop = addYears(new Date(dop), parseFloat(opt));
-    if (oldDop <= newDop) {
+    if (dateToday <= newDop) {
       return <div className='text-green-500'>Good</div>;
     } else {
       return <div className='text-red-400'>Out of warranty</div>;
