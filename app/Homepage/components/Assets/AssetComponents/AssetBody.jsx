@@ -114,7 +114,12 @@ const AssetBody = () => {
         </div>
       ) : (
         <div className='flex gap-x-5'>
-          <Table assetData={assetData} />
+          <Table
+            assetData={assetData}
+            setActionStatus={handleActionStatus}
+            actionStatus={actionStatus}
+            assetLoading={assetLoading}
+          />
         </div>
       )}
     </div>

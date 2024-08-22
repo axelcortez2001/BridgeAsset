@@ -19,12 +19,15 @@ import {
   viewMonitorHistoryAtom,
   supplierAtom,
   branchAtom,
+  warrantyPeriodAtom,
+  userTypeAtom,
 } from "../../Store/MonitorStore";
 import {
   selectedAssetDataAtom,
   setLogicAssetHolderAtom,
 } from "@/app/Homepage/AssetStore";
 import { historyMonitorActionFunction } from "../../Functions/functionAtom";
+import UserRadioOption from "../../DropDownComponents/UserRadioOption";
 const MonitorInputForms = ({ selectedType, employeeOptions }) => {
   const [item, setItem] = useAtom(itemNameAtom);
   const [serialNo, setSerialNo] = useAtom(serialNumberAtom);
@@ -37,6 +40,8 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
   const [branch, setBranch] = useAtom(branchAtom);
   const [supplier, setSupplier] = useAtom(supplierAtom);
   const [status, setStatus] = useAtom(statusAtom);
+  const [warranty, setWarranty] = useAtom(warrantyPeriodAtom);
+  const [userType, setUserType] = useAtom(userTypeAtom);
   const [viewMonitorHistory, setViewMonitorHistory] = useAtom(
     viewMonitorHistoryAtom
   );
@@ -45,7 +50,6 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
   const setHistory = useSetAtom(historyMonitorActionFunction);
   //handlers
   const handleAssetHolder = (opt) => {
-    console.log("Holder: ", opt);
     setLogicAssetHolder(selectedAssetData?.asset_holder);
     if (opt !== null) {
       const dateToday = new Date();
@@ -67,6 +71,10 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
   const handleStatus = (opt) => {
     setStatus(opt);
     handleInput(" Status ", opt?.name, status?.name);
+  };
+  const handleUserType = (opt) => {
+    setUserType(opt);
+    handleInput(" User Type ", opt, userType);
   };
   const handleInput = (field, newData, oldData) => {
     if (selectedAssetData !== null) {
@@ -132,6 +140,21 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
             className='max-w-40'
           />
           <Input
+            type='number'
+            label='Warranty Period'
+            value={warranty}
+            onChange={(e) => setWarranty(e.target.value)}
+            onBlur={() =>
+              handleInput(
+                " Warranty Period ",
+                warranty,
+                selectedAssetData?.warranty_period
+              )
+            }
+            size={"sm"}
+            className='max-w-40'
+          />
+          <Input
             type='date'
             size={"sm"}
             label='DOP'
@@ -184,6 +207,7 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
         <div className='w-full flex flex-wrap p-1 gap-3'>
           <BranchDropDown branch={branch} setBranch={handleBranch} />
           <MonitorStatus status={status} setStatus={handleStatus} />
+          <UserRadioOption userType={userType} setUserType={handleUserType} />
         </div>
       </div>
     </div>

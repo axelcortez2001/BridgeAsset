@@ -4,6 +4,11 @@ import {
   differenceInDays,
   isValid,
 } from "date-fns";
+import {
+  checkWarrantStatus,
+  checkWarrantyPeriod,
+  computeYTD,
+} from "./TableFunction";
 
 const formatDate = (opt) => {
   if (isValid(new Date(opt))) {
@@ -17,47 +22,7 @@ const formatDate = (opt) => {
     return "Unavailable";
   }
 };
-const checkWarrantyPeriod = (opt, dop) => {
-  if (opt && dop) {
-    const newDate = addYears(new Date(dop), parseFloat(opt));
-    const formattedDate = new Date(newDate).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-    return <div>{formattedDate}</div>;
-  } else {
-    return <div className='text-red-400'>Invalid</div>;
-  }
-};
-const checkWarrantStatus = (opt, dop) => {
-  if (opt && dop) {
-    const dateToday = new Date();
-    const oldDop = new Date(dop);
-    const newDop = addYears(new Date(dop), parseFloat(opt));
-    if (dateToday <= newDop) {
-      return <div className='text-green-500'>Good</div>;
-    } else {
-      return <div className='text-red-400'>Out of warranty</div>;
-    }
-  } else {
-    return <div className='text-red-400'>Invalid</div>;
-  }
-};
-const computeYTD = (dop) => {
-  if (dop) {
-    const date = new Date();
-    const totalDay = differenceInDays(new Date(date), new Date(dop));
-    const ytd = parseFloat((parseFloat(totalDay) / 365.25).toFixed(2));
-    if (typeof ytd === "number") {
-      return ytd;
-    } else {
-      return "Invalid";
-    }
-  } else {
-    return "Unavailable";
-  }
-};
+
 export const laptopColumns = [
   // {
   //   header: ({ table }) => (
