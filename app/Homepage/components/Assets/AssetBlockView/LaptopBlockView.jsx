@@ -16,6 +16,7 @@ import {
 import AssetLoading from "../../LoadingComponents/AssetLoading";
 import Blocks from "../AssetOtherComponents/Blocks";
 import { toast } from "sonner";
+import useHandleSelectAssetLaptop from "../Functions/laptopFunction";
 
 const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
   const assetData = useAtomValue(assetDataAtom);
@@ -25,14 +26,9 @@ const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
   const setDataFromSelected = useSetAtom(setDataFromSelectedAtom);
   const setDataToDefault = useSetAtom(setDataToDefaultAtom);
   const setEmployeesToDefault = useSetAtom(handleReturnEmployeesDefaultAtom);
+  const handleSelect = useHandleSelectAssetLaptop(setActionStatus);
   const handleSelectAsset = async (opt) => {
-    setEmployeesToDefault();
-    await setDataToDefault();
-    setSelectedAssetData(opt);
-    await setDataFromSelected();
-    setSelectedType(opt.category);
-    setItemStatusOption("Update");
-    setActionStatus(false);
+    handleSelect(opt);
   };
 
   //delete asset handler

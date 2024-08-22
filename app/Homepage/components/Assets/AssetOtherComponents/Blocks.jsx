@@ -11,8 +11,10 @@ import {
   Divider,
   CardBody,
   Avatar,
+  useDisclosure,
 } from "@nextui-org/react";
 import { isValid } from "date-fns";
+import ViewModal from "./ViewModal";
 
 const Blocks = ({ selectAsset, asset, delAsset }) => {
   const formatDate = (opt) => {
@@ -27,6 +29,12 @@ const Blocks = ({ selectAsset, asset, delAsset }) => {
       return "No Date";
     }
   };
+  const handleSelectAsset = () => {
+    selectAsset(asset);
+    onOpenChange(false);
+  };
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <Card className='border hover: cursor-pointer rounded-md p-1'>
       <CardHeader className='flex w-full justify-start items-center'>
@@ -37,7 +45,8 @@ const Blocks = ({ selectAsset, asset, delAsset }) => {
             </div>
           </DropdownTrigger>
           <DropdownMenu aria-label='Static Actions'>
-            <DropdownItem key='expand' onClick={() => selectAsset(asset)}>
+            {/* onClick={() => selectAsset(asset)} */}
+            <DropdownItem key='expand' onPress={onOpen}>
               Expand
             </DropdownItem>
             <DropdownItem
@@ -136,6 +145,12 @@ const Blocks = ({ selectAsset, asset, delAsset }) => {
           )}
         </div>
       </CardBody>
+      <ViewModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        asset={asset}
+        selectAsset={handleSelectAsset}
+      />
     </Card>
   );
 };

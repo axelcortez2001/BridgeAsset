@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Column,
   ColumnDef,
@@ -7,8 +7,19 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { laptopColumns } from "./TableData";
+import { Button, useDisclosure } from "@nextui-org/react";
 import TableFooter from "./TableFooter";
-const LaptopTable = ({ assetData }) => {
+import useHandleSelectAssetLaptop from "../Functions/laptopFunction";
+
+import ViewModal from "../AssetOtherComponents/ViewModal";
+import useHandleSelectAssetMonitor from "../Functions/MonitorFunction";
+import useHandleSelectAssetPeripheral from "../Functions/PeripheralFunction";
+const LaptopTable = ({
+  assetData,
+  setActionStatus,
+  actionStatus,
+  assetLoading,
+}) => {
   console.log("AssetData:", assetData);
   const data = assetData;
   const columns = laptopColumns;
@@ -37,6 +48,29 @@ const LaptopTable = ({ assetData }) => {
       backgroundColor: isPinned ? "white" : "transparent",
     };
   };
+
+  const [selectedTD, setSelectedTd] = useState(null);
+  const handleSelectLaptop = useHandleSelectAssetLaptop(setActionStatus);
+  const handleSelectMonitor = useHandleSelectAssetMonitor(setActionStatus);
+  const handleSelectPeripheral =
+    useHandleSelectAssetPeripheral(setActionStatus);
+  const handleSelectFromTable = (opt) => {
+    onOpenChange(true);
+    setSelectedTd(opt);
+  };
+  const handleSelectAsset = () => {
+    if (selectedTD?.category === "laptop") {
+      handleSelectLaptop(selectedTD);
+      onOpenChange(false);
+    } else if (selectedTD?.category === "monitor") {
+      handleSelectMonitor(selectedTD);
+      onOpenChange(false);
+    } else if (selectedTD?.category === "peripheral") {
+      handleSelectPeripheral(selectedTD);
+      onOpenChange(false);
+    }
+  };
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <div className='w-full'>
       <p>Laptop Table</p>
@@ -88,7 +122,10 @@ const LaptopTable = ({ assetData }) => {
             </thead>
             <tbody>
               {table?.getRowModel()?.rows?.map((row) => (
-                <tr key={row.id} className='hover:cursor-pointer  relative'>
+                <tr
+                  key={row.id}
+                  className='hover:cursor-pointer  hover:bg-gray-200  relative'
+                >
                   {row.getVisibleCells().map((cell) => {
                     const { column } = cell;
                     return (
@@ -98,11 +135,14 @@ const LaptopTable = ({ assetData }) => {
                           width: cell.column.getSize(),
                           ...getCommonPinningStyles(column),
                         }}
+                        onClick={() =>
+                          handleSelectFromTable(cell?.row?.original)
+                        }
                         className={`${
                           row.getIsSelected()
                             ? "bg-orange-700 text-red-400"
                             : ""
-                        } text-sm text-center border-b  `}
+                        } text-sm text-center border-b `}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -119,6 +159,12 @@ const LaptopTable = ({ assetData }) => {
                 ))}
               </tr>
             </tbody>
+            <ViewModal
+              isOpen={isOpen}
+              onOpenChange={onOpenChange}
+              asset={selectedTD}
+              selectAsset={handleSelectAsset}
+            />
           </table>
         ) : (
           <div>No Data Available</div>

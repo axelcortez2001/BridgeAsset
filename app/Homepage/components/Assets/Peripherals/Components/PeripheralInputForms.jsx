@@ -15,6 +15,7 @@ import {
   statusAtom,
   peripheralTypeAtom,
   warrantyPeriodAtom,
+  userTypeAtom,
 } from "../../Store/PeripheralStore";
 import { Input, Textarea } from "@nextui-org/react";
 import LaptopSupplierDropDown from "../../DropDownComponents/LaptopSupplierDropDown";
@@ -28,6 +29,7 @@ import {
 } from "@/app/Homepage/AssetStore";
 import { format } from "date-fns";
 import { historyPeripheralActionFunction } from "../../Functions/functionAtom";
+import UserRadioOption from "../../DropDownComponents/UserRadioOption";
 
 const PeripheralInputForms = ({ employeeOptions }) => {
   const [item, setItem] = useAtom(itemNameAtom);
@@ -43,6 +45,7 @@ const PeripheralInputForms = ({ employeeOptions }) => {
   const [status, setStatus] = useAtom(statusAtom);
   const [peripheralType, setPeripheralType] = useAtom(peripheralTypeAtom);
   const [warrantyPeriod, setWarrantyPeriod] = useAtom(warrantyPeriodAtom);
+  const [userType, setUserType] = useAtom(userTypeAtom);
 
   //get Atom
   const selectedAssetData = useAtomValue(selectedAssetDataAtom);
@@ -75,6 +78,10 @@ const PeripheralInputForms = ({ employeeOptions }) => {
     console.log(opt);
     setPeripheralType(opt);
     handleInput(" Peripheral Type ", opt, peripheralType);
+  };
+  const handleUserType = (opt) => {
+    setUserType(opt);
+    handleInput(" User Type ", opt, userType);
   };
   const handleAssetHolder = (opt) => {
     console.log("beofre: ", employeeOptions);
@@ -209,6 +216,10 @@ const PeripheralInputForms = ({ employeeOptions }) => {
             <div className='w-full flex flex-wrap p-1 gap-3'>
               <BranchDropDown branch={branch} setBranch={handleBranch} />
               <MonitorStatus status={status} setStatus={handleStatus} />
+              <UserRadioOption
+                userType={userType}
+                setUserType={handleUserType}
+              />
             </div>
           </div>
         )}
