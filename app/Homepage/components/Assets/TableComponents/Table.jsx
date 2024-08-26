@@ -14,13 +14,7 @@ import useHandleSelectAssetLaptop from "../Functions/laptopFunction";
 import ViewModal from "../AssetOtherComponents/ViewModal";
 import useHandleSelectAssetMonitor from "../Functions/MonitorFunction";
 import useHandleSelectAssetPeripheral from "../Functions/PeripheralFunction";
-const LaptopTable = ({
-  assetData,
-  setActionStatus,
-  actionStatus,
-  assetLoading,
-}) => {
-  console.log("AssetData:", assetData);
+const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
   const data = assetData;
   const columns = laptopColumns;
   const table = useReactTable({
@@ -73,8 +67,7 @@ const LaptopTable = ({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <div className='w-full'>
-      <p>Laptop Table</p>
-      <div className=' w-full overflow-x-auto border '>
+      <div className='w-full overflow-x-auto border '>
         {data ? (
           <table
             className='min-w-full overflow-x-auto border-l'
@@ -174,4 +167,4 @@ const LaptopTable = ({
   );
 };
 
-export default LaptopTable;
+export default Table;

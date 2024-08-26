@@ -15,6 +15,7 @@ import PeripheralBlockVIew from "../AssetBlockView/PeripheralBlockVIew";
 import { IoAddSharp } from "react-icons/io5";
 import { Tab, Tabs } from "@nextui-org/react";
 import Table from "../TableComponents/Table";
+import TableGateWay from "../TableComponents/TableGateWay";
 
 const AssetBody = () => {
   const [globalActionStatus, setGlobalActionStatus] = useAtom(
@@ -95,7 +96,7 @@ const AssetBody = () => {
         <div>Filtering here...</div>
       </div>
       {tabState === "Block" ? (
-        <div className='flex gap-x-5'>
+        <div className='flex flex-col gap-x-5'>
           {selectedType === "laptop" ? (
             <LaptopBlockView
               setActionStatus={handleActionStatus}
@@ -118,11 +119,12 @@ const AssetBody = () => {
         </div>
       ) : (
         <div className='flex gap-x-5'>
-          <Table
+          <TableGateWay
             assetData={assetData}
             setActionStatus={handleActionStatus}
             actionStatus={actionStatus}
             assetLoading={assetLoading}
+            selectedType={selectedType}
           />
         </div>
       )}
