@@ -6,6 +6,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   assetDataAtom,
   fetchAssetDataAtom,
+  globalActionStatusAtom,
   selectedTypeAtom,
 } from "@/app/Homepage/AssetStore";
 import LaptopBlockView from "../AssetBlockView/LaptopBlockView";
@@ -16,7 +17,10 @@ import { Tab, Tabs } from "@nextui-org/react";
 import Table from "../TableComponents/Table";
 
 const AssetBody = () => {
-  const [actionStatus, setActionStatus] = useState(false);
+  const [globalActionStatus, setGlobalActionStatus] = useAtom(
+    globalActionStatusAtom
+  );
+  const [actionStatus, setActionStatus] = useState(globalActionStatus);
   const [assetData, setAssetData] = useAtom(assetDataAtom);
   const selectedType = useAtomValue(selectedTypeAtom);
   const [assetLoading, setAssetLoading] = useState(false);

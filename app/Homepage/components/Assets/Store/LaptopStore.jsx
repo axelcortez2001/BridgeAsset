@@ -1,5 +1,7 @@
 import {
   assetDataAtom,
+  globalActionStatusAtom,
+  globalSelectedassetAtom,
   selectedAssetDataAtom,
   selectedTypeAtom,
 } from "@/app/Homepage/AssetStore";
@@ -57,6 +59,8 @@ export const setDataToDefaultAtom = atom(null, async (get, set) => {
   set(branchAtom, "Makati");
   set(userTypeAtom, "Employee");
   set(remarksAtom, "");
+  set(globalSelectedassetAtom, null);
+  set(globalActionStatusAtom, false);
 });
 export const setDataFromSelectedAtom = atom(null, async (get, set) => {
   const selectedAssetData = get(selectedAssetDataAtom);
