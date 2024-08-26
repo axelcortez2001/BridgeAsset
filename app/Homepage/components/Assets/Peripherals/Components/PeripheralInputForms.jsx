@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   itemNameAtom,
   serialNumberAtom,
@@ -16,6 +16,7 @@ import {
   peripheralTypeAtom,
   warrantyPeriodAtom,
   userTypeAtom,
+  setPeripheralFromDataSelectedAtom,
 } from "../../Store/PeripheralStore";
 import { Input, Textarea } from "@nextui-org/react";
 import LaptopSupplierDropDown from "../../DropDownComponents/LaptopSupplierDropDown";
@@ -24,6 +25,7 @@ import MonitorStatus from "../../DropDownComponents/MonitorStatus";
 import PeripheralTypeDropdown from "../../DropDownComponents/PeripheralTypeDropdown";
 import EmployeeDropDown from "../../DropDownComponents/EmployeeDropDown";
 import {
+  globalSelectedassetAtom,
   selectedAssetDataAtom,
   setLogicAssetHolderAtom,
 } from "@/app/Homepage/AssetStore";
@@ -48,11 +50,23 @@ const PeripheralInputForms = ({ employeeOptions }) => {
   const [userType, setUserType] = useAtom(userTypeAtom);
 
   //get Atom
-  const selectedAssetData = useAtomValue(selectedAssetDataAtom);
+
   //set atoms
   const setLogicAssetHolder = useSetAtom(setLogicAssetHolderAtom);
   const setHistory = useSetAtom(historyPeripheralActionFunction);
-
+  const globalSelected = useAtomValue(globalSelectedassetAtom);
+  const [selectedAssetData, setSelectedAssetData] = useAtom(
+    selectedAssetDataAtom
+  );
+  const setAssetDataFromSelected = useSetAtom(
+    setPeripheralFromDataSelectedAtom
+  );
+  useEffect(() => {
+    if (globalSelected !== null) {
+      setSelectedAssetData(globalSelected);
+      setAssetDataFromSelected(globalSelected);
+    }
+  }, [globalSelected, setSelectedAssetData]);
   //handlers
   //for history
   const handleInput = (field, newData, oldData) => {

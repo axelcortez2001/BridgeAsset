@@ -68,7 +68,7 @@ const UserCard = ({ key, user, checkStat, tabLoc, tabSelect }) => {
       </CardBody>
       <Divider />
       <CardFooter>
-        <Button onPress={onOpen}>See more</Button>
+        <Button onClick={onOpen}>See more</Button>
       </CardFooter>
       <ViewUserModal isOpen={isOpen} user={user} onOpenChange={onOpenChange} />
     </Card>

@@ -1,5 +1,7 @@
 import {
   assetDataAtom,
+  globalActionStatusAtom,
+  globalSelectedassetAtom,
   selectedAssetDataAtom,
   selectedTypeAtom,
 } from "@/app/Homepage/AssetStore";
@@ -75,6 +77,8 @@ export const setPeripheralToDefault = atom(null, async (get, set) => {
   });
   set(peripheralTypeAtom, "");
   set(viewPeripheralHistoryAtom, false);
+  set(globalSelectedassetAtom, null);
+  set(globalActionStatusAtom, false);
 });
 
 //adding peripheral handler

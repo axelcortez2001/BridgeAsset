@@ -1,5 +1,7 @@
 import {
   assetDataAtom,
+  globalActionStatusAtom,
+  globalSelectedassetAtom,
   selectedAssetDataAtom,
   selectedTypeAtom,
 } from "@/app/Homepage/AssetStore";
@@ -55,6 +57,8 @@ export const setMonitorDataToDefaultAtom = atom(null, async (get, set) => {
   set(userTypeAtom, "Employee");
   set(remarksAtom, "");
   set(tagCodeAtom, "");
+  set(globalSelectedassetAtom, null);
+  set(globalActionStatusAtom, false);
 });
 export const setMonitorDataFromSelectedAtom = atom(null, async (get, set) => {
   const selectedAssetData = get(selectedAssetDataAtom);

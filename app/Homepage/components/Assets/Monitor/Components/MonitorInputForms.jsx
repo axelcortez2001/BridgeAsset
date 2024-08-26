@@ -21,8 +21,10 @@ import {
   branchAtom,
   warrantyPeriodAtom,
   userTypeAtom,
+  setMonitorDataFromSelectedAtom,
 } from "../../Store/MonitorStore";
 import {
+  globalSelectedassetAtom,
   selectedAssetDataAtom,
   setLogicAssetHolderAtom,
 } from "@/app/Homepage/AssetStore";
@@ -46,8 +48,19 @@ const MonitorInputForms = ({ selectedType, employeeOptions }) => {
     viewMonitorHistoryAtom
   );
   const setLogicAssetHolder = useSetAtom(setLogicAssetHolderAtom);
-  const selectedAssetData = useAtomValue(selectedAssetDataAtom);
+  const [selectedAssetData, setSelectedAssetData] = useAtom(
+    selectedAssetDataAtom
+  );
+  const globalSelected = useAtomValue(globalSelectedassetAtom);
+  const setMonitorDataFromSelected = useSetAtom(setMonitorDataFromSelectedAtom);
+  useEffect(() => {
+    if (globalSelected !== null) {
+      setSelectedAssetData(globalSelected);
+      setMonitorDataFromSelected(globalSelected);
+    }
+  }, [globalSelected, setSelectedAssetData]);
   const setHistory = useSetAtom(historyMonitorActionFunction);
+
   //handlers
   const handleAssetHolder = (opt) => {
     setLogicAssetHolder(selectedAssetData?.asset_holder);

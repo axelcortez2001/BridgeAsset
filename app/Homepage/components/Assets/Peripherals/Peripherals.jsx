@@ -132,7 +132,6 @@ const Peripherals = ({ selectedType, setActionStatus, actionStatus }) => {
     selectedType,
     peripheralType,
     peripheralState,
-    actionStatus,
   ]);
   return (
     <div className='w-full flex flex-col h-full'>

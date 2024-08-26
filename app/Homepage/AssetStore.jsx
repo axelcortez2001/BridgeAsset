@@ -11,6 +11,8 @@ export const selectedAssetDataAtom = atom(null);
 export const assetDataAtom = atom(null);
 export const allAssetDataAtom = atom(null);
 export const userAtom = atom(null);
+export const globalActionStatusAtom = atom(false);
+export const globalSelectedassetAtom = atom(null);
 
 let supplierId = 0;
 export const supplierData = atom([
@@ -226,6 +228,7 @@ export const fetchUserAtom = atom(null, async (get, set) => {
           category: asset?.category,
           peripheral_type: asset?.peripheral_type,
           date_received: asset?.doi,
+          asset,
         };
         if (assetHolderActive.length > 0) {
           assetHolderActive = [...assetHolderActive, dataHolder];
@@ -240,6 +243,7 @@ export const fetchUserAtom = atom(null, async (get, set) => {
           asset_name: asset?.item,
           category: asset?.category,
           peripheral_type: asset?.peripheral_type,
+          asset,
         };
         if (assetHolderHistory.length > 0) {
           assetHolderHistory = [...assetHolderHistory, historyData];
@@ -267,6 +271,7 @@ export const fetchUserAtom = atom(null, async (get, set) => {
           userData = [...userData, returnedUser];
         }
       });
+      console.log("UserData: ", userData);
       set(userAtom, userData);
       return { success: true, message: "Users Found!", user: userData };
     } else {

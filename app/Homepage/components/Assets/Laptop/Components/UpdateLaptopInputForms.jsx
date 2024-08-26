@@ -1,5 +1,6 @@
 import {
   assetDataAtom,
+  globalSelectedassetAtom,
   selectedAssetDataAtom,
   setLogicAssetHolderAtom,
 } from "@/app/Homepage/AssetStore";
@@ -69,7 +70,13 @@ const UpdateLaptopInputForms = ({
   const [remarks, setRemarks] = useAtom(remarksAtom);
   const setLogicAssetHolder = useSetAtom(setLogicAssetHolderAtom);
   const setHistory = useSetAtom(historyActionfunction);
-
+  const globalSelected = useAtomValue(globalSelectedassetAtom);
+  useEffect(() => {
+    if (globalSelected !== null) {
+      setSelectedAssetData(globalSelected);
+      setDataFromSelected(globalSelected);
+    }
+  }, [globalSelected, setSelectedAssetData]);
   //handlers
   const handleInput = (field, newData, oldData) => {
     if (newData !== oldData) {
