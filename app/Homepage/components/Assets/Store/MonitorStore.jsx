@@ -16,6 +16,7 @@ export const monitorStatusData = [
   { name: "Active", id: 2, color: "bg-green-500" },
   { name: "Defective", id: 3, color: "bg-red-500" },
   { name: "Archive", id: 4, color: "bg-amber-900" },
+  { name: "Transfer", id: 5, color: "bg-purple-600" },
 ];
 export const actionMonitorHistoryAtom = atom([]);
 export const itemStatusOptionAtom = atom("NONE");

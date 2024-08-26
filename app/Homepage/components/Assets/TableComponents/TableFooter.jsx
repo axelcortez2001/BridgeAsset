@@ -82,7 +82,6 @@ const TableFooter = ({ column, data }) => {
       ></div>
     ));
   };
-  console.log("totalRow", totalRow());
   return (
     <td>
       {totalRow()?.accessorKey?.startsWith("unit_price") ? (
