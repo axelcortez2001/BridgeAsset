@@ -87,10 +87,8 @@ export const registerUser = atom(null, async (get, set) => {
 export const fetchAssetDataAtom = atom(null, async (get, set, loc) => {
   const response = await restGet("/assets");
   const selectedType = get(selectedTypeAtom);
-  console.log("response: ", response);
   if (response?.success) {
     if (loc === "users") {
-      console.log("trigger");
       set(allAssetDataAtom, response?.response);
       return { success: true, message: "Fetched Asset Data" };
     } else {

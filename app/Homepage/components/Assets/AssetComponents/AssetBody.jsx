@@ -13,7 +13,7 @@ import LaptopBlockView from "../AssetBlockView/LaptopBlockView";
 import MonitorBlockView from "../AssetBlockView/MonitorBlockView";
 import PeripheralBlockVIew from "../AssetBlockView/PeripheralBlockVIew";
 import { IoAddSharp } from "react-icons/io5";
-import { Tab, Tabs } from "@nextui-org/react";
+import { Input, Tab, Tabs } from "@nextui-org/react";
 import Table from "../TableComponents/Table";
 import TableGateWay from "../TableComponents/TableGateWay";
 
@@ -23,11 +23,13 @@ const AssetBody = () => {
   );
   const [actionStatus, setActionStatus] = useState(globalActionStatus);
   const [assetData, setAssetData] = useAtom(assetDataAtom);
+  const [oldAssetData, setOldAssetData] = useState(null);
   const selectedType = useAtomValue(selectedTypeAtom);
   const [assetLoading, setAssetLoading] = useState(false);
   const fetchAssetData = useSetAtom(fetchAssetDataAtom);
   const [selected, setSelected] = useState(selectedType);
   const [tabState, setTabState] = useState("Block");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const handleActionStatus = (stat) => {
     setActionStatus(!stat);
@@ -46,8 +48,10 @@ const AssetBody = () => {
           const asset = await fetchAssetData();
           if (asset.success) {
             setAssetData(asset.response);
+            setOldAssetData(asset.response);
           } else {
             setAssetData([]);
+            setOldAssetData([]);
           }
         }
       } catch (e) {
@@ -58,42 +62,81 @@ const AssetBody = () => {
     };
     handleFetchData();
   }, [assetData, selectedType]);
-  console.log("Asset: ", assetData);
+  const [searchQuery, setSearchQuery] = useState("");
+  console.log(assetData);
+  useEffect(() => {
+    if (isSearchOpen) {
+      if (searchQuery === "") {
+        setAssetData(oldAssetData);
+      } else {
+        const filtered = oldAssetData.filter(
+          (asset) =>
+            asset?.item?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            asset?.serial_number
+              ?.toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            asset?.asset_holder?.name
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            asset?.branch?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            asset?.peripheral_type
+              ?.toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            asset?.supplier?.name
+              ?.toLowerCase()
+              .includes(searchQuery.toLowerCase())
+        );
+        setAssetData(filtered);
+      }
+    }
+  }, [searchQuery]);
   return (
-    <div className='p-2'>
-      <AnimatePresence>
-        {actionStatus && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "" }} // 24rem is equivalent to h-96 in Tailwind CSS
-            exit={{ opacity: 0, height: 0 }}
-            className='border w-full overflow-hidden'
-          >
-            <AddAsset
-              setActionStatus={handleActionStatus}
-              actionStatus={actionStatus}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <div className='flex items-center gap-2'>
-        {!actionStatus ? (
-          <div>
-            <button
-              className='border rounded-md p-2 bg-amber-500'
-              onClick={() => handleActionStatus(actionStatus)}
+    <div className=''>
+      <div className='w-full sticky top-0 z-50  bg-white'>
+        <AnimatePresence>
+          {actionStatus && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "" }} // 24rem is equivalent to h-96 in Tailwind CSS
+              exit={{ opacity: 0, height: 0 }}
+              className='border w-full overflow-hidden'
             >
-              <IoAddSharp />
-            </button>
+              <AddAsset
+                setActionStatus={handleActionStatus}
+                actionStatus={actionStatus}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className='flex items-center gap-2'>
+          {!actionStatus ? (
+            <div>
+              <button
+                className='border rounded-md p-2 bg-amber-500'
+                onClick={() => handleActionStatus(actionStatus)}
+              >
+                <IoAddSharp />
+              </button>
+            </div>
+          ) : null}
+          <div>
+            <Tabs selectedKey={tabState} onSelectionChange={handleTabChange}>
+              <Tab key='Block' title='Block' />
+              <Tab key='Table' title='Table' />
+            </Tabs>
           </div>
-        ) : null}
-        <div>
-          <Tabs selectedKey={tabState} onSelectionChange={handleTabChange}>
-            <Tab key='Block' title='Block' />
-            <Tab key='Table' title='Table' />
-          </Tabs>
+          <div>
+            <Input
+              className='min-w-60 h-full border rounded-md'
+              placeholder='Search here...'
+              size='sm'
+              onFocus={() => setIsSearchOpen(true)}
+              onBlur={() => setIsSearchOpen(false)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
-        <div>Filtering here...</div>
       </div>
       {tabState === "Block" ? (
         <div className='flex flex-col gap-x-5'>
