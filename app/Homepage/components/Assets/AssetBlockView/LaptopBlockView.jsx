@@ -57,7 +57,13 @@ const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
     "Irreparable",
     "OTHERS",
   ]);
-  const tableOptions = ["Active", "SOH", "For Repair", "Irreparable", "OTHERS"];
+  const tableOptions = [
+    { name: "Active", color: "green-500" },
+    { name: "SOH", color: "amber-500" },
+    { name: "For Repair", color: "red-500" },
+    { name: "Irreparable", color: "gray-800" },
+    { name: "OTHERS", color: "orange-700" },
+  ];
   const toggleAccordion = (opt) => {
     if (accordionArray.some((acc) => acc === opt)) {
       setAccordionArray(accordionArray.filter((acc) => acc !== opt));
@@ -69,7 +75,6 @@ const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
     const newFilteredLaptopAsset = assetData?.filter((asset) => {
       return asset?.item_stats === opt;
     });
-    console.log(newFilteredLaptopAsset);
     return newFilteredLaptopAsset;
   };
   return assetLoading ? (
@@ -77,11 +82,16 @@ const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
   ) : (
     <>
       {tableOptions.map((option, index) => (
-        <div className='flex flex-col w-full p-2 gap-3' key={index}>
-          <div className='border rounded-md p-2 max-w-full '>
+        <div
+          className={`text-${option.color} flex flex-col w-full p-2 gap-3 max-h-screen overflow-y-auto`}
+          key={index}
+        >
+          <div
+            className={`border border-${option.color} rounded-md p-2 max-w-full `}
+          >
             <div
               className='flex items-center gap-5 hover:cursor-pointer'
-              onClick={() => toggleAccordion(option)}
+              onClick={() => toggleAccordion(option.name)}
             >
               <motion.div
                 className='font-semibold'
@@ -89,7 +99,7 @@ const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
                 animate={{
                   rotate:
                     accordionArray &&
-                    accordionArray.some((acc) => acc === option)
+                    accordionArray.some((acc) => acc === option.name)
                       ? 90
                       : 0,
                 }}
@@ -98,16 +108,16 @@ const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
                 {">"}
               </motion.div>
               <p>
-                {option} -{" "}
+                {option.name} -{" "}
                 <span>
-                  {filterLaptopAsset(option)?.length} item
-                  {filterLaptopAsset(option)?.length > 1 ? "s" : ""}
+                  {filterLaptopAsset(option.name)?.length} item
+                  {filterLaptopAsset(option.name)?.length > 1 ? "s" : ""}
                 </span>
               </p>
             </div>
             <AnimatePresence>
               {accordionArray &&
-                accordionArray.some((acc) => acc === option) && (
+                accordionArray.some((acc) => acc === option.name) && (
                   <motion.div
                     className='mt-2 w-full overflow-x-auto p-2'
                     initial={{ opacity: 0, height: 0 }}
@@ -117,16 +127,18 @@ const AssetBlockView = ({ setActionStatus, actionStatus, assetLoading }) => {
                   >
                     <div className='w-full h-full flex items-center justify-center mt-2'>
                       <div className='grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2 w-full'>
-                        {filterLaptopAsset(option) &&
-                          filterLaptopAsset(option)?.length > 0 &&
-                          filterLaptopAsset(option)?.map((asset, index) => (
-                            <Blocks
-                              key={index}
-                              selectAsset={handleSelectAsset}
-                              asset={asset}
-                              delAsset={handleDelete}
-                            />
-                          ))}
+                        {filterLaptopAsset(option.name) &&
+                          filterLaptopAsset(option.name)?.length > 0 &&
+                          filterLaptopAsset(option.name)?.map(
+                            (asset, index) => (
+                              <Blocks
+                                key={index}
+                                selectAsset={handleSelectAsset}
+                                asset={asset}
+                                delAsset={handleDelete}
+                              />
+                            )
+                          )}
                       </div>
                     </div>
                   </motion.div>
