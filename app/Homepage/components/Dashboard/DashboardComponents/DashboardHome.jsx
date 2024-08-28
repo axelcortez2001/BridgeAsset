@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import AssetLoading from "../../LoadingComponents/AssetLoading";
 import { Tab, Tabs } from "@nextui-org/react";
-import AllComponent from "./AllComponents/page";
-import LaptopComponent from "./LaptopComponents/page";
-import MonitorComponent from "./MonitorComponents/page";
-import PeripheralComponent from "./PeripheralComponents/page";
+import AllComponent from "./AllComponents/AllComponent";
+import LaptopComponent from "./LaptopComponents/LaptopComponent";
+import MonitorComponent from "./MonitorComponents/MonitorComponent";
+import PeripheralComponent from "./PeripheralComponents/PeripheralComponent";
 
 const DashboardHome = ({ dashboardData }) => {
   const [tabLocation, setTabLocation] = useState("All");

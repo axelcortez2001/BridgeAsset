@@ -62,4 +62,5 @@
 
 `Implemented Data fetching and filtering based from asset category for better visualization and ease to function on dashboard` 
     - Deployment Failed: dashboard components were read as server 
-    - Testing deployment: input `use client` for every component's page
+    - Testing deployment: input `use client` for every component's page(FAILED)
+    - Testing deployment (v2) : rename page components with their specific component title
