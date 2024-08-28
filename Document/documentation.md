@@ -57,3 +57,6 @@
 `Filtering for asset component page`
 `Admin suggested to add a logic function where in when the doi of an asset is more than 3 years up to now, it will return "more then 3 years"`
 `Documentations`   
+
+### August 28, 2024
+`Implemented Data fetching and filtering based from asset category for better visualization and ease to function on dashboard`
