@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { computeTotalCost } from "../AllComponents/function";
 

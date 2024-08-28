@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { categorizedAsset, computeTotalCost } from "./function";
 import { Card } from "@nextui-org/react";
