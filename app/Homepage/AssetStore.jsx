@@ -2,6 +2,7 @@ import { fetchUserAttributes } from "aws-amplify/auth";
 import { atom } from "jotai";
 import { getUsers, restDelete, restGet, restInsert } from "../utils";
 import { peripheralTypeAtom } from "./components/Assets/Store/PeripheralStore";
+import { dashBoardDataAtom } from "./components/Dashboard/DashboardStore/MainStore";
 
 export const selectedTypeAtom = atom("laptop");
 export const employeeOptionsAtom = atom([]);
@@ -13,6 +14,7 @@ export const allAssetDataAtom = atom(null);
 export const userAtom = atom(null);
 export const globalActionStatusAtom = atom(false);
 export const globalSelectedassetAtom = atom(null);
+export const updateStatusAtom = atom(false);
 
 let supplierId = 0;
 export const supplierData = atom([
@@ -78,6 +80,7 @@ export const registerUser = atom(null, async (get, set) => {
   const data = get(userDataAtom);
   const userResponse = await restInsert("/users", data.value);
   if (userResponse?.success) {
+    set(updateStatusAtom, true);
     return { success: true, userResponse };
   } else {
     return { success: false };
@@ -85,15 +88,16 @@ export const registerUser = atom(null, async (get, set) => {
 });
 
 export const fetchAssetDataAtom = atom(null, async (get, set, loc) => {
-  const response = await restGet("/assets");
+  const assetFromDashboard = get(dashBoardDataAtom);
   const selectedType = get(selectedTypeAtom);
-  if (response?.success) {
+  console.log("Selected type: ", selectedType);
+  if (assetFromDashboard) {
     if (loc === "users") {
-      set(allAssetDataAtom, response?.response);
+      set(allAssetDataAtom, assetFromDashboard);
       return { success: true, message: "Fetched Asset Data" };
     } else {
-      const willReturn = response?.response;
-      if (response && response?.response?.length > 0) {
+      const willReturn = assetFromDashboard;
+      if (assetFromDashboard.length > 0) {
         const finalReturn = willReturn.filter((asset) => {
           return asset?.category === selectedType;
         });
@@ -115,17 +119,42 @@ export const setSideBarLocation = atom(null, (get, set, location) => {
 export const fetchEmployeeAtom = atom(null, async (get, set, category) => {
   try {
     const assetData = get(assetDataAtom);
+
     const { user } = await getUsers("/users");
-    if (category === "peripheral") {
-      const peripheralType = get(peripheralTypeAtom);
-      if (peripheralType === "others") {
-        set(filteredEmployeesAtom, user);
-        set(employeeOptionsAtom, user);
-      } else if (peripheralType !== "") {
-        const peripheralAssets = assetData.filter((asset) => {
-          return asset?.peripheral_type === peripheralType;
-        });
-        const assetDataWithHolder = peripheralAssets
+    console.log("Asset Data from fetchEMployee: ", assetData);
+    console.log("user Data from fetchEMployee: ", user);
+    if (assetData !== null && user !== null) {
+      if (category === "peripheral") {
+        const peripheralType = get(peripheralTypeAtom);
+        if (peripheralType === "others") {
+          set(filteredEmployeesAtom, user);
+          set(employeeOptionsAtom, user);
+        } else if (peripheralType !== "") {
+          const peripheralAssets = assetData.filter((asset) => {
+            return asset?.peripheral_type === peripheralType;
+          });
+          const assetDataWithHolder = peripheralAssets
+            .flatMap((asset) => {
+              if (asset?.asset_holder !== null) {
+                return asset?.asset_holder.sub;
+              } else {
+                return null;
+              }
+            })
+            .filter((asset) => {
+              return asset !== null;
+            });
+          const returnedUser = user.filter(
+            (user) => !assetDataWithHolder.includes(user.sub)
+          );
+          set(filteredEmployeesAtom, returnedUser);
+          set(employeeOptionsAtom, returnedUser);
+        } else {
+          set(filteredEmployeesAtom, []);
+          set(employeeOptionsAtom, []);
+        }
+      } else {
+        const assetDataWithHolder = assetData
           .flatMap((asset) => {
             if (asset?.asset_holder !== null) {
               return asset?.asset_holder.sub;
@@ -136,33 +165,13 @@ export const fetchEmployeeAtom = atom(null, async (get, set, category) => {
           .filter((asset) => {
             return asset !== null;
           });
+
         const returnedUser = user.filter(
           (user) => !assetDataWithHolder.includes(user.sub)
         );
         set(filteredEmployeesAtom, returnedUser);
         set(employeeOptionsAtom, returnedUser);
-      } else {
-        set(filteredEmployeesAtom, []);
-        set(employeeOptionsAtom, []);
       }
-    } else {
-      const assetDataWithHolder = assetData
-        .flatMap((asset) => {
-          if (asset?.asset_holder !== null) {
-            return asset?.asset_holder.sub;
-          } else {
-            return null;
-          }
-        })
-        .filter((asset) => {
-          return asset !== null;
-        });
-
-      const returnedUser = user.filter(
-        (user) => !assetDataWithHolder.includes(user.sub)
-      );
-      set(filteredEmployeesAtom, returnedUser);
-      set(employeeOptionsAtom, returnedUser);
     }
   } catch (e) {
     console.log(e);
@@ -200,6 +209,7 @@ export const deleteAssetDataAtom = atom(null, async (get, set, _id) => {
       const newAssetData = get(assetDataAtom).filter(
         (asset) => asset._id !== _id
       );
+      set(updateStatusAtom, true);
       set(assetDataAtom, newAssetData);
       return { success: true, response };
     } else {

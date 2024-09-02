@@ -23,6 +23,7 @@ import {
   actionPeripheralHistoryAtom,
   setPeripheralToDefault,
 } from "./Assets/Store/PeripheralStore";
+import { expandIndexAtom } from "./Dashboard/DashboardComponents/AllComponents/Charts/AllComponentsStore";
 
 const Sidebar = () => {
   const dashboardLocation = useAtomValue(sideBarLocation);
@@ -43,6 +44,7 @@ const Sidebar = () => {
     setMonitorHistory([]);
     setPeripheralHistory([]);
   };
+  const setExpandIndex = useSetAtom(expandIndexAtom);
   const setPeripheralDefault = useSetAtom(setPeripheralToDefault);
   const handleNavigation = async (location, type) => {
     setEmployeesToDefault([]);
@@ -54,6 +56,7 @@ const Sidebar = () => {
     setMonitorToDefault();
     setHistoryDefault();
     setPeripheralDefault();
+    setExpandIndex(null);
   };
 
   const toggleAccordion = () => {

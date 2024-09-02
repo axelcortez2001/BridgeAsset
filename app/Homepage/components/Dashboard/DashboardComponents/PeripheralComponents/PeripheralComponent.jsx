@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { computeTotalCost } from "../AllComponents/function";
+import TotalCostCard from "../TotalCostCard";
 
 const PeripheralComponent = ({ dashboardData }) => {
   return (
@@ -8,8 +9,11 @@ const PeripheralComponent = ({ dashboardData }) => {
       <p>
         Total Items: <span>{dashboardData?.length}</span>
       </p>
-      <div className='border rounded-md h-20 w-20'>
-        Total Cost: {computeTotalCost(dashboardData)}
+      <div className='flex flex-wrap gap-5'>
+        <TotalCostCard
+          cost={computeTotalCost(dashboardData)}
+          loc='peripheral'
+        />
       </div>
     </div>
   );

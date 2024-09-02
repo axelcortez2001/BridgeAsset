@@ -7,7 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { laptopColumns } from "./TableData";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, select, useDisclosure } from "@nextui-org/react";
 import TableFooter from "./TableFooter";
 import useHandleSelectAssetLaptop from "../Functions/laptopFunction";
 
@@ -54,6 +54,7 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
     setSelectedTd(opt);
   };
   const handleSelectAsset = () => {
+    console.log("Selected TD: ", selectedTD);
     if (selectedTD?.category === "laptop") {
       handleSelectLaptop(selectedTD);
       onOpenChange(false);

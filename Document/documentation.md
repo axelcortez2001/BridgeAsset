@@ -64,3 +64,13 @@
     - Deployment Failed: dashboard components were read as server 
     - Testing deployment: input `use client` for every component's page(FAILED)
     - Testing deployment (v2) : rename page components with their specific component title
+
+### September 02, 2024
+`Expandable asset categories chart for better asset dashboard visualization`
+## Features 
+ - clickable bar chart
+ - show specific asset based from category selected at bar chart
+ - navigate to update asset component based from the selected asset at the table view of the selected category at bar chart
+
+    - `New Issue found` ->  Updates from asset and user component we're not reflecting at dashboard component
+    - `FIXED`

@@ -10,12 +10,12 @@ import {
 
 import React from "react";
 
-const TotalCostCard = ({ cost }) => {
+const TotalCostCard = ({ cost, loc }) => {
   return (
-    <Card className='max-w-[400px]'>
+    <Card className='max-w-[400px]  hover:cursor-pointer hover:transform'>
       <CardHeader className='flex gap-3'>
         <div className='flex flex-col'>
-          <p className='text-md'>Total Cost</p>
+          <p className='text-xl capitalize font-semibold '>{loc} Cost</p>
           <p className='text-small text-default-500'>
             Cost accumulated from all assets
           </p>
@@ -23,10 +23,8 @@ const TotalCostCard = ({ cost }) => {
       </CardHeader>
       <Divider />
       <CardBody>
-        <p>PHP {cost}</p>
+        <p className='text-blue-400'>PHP {cost}</p>
       </CardBody>
-      {/* <Divider />
-      <CardFooter></CardFooter> */}
     </Card>
   );
 };
