@@ -1,46 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { Pie, Bar, Line, Doughnut } from "react-chartjs-2";
-import { IoMdExpand } from "react-icons/io";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-} from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-import { dynamicValues } from "../function";
-import ExpandableCategories from "./ExpandableCategories";
+import React from "react";
 import { Button, useDisclosure } from "@nextui-org/react";
-import { useAtom, useSetAtom } from "jotai";
-import { expandIndexAtom } from "./AllComponentsStore";
-// Register the components
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  ChartDataLabels
-);
-
-const Categories = ({ chartData, chartOpen }) => {
+import { useAtom } from "jotai";
+import { expandIndexAtom } from "../../AllComponents/Charts/AllComponentsStore";
+import { dynamicValues } from "../../AllComponents/function";
+import { IoMdExpand } from "react-icons/io";
+import ExpandableCategories from "../../AllComponents/Charts/ExpandableCategories";
+import CustomChart from "../CustomChart";
+const AllComponentsGateway = ({ chartData, chartOpen }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [expandIndex, setExpandIndex] = useAtom(expandIndexAtom);
   const labels = Object.keys(chartData.newAsset);
-  const dataValues = labels.map(
-    (category) => chartData.newAsset[category].length
-  );
-
   const data = dynamicValues(chartData, labels, expandIndex);
-  // Chart options
+
   const options = {
     responsive: true,
     maintainAspectRatio: true,
@@ -79,10 +50,8 @@ const Categories = ({ chartData, chartOpen }) => {
       onOpenChange(true);
     }
   };
-
   return (
     <div className='w-full max-h-[700px] flex items-center flex-col  p-2 '>
-      {/* header */}
       <div className='w-full p-2 flex flex-row justify-between items-center'>
         <h2>Asset Categories</h2>
         {!chartOpen && (
@@ -102,8 +71,7 @@ const Categories = ({ chartData, chartOpen }) => {
           </div>
         )}
       </div>
-
-      <Bar data={data} options={options} />
+      <CustomChart chartData={data} options={options} type='Bar' />
       <ExpandableCategories
         onOpen={onOpen}
         isOpen={isOpen}
@@ -116,4 +84,4 @@ const Categories = ({ chartData, chartOpen }) => {
   );
 };
 
-export default Categories;
+export default AllComponentsGateway;

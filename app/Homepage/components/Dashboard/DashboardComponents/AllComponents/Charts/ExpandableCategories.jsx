@@ -7,7 +7,6 @@ import {
   ModalFooter,
   Button,
 } from "@nextui-org/react";
-import Categories from "./Categories";
 import { computeStat, expandAllFiltering } from "../function";
 import Table from "@/app/Homepage/components/Assets/TableComponents/Table";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -16,6 +15,7 @@ import {
   globalActionStatusAtom,
   sideBarLocation,
 } from "@/app/Homepage/AssetStore";
+import AllComponentsGateway from "../../ChartComponents/ChartGateWay/AllComponentsGateway";
 
 const ExpandableCategories = ({
   isOpen,
@@ -73,7 +73,10 @@ const ExpandableCategories = ({
             <ModalBody>
               <div className='border rounded-md p-2 flex w-full flex-col items-center justify-start'>
                 <div className='w-3/4'>
-                  <Categories chartData={chartData} chartOpen={true} />
+                  <AllComponentsGateway
+                    chartData={chartData}
+                    chartOpen={true}
+                  />
                 </div>
 
                 {expandIndex !== null && (
