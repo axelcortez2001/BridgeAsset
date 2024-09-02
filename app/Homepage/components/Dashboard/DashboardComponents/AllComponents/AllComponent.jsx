@@ -6,7 +6,6 @@ import TotalCostCard from "../TotalCostCard";
 import Categories from "./Charts/Categories";
 
 const AllComponent = ({ dashboardData }) => {
-  console.log(categorizedAsset(dashboardData));
   return (
     <div className='w-full flex flex-col gap-5 h-screen'>
       <p>
@@ -15,6 +14,7 @@ const AllComponent = ({ dashboardData }) => {
       <div className='flex flex-wrap gap-5'>
         <TotalCostCard cost={computeTotalCost(dashboardData)} />
         <div className='border w-full rounded-md p-2'>
+          <div className></div>
           <Categories chartData={categorizedAsset(dashboardData)} />
         </div>
       </div>
