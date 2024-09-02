@@ -22,6 +22,24 @@ export const categorizedAsset = (data) => {
   };
   return { newAsset };
 };
+
+export const categorizedBranch = (data) => {
+  let laoag = [];
+  let makati = [];
+  let australia = [];
+  data.forEach((item) => {
+    if (item.branch.toLocaleLowerCase() === "laoag") laoag.push(item);
+    else if (item.branch.toLocaleLowerCase() === "makati") makati.push(item);
+    else if (item.branch.toLocaleLowerCase() === "australia")
+      australia.push(item);
+  });
+  const newAsset = {
+    laoag: laoag,
+    makati: makati,
+    australia: australia,
+  };
+  return { newAsset };
+};
 export const filterCategoryStatus = (chartData, labels, stat) => {
   const data = labels.map((category) => {
     let filteredArray = [];

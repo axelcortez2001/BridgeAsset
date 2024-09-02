@@ -74,3 +74,4 @@
 
     - `New Issue found` ->  Updates from asset and user component we're not reflecting at dashboard component
     - `FIXED`
+- trnasform chart component into a reusable chart component for bar and pie chart

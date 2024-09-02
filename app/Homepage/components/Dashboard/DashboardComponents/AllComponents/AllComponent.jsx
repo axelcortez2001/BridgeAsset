@@ -1,9 +1,14 @@
 "use client";
 import React, { useEffect } from "react";
-import { categorizedAsset, computeTotalCost } from "./function";
+import {
+  categorizedAsset,
+  categorizedBranch,
+  computeTotalCost,
+} from "./function";
 import { Card } from "@nextui-org/react";
 import TotalCostCard from "../TotalCostCard";
-import Categories from "./Charts/Categories";
+import AllComponentsGateway from "../ChartComponents/ChartGateWay/AllComponentsGateway";
+import BranchPieGateway from "../ChartComponents/ChartGateWay/BranchPieGateway";
 
 const AllComponent = ({ dashboardData }) => {
   const filteredLaptop = dashboardData.filter(
@@ -34,7 +39,10 @@ const AllComponent = ({ dashboardData }) => {
           />
         </div>
         <div className='border relative w-full rounded-md p-2 overflow-auto resize'>
-          <Categories chartData={categorizedAsset(dashboardData)} />
+          <AllComponentsGateway chartData={categorizedAsset(dashboardData)} />
+        </div>
+        <div className='border relative  rounded-md p-2 overflow-auto resize'>
+          <BranchPieGateway chartData={categorizedBranch(dashboardData)} />
         </div>
       </div>
     </div>
