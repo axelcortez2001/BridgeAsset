@@ -16,6 +16,7 @@ import useHandleSelectAssetMonitor from "../Functions/MonitorFunction";
 import useHandleSelectAssetPeripheral from "../Functions/PeripheralFunction";
 const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
   const data = assetData;
+  console.log("Data at table: ", data);
   const columns = laptopColumns;
   const table = useReactTable({
     data,
@@ -135,7 +136,7 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
                           row.getIsSelected()
                             ? "bg-orange-700 text-red-400"
                             : ""
-                        } text-sm text-center border-b `}
+                        }  text-center border-b `}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,

@@ -14,7 +14,10 @@ import {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { dynamicValues } from "../function";
-
+import ExpandableCategories from "./ExpandableCategories";
+import { Button, useDisclosure } from "@nextui-org/react";
+import { useAtom, useSetAtom } from "jotai";
+import { expandIndexAtom } from "./AllComponentsStore";
 // Register the components
 ChartJS.register(
   ArcElement,
@@ -28,14 +31,15 @@ ChartJS.register(
   ChartDataLabels
 );
 
-const Categories = ({ chartData }) => {
+const Categories = ({ chartData, chartOpen }) => {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [expandIndex, setExpandIndex] = useAtom(expandIndexAtom);
   const labels = Object.keys(chartData.newAsset);
   const dataValues = labels.map(
     (category) => chartData.newAsset[category].length
   );
 
-  console.log("Data values: ", dynamicValues(chartData, labels));
-  const data = dynamicValues(chartData, labels);
+  const data = dynamicValues(chartData, labels, expandIndex);
   // Chart options
   const options = {
     responsive: true,
@@ -48,17 +52,32 @@ const Categories = ({ chartData }) => {
     },
     plugins: {
       legend: {
-        position: "top",
+        position: "right",
       },
       tooltip: {
         callbacks: {
           label: (context) => {
-            console.log("Context: ", context);
             return `${context.dataset.label}: ${context.raw} items`;
           },
         },
       },
     },
+    onClick: (event, elements, context) => {
+      if (elements.length > 0) {
+        const elementIndex = elements[0].index;
+        handleModalIndex(elements[0]?.datasetIndex);
+      }
+    },
+  };
+  const handleModalIndex = (dataIndex) => {
+    if (expandIndex !== null) {
+      setExpandIndex(null);
+    } else {
+      setExpandIndex(dataIndex);
+    }
+    if (!chartOpen) {
+      onOpenChange(true);
+    }
   };
 
   return (
@@ -66,14 +85,33 @@ const Categories = ({ chartData }) => {
       {/* header */}
       <div className='w-full p-2 flex flex-row justify-between items-center'>
         <h2>Asset Categories</h2>
-
-        <IoMdExpand
-          size={20}
-          title='Expand'
-          className='hover:cursor-pointer hover:bg-gray-200'
-        />
+        {!chartOpen && (
+          <IoMdExpand
+            size={20}
+            title='Expand'
+            className='hover:cursor-pointer hover:bg-gray-200'
+            onClick={() => handleModalIndex(null)}
+          />
+        )}
+        {expandIndex !== null && (
+          <div
+            className='border rounded-md'
+            onClick={() => handleModalIndex(null)}
+          >
+            Clear
+          </div>
+        )}
       </div>
+
       <Bar data={data} options={options} />
+      <ExpandableCategories
+        onOpen={onOpen}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        className='p-2 max-h-screen'
+        chartData={chartData}
+        data={data}
+      />
     </div>
   );
 };
