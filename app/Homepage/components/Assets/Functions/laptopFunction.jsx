@@ -20,6 +20,7 @@ const useHandleSelectAssetLaptop = (setActionStatus) => {
   const setItemStatusOption = useSetAtom(itemStatusOptionAtom);
 
   const handleSelectAsset = async (opt) => {
+    console.log("Selected Asset at Laptop: ", opt);
     setEmployeesToDefault();
     await setDataToDefault();
     setSelectedAssetData(opt);

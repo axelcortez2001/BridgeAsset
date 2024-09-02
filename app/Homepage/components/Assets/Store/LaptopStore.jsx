@@ -4,6 +4,7 @@ import {
   globalSelectedassetAtom,
   selectedAssetDataAtom,
   selectedTypeAtom,
+  updateStatusAtom,
 } from "@/app/Homepage/AssetStore";
 import { restInsert, restUpdate } from "@/app/utils";
 import { fetchUserAttributes } from "aws-amplify/auth";
@@ -124,6 +125,7 @@ export const SaveLaptopAtom = atom(null, async (get, set) => {
       const newAssetData = oldAsset?.length
         ? [...oldAsset, response.response]
         : [response.response];
+      set(updateStatusAtom, true);
       set(assetDataAtom, newAssetData);
       return { success: true, response };
     } else {
@@ -195,7 +197,7 @@ export const updateLaptopAtom = atom(null, async (get, set) => {
       const newAssetData = get(assetDataAtom).map((asset) =>
         asset._id === oldAssetData._id ? assetData : asset
       );
-      console.log("New AssetData: ", newAssetData);
+      set(updateStatusAtom, true);
       set(assetDataAtom, newAssetData);
       return { success: true, response };
     } else {

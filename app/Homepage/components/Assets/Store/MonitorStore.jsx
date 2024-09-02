@@ -4,6 +4,7 @@ import {
   globalSelectedassetAtom,
   selectedAssetDataAtom,
   selectedTypeAtom,
+  updateStatusAtom,
 } from "@/app/Homepage/AssetStore";
 import { restInsert, restUpdate } from "@/app/utils";
 import { fetchUserAttributes } from "aws-amplify/auth";
@@ -127,6 +128,7 @@ export const handleAddNewMonitorAtom = atom(null, async (get, set) => {
       const newAssetData = oldAsset?.length
         ? [...oldAsset, response.response]
         : [response.response];
+      set(updateStatusAtom, true);
       set(assetDataAtom, newAssetData);
       return { success: true, response };
     }
@@ -191,6 +193,7 @@ export const updateMonitorAtom = atom(null, async (get, set, action) => {
       const newAssetData = get(assetDataAtom).map((asset) =>
         asset._id === oldAssetData._id ? assetData : asset
       );
+      set(updateStatusAtom, true);
       set(assetDataAtom, newAssetData);
       return { success: true, response };
     } else {

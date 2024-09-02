@@ -1,5 +1,5 @@
 "use client";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import React, { useEffect, useState } from "react";
 
 import {
@@ -8,15 +8,17 @@ import {
 } from "./DashboardStore/MainStore";
 import DashboardHome from "./DashboardComponents/DashboardHome";
 import AssetLoading from "../LoadingComponents/AssetLoading";
+import { updateStatusAtom } from "../../AssetStore";
 
 const Dashboard = () => {
   const [dashboardLoading, setDashboardLoading] = useState(false);
   const fetchDashBoard = useSetAtom(fetchDashboardDataAtom);
+  const [updateStatus, setUpdateStatus] = useAtom(updateStatusAtom);
   const dashboardData = useAtomValue(dashBoardDataAtom);
 
   useEffect(() => {
     const getDashboardData = async () => {
-      if (dashboardData === null) {
+      if (dashboardData === null || updateStatus === true) {
         setDashboardLoading(true);
         try {
           const res = await fetchDashBoard();
@@ -29,6 +31,7 @@ const Dashboard = () => {
           console.log("Error: ", error);
         } finally {
           setDashboardLoading(false);
+          setUpdateStatus(false);
         }
       }
     };
