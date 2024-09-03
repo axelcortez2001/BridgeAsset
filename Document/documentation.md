@@ -75,3 +75,15 @@
     - `New Issue found` ->  Updates from asset and user component we're not reflecting at dashboard component
     - `FIXED`
 - trnasform chart component into a reusable chart component for bar and pie chart
+
+### September 03, 2024
+`Creating reusable chart for date line and fixed issue on tab selection at dashboard`
+    
+## NOTE: inclusion of creation of folder and files from last updates
+
+    - Create folder ChartGateWay for gateways of components to chart component
+    - Created an AllComponentsGateway file
+    - Created BranchPieGateway file
+    - Created DateChartGateway
+        - added categorizeDate function and logic
+    - Implemented the reusable date chart to component (All, Laptop, Monitor and Peripheral)

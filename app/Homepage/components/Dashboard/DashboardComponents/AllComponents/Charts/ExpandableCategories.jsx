@@ -10,7 +10,7 @@ import {
 import { computeStat, expandAllFiltering } from "../function";
 import Table from "@/app/Homepage/components/Assets/TableComponents/Table";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { expandIndexAtom } from "./AllComponentsStore";
+import { expandIndexAtom, tabLocationAtom } from "./AllComponentsStore";
 import {
   globalActionStatusAtom,
   sideBarLocation,
@@ -25,15 +25,17 @@ const ExpandableCategories = ({
   data,
 }) => {
   const [expandIndex, setExpandIndex] = useAtom(expandIndexAtom);
-  const [activeLaptopAsset, setActiveLaptopAsset] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
   const [actionStatus, setActionStatus] = useAtom(globalActionStatusAtom);
+  const tabLocation = useAtomValue(tabLocationAtom);
+  const [tabLocationState, setTabLocationState] = useState(tabLocation);
   const setSideBar = useSetAtom(sideBarLocation);
   const handleActionStatus = (stat) => {
     onOpenChange(false);
     setSideBar("assets");
     setActionStatus(!stat);
   };
+
   const indexDir = [
     { id: 0, name: "Stock" },
     { id: 1, name: "Active" },
@@ -44,16 +46,16 @@ const ExpandableCategories = ({
     const triggerFunctions = () => {
       if (filteredData === null) {
         const filterD = expandAllFiltering(data, expandIndex);
-        const activeLaptop = filterD?.laptop?.Active;
+        console.log("Filtered data: ", filterD);
         setFilteredData(filterD);
-        setActiveLaptopAsset(activeLaptop);
+        setTabLocationState(tabLocation);
       }
     };
     triggerFunctions();
-  }, [activeLaptopAsset, filteredData]);
+  }, [filteredData, tabLocation, data]);
 
   const returnText = indexDir.find((ind) => ind.id === expandIndex)?.name;
-  console.log("returnTextInd: ", returnText);
+
   const handleCloseModal = () => {
     setExpandIndex(null);
     onOpenChange(false);

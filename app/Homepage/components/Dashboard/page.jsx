@@ -19,9 +19,11 @@ const Dashboard = () => {
   useEffect(() => {
     const getDashboardData = async () => {
       if (dashboardData === null || updateStatus === true) {
+        console.log("Trigger main event");
         setDashboardLoading(true);
         try {
           const res = await fetchDashBoard();
+          console.log("res: ", res);
           if (res?.success) {
             console.log("Response: ", res?.message);
           } else {
@@ -40,14 +42,11 @@ const Dashboard = () => {
 
   return dashboardLoading ? (
     <AssetLoading />
-  ) : dashboardData && dashboardData?.length < 1 ? (
+  ) : dashboardData && dashboardData?.length <= 0 ? (
     <div>No Data Available</div>
   ) : (
     <div className='relative max-h-screen border overflow-y-auto w-full'>
-      <DashboardHome
-        dashboardData={dashboardData}
-        dashboardLoading={dashboardLoading}
-      />
+      <DashboardHome dashboardLoading={dashboardLoading} />
     </div>
   );
 };
