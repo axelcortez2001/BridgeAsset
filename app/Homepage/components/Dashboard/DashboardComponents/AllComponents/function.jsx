@@ -40,6 +40,29 @@ export const categorizedBranch = (data) => {
   };
   return { newAsset };
 };
+
+export const categorizedDate = (data) => {
+  // Step 1: Sort Data by Date in Descending Order
+  const sortedData = data.sort((a, b) => new Date(b.dop) - new Date(a.dop));
+  // Step 2: Group by Date and Sum Unit Prices
+  const dateMap = sortedData.reduce((acc, item) => {
+    const date = item.dop;
+    if (!acc[date]) {
+      acc[date] = 0;
+    }
+    acc[date] += item.unit_price;
+    return acc;
+  }, {});
+  // Step 3: Convert Grouped Data to Arrays
+  const labels = Object.keys(dateMap);
+  const unitPrices = Object.values(dateMap);
+  // Step 4: Sort Arrays by Date (Ascending)
+  const sortedLabels = labels.sort((a, b) => new Date(a) - new Date(b));
+  const sortedUnitPrices = sortedLabels.map((label) => dateMap[label]);
+
+  const newAsset = { labels: sortedLabels, unitPrices: sortedUnitPrices };
+  return { newAsset };
+};
 export const filterCategoryStatus = (chartData, labels, stat) => {
   const data = labels.map((category) => {
     let filteredArray = [];
@@ -168,14 +191,12 @@ export const dynamicValues = (chartData, labels, expandIndex) => {
   });
   let datasets = oldDataSets;
   if (expandIndex !== null) {
-    console.log("Expand Index: " + expandIndex);
     datasets = datasets.filter((data, index) => {
       if (index === expandIndex) {
         return data;
       }
     });
   }
-  console.log("DataSets: ", datasets);
   return { labels, datasets };
 };
 
@@ -189,12 +210,14 @@ export const expandAllFiltering = (data, expandIndex) => {
         classificationMap[label] = data.datasets?.forEach((dat) => {
           returnData[dat.label] = dat.filteredData[index];
         });
+
         classificationMap[label] = returnData;
       } else {
         classificationMap[label] =
           data.datasets[expandIndex]?.filteredData[index];
       }
     });
+
     return classificationMap;
   }
 };

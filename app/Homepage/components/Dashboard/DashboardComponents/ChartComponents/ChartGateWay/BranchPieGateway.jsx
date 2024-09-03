@@ -2,9 +2,7 @@ import React from "react";
 import CustomChart from "../CustomChart";
 
 const BranchPieGateway = ({ chartData, chartOpen }) => {
-  console.log("Chart at Branch: ", chartData);
   const labels = Object.keys(chartData.newAsset);
-  console.log("Labels: ", labels);
   const dataValues = labels.map(
     (branch) => chartData.newAsset[branch.toLocaleLowerCase()].length
   );

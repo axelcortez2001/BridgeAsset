@@ -1,8 +1,13 @@
 "use client";
 import React from "react";
 import TotalCostCard from "../TotalCostCard";
-import { categorizedBranch, computeTotalCost } from "../AllComponents/function";
+import {
+  categorizedBranch,
+  categorizedDate,
+  computeTotalCost,
+} from "../AllComponents/function";
 import BranchPieGateway from "../ChartComponents/ChartGateWay/BranchPieGateway";
+import DateChartGateway from "../ChartComponents/ChartGateWay/DateChartGateway";
 
 const LaptopComponent = ({ dashboardData }) => {
   return (
@@ -16,6 +21,9 @@ const LaptopComponent = ({ dashboardData }) => {
         </div>
         <div className='border relative  rounded-md p-2 overflow-auto resize'>
           <BranchPieGateway chartData={categorizedBranch(dashboardData)} />
+        </div>
+        <div className='border relative  rounded-md p-2 w-full'>
+          <DateChartGateway chartData={categorizedDate(dashboardData)} />
         </div>
       </div>
     </div>

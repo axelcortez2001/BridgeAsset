@@ -5,13 +5,26 @@ import AllComponent from "./AllComponents/AllComponent";
 import LaptopComponent from "./LaptopComponents/LaptopComponent";
 import MonitorComponent from "./MonitorComponents/MonitorComponent";
 import PeripheralComponent from "./PeripheralComponents/PeripheralComponent";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import {
+  expandIndexAtom,
+  tabLocationAtom,
+} from "./AllComponents/Charts/AllComponentsStore";
+import { dashBoardDataAtom } from "../DashboardStore/MainStore";
 
-const DashboardHome = ({ dashboardData }) => {
-  const [tabLocation, setTabLocation] = useState("All");
+const DashboardHome = () => {
+  const dashboardData = useAtomValue(dashBoardDataAtom);
+  const [tabLocation, setTabLocation] = useAtom(tabLocationAtom);
   const [filteredData, setFileteredData] = useState([]);
+  const setExpandIndex = useSetAtom(expandIndexAtom);
   const handleChange = (e) => {
+    setExpandIndex(null);
     setTabLocation(e);
   };
+  const [allData, setAllData] = useState([]);
+  const [laptopData, setLaptopData] = useState([]);
+  const [monitorData, setMonitorData] = useState([]);
+  const [peripheralData, setPeripheralData] = useState([]);
 
   useEffect(() => {
     const handleFilterData = () => {
@@ -22,12 +35,12 @@ const DashboardHome = ({ dashboardData }) => {
           );
           setFileteredData(filtered);
         } else {
-          setFileteredData(dashboardData);
+          setAllData(dashboardData);
         }
       }
     };
     handleFilterData();
-  }, [tabLocation]);
+  }, [tabLocation, dashboardData]);
 
   return (
     <div className='w-full h-screen  flex items-start justify-start flex-col p-2 gap-4'>
@@ -40,15 +53,18 @@ const DashboardHome = ({ dashboardData }) => {
         </Tabs>
       </div>
       <div className='w-full'>
-        {filteredData && filteredData?.length > 0 ? (
+        {(filteredData && filteredData?.length > 0) ||
+        (dashboardData && dashboardData?.length > 0) ? (
           tabLocation === "All" ? (
-            <AllComponent dashboardData={filteredData} />
+            allData && <AllComponent dashboardData={allData} />
           ) : tabLocation === "Laptop" ? (
             <LaptopComponent dashboardData={filteredData} />
           ) : tabLocation === "Monitor" ? (
             <MonitorComponent dashboardData={filteredData} />
           ) : (
-            <PeripheralComponent dashboardData={filteredData} />
+            tabLocation === "Peripheral" && (
+              <PeripheralComponent dashboardData={filteredData} />
+            )
           )
         ) : (
           <div>No data available</div>

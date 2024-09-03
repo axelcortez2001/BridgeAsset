@@ -33,8 +33,10 @@ const CustomChart = ({ chartData, options, type }) => {
 
   return type === "Bar" ? (
     <Bar data={data} options={options} />
-  ) : (
+  ) : type === "Pie" ? (
     <Pie data={data} options={options} />
+  ) : (
+    type === "Line" && <Line data={data} options={options} />
   );
 };
 
