@@ -88,14 +88,33 @@ export const categorizedDate = (data) => {
     acc[date] += item.unit_price;
     return acc;
   }, {});
+  // Initialize accumulator for grouping items by date
+  const dateValue = sortedData.reduce((acc, item) => {
+    const date = item.dop;
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(item);
+    return acc;
+  }, {});
+  console.log("Sorted: ", sortedData);
+  console.log("dateMap", dateMap);
+  console.log("dateValue", dateValue);
   // Step 3: Convert Grouped Data to Arrays
   const labels = Object.keys(dateMap);
   const unitPrices = Object.values(dateMap);
+
   // Step 4: Sort Arrays by Date (Ascending)
   const sortedLabels = labels.sort((a, b) => new Date(a) - new Date(b));
+  console.log(sortedLabels);
   const sortedUnitPrices = sortedLabels.map((label) => dateMap[label]);
-
-  const newAsset = { labels: sortedLabels, unitPrices: sortedUnitPrices };
+  // Get sorted values based on sorted labels
+  const sortedValue = sortedLabels.map((label) => dateValue[label]);
+  const newAsset = {
+    labels: sortedLabels,
+    unitPrices: sortedUnitPrices,
+    value: sortedValue,
+  };
   return { newAsset };
 };
 export const filterCategoryStatus = (chartData, labels, stat) => {

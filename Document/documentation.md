@@ -100,3 +100,10 @@
     - Created generateWarrantyStatus function
     - integrated gateway to all the components and now its working
     - push changes to GH
+
+## Creating a reusable expand component
+
+    - Created a new folder `Expand Components`
+    - Created file ExpandGateway, expandGatewayModal and Expand Store
+    - Implemented function and logic for branch chart data
+    

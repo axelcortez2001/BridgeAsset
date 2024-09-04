@@ -13,6 +13,7 @@ const useHandleSelectAssetMonitor = (setActionStatus) => {
   const setMonitorDataToDefault = useSetAtom(setMonitorDataToDefaultAtom);
   const setSelectedType = useSetAtom(selectedTypeAtom);
   const handleSelectItem = async (item) => {
+    console.log("Item : ", item);
     await setMonitorDataToDefault();
     setSelectedAssetData(item);
     await setMonitorDataFromSelected();
