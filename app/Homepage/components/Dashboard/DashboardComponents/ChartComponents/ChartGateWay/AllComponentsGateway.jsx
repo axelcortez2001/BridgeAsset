@@ -23,7 +23,7 @@ const AllComponentsGateway = ({ chartData, chartOpen }) => {
     },
     plugins: {
       legend: {
-        position: "right",
+        position: "top",
       },
       tooltip: {
         callbacks: {
@@ -51,7 +51,7 @@ const AllComponentsGateway = ({ chartData, chartOpen }) => {
     }
   };
   return (
-    <div className='w-full max-h-[700px] flex items-center flex-col  p-2 '>
+    <div className='w-auto max-h-[600px] flex items-center flex-col  p-2 '>
       <div className='w-full p-2 flex flex-row justify-between items-center'>
         <h2>Asset Categories</h2>
         {!chartOpen && (

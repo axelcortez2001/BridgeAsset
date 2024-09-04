@@ -87,3 +87,16 @@
     - Created DateChartGateway
         - added categorizeDate function and logic
     - Implemented the reusable date chart to component (All, Laptop, Monitor and Peripheral)
+
+### September 04, 2024
+`Updates and actions for this date`
+
+    - Set bar charts legend to top position
+    - set pie and doughnut legend to bottom position
+
+## Creating LifeSpan Chart
+
+    - Created `LifeSpanGateWay`
+    - Created generateWarrantyStatus function
+    - integrated gateway to all the components and now its working
+    - push changes to GH

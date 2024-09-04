@@ -10,11 +10,24 @@ const DateChartGateway = ({ chartData }) => {
     maintainAspectRatio: true,
     plugins: {
       legend: {
-        position: "right",
+        position: "top",
       },
       tooltip: {
         callbacks: {
           label: (context) => `${context.label}: ${context.raw} Php`,
+        },
+      },
+      datalabels: {
+        //remove labels for pie and dou
+        display: true,
+        anchor: "end",
+        align: "end",
+        color: "black",
+        font: {
+          weight: "bold",
+        },
+        formatter: (value, context) => {
+          return value;
         },
       },
     },
@@ -35,7 +48,8 @@ const DateChartGateway = ({ chartData }) => {
           //   "rgba(54, 162, 235, 1)",
           "rgba(255, 206, 86, 1)",
         ],
-        borderWidth: 1,
+        borderJoinStyle: "bevel",
+        borderWidth: 2,
       },
     ],
   };
