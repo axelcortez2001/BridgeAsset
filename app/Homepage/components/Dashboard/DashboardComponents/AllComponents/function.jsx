@@ -97,16 +97,12 @@ export const categorizedDate = (data) => {
     acc[date].push(item);
     return acc;
   }, {});
-  console.log("Sorted: ", sortedData);
-  console.log("dateMap", dateMap);
-  console.log("dateValue", dateValue);
   // Step 3: Convert Grouped Data to Arrays
   const labels = Object.keys(dateMap);
   const unitPrices = Object.values(dateMap);
 
   // Step 4: Sort Arrays by Date (Ascending)
   const sortedLabels = labels.sort((a, b) => new Date(a) - new Date(b));
-  console.log(sortedLabels);
   const sortedUnitPrices = sortedLabels.map((label) => dateMap[label]);
   // Get sorted values based on sorted labels
   const sortedValue = sortedLabels.map((label) => dateValue[label]);

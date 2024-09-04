@@ -106,4 +106,6 @@
     - Created a new folder `Expand Components`
     - Created file ExpandGateway, expandGatewayModal and Expand Store
     - Implemented function and logic for branch chart data
+    - Implemented file dateChartGateway
+    - Implemented its functionalities
     
