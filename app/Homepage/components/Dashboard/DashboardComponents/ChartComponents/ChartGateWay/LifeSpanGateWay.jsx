@@ -8,7 +8,6 @@ import {
   selectedValueDataAtom,
 } from "../../ExpandComponents/ExpandStore";
 const LifeSpanGateWay = ({ chartData }) => {
-  console.log("Asset Data at LifeSpan: ", chartData);
   const [newChartData, setNewChartData] = useState(chartData);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const labelMapping = {

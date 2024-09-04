@@ -15,28 +15,32 @@ const DateChartGateway = ({ chartData }) => {
   const [selectedValueData, setSelectedValueData] = useAtom(
     selectedValueDataAtom
   );
-  const labels = newChartData?.newAsset?.labels;
-  const dataValues = newChartData?.newAsset?.unitPrices;
+
   useEffect(() => {
     if (
       selectedValueData &&
       selectedValueData.label &&
       selectedValueData.location === "date"
     ) {
-      const filteredData =
-        chartData.newAsset.value[selectedValueData.index] || [];
-      setNewChartData((prevData) => ({
+      const filteredData = {
+        labels: [chartData.newAsset.labels[selectedValueData.index]],
+        unitPrices: [chartData.newAsset.unitPrices[selectedValueData.index]],
+      };
+      const newData = (prevData) => ({
         ...prevData,
-        newAsset: {
-          [selectedValueData.label]: filteredData,
-        },
-      }));
+        newAsset: filteredData,
+      });
+      setNewChartData(newData());
+      console.log("New Data: ", newData());
       console.log("selectedValueData.label: ", filteredData);
-      console.log("filteredData: ", chartData.newAsset.value);
+      console.log("filteredData: ", chartData);
     } else if (isBranchOpen === false) {
       setNewChartData(chartData);
     }
   }, [selectedValueData, chartData]);
+  const labels = newChartData?.newAsset?.labels;
+  const dataValues = newChartData?.newAsset?.unitPrices;
+  console.log("Data Values: ", dataValues);
 
   const options = {
     responsive: true,
@@ -89,6 +93,7 @@ const DateChartGateway = ({ chartData }) => {
       }
     },
   };
+  console.log("aaa: ", chartData);
   const data = {
     labels: labels,
     datasets: [

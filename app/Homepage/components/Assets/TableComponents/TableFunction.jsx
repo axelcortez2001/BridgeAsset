@@ -20,7 +20,6 @@ export const checkWarrantStatus = (opt, dop) => {
     const oldDop = new Date(dop);
     const newDop = addYears(new Date(dop), parseFloat(opt));
     const threeYearsDop = addYears(new Date(dop), 3);
-    console.log(threeYearsDop);
     if (dateToday <= newDop) {
       return <div className='text-green-500'>Good</div>;
     } else if (dateToday > threeYearsDop) {

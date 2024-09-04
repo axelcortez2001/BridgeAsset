@@ -27,6 +27,8 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
           [selectedValueData.label]: filteredData,
         },
       }));
+      console.log("selectedValueData.label: ", filteredData);
+      console.log("filteredData: ", chartData);
     } else if (isBranchOpen === false) {
       setNewChartData(chartData);
     }
@@ -85,7 +87,7 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
       setIsBranchOpen(true);
     }
   };
-
+  console.log("filteredData: ", chartData);
   const data = {
     labels: labels,
     datasets: [
