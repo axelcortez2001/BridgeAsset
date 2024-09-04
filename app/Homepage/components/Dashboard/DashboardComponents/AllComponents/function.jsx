@@ -1,3 +1,5 @@
+import { addYears } from "date-fns";
+
 export const computeTotalCost = (data) => {
   let totalCost = 0;
   data.forEach((item) => {
@@ -37,6 +39,39 @@ export const categorizedBranch = (data) => {
     laoag: laoag,
     makati: makati,
     australia: australia,
+  };
+  return { newAsset };
+};
+
+export const generateWarrantyStatus = (data) => {
+  let Good = [];
+  let above = [];
+  let outOfWarranty = [];
+  let invalid = [];
+  //loop through data and set its warranty status
+  data.forEach((item) => {
+    const opt = item?.warranty_period;
+    const dop = item?.dop;
+    if (opt && dop) {
+      const dateToday = new Date();
+      const newDop = addYears(new Date(dop), parseFloat(opt));
+      const threeYearsDop = addYears(new Date(dop), 3);
+      if (dateToday <= newDop) {
+        Good.push(item);
+      } else if (dateToday > threeYearsDop) {
+        above.push(item);
+      } else {
+        outOfWarranty.push(item);
+      }
+    } else {
+      invalid.push(item);
+    }
+  });
+  const newAsset = {
+    Good: Good,
+    above: above,
+    outOfWarranty: outOfWarranty,
+    invalid: invalid,
   };
   return { newAsset };
 };

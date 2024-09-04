@@ -4,10 +4,12 @@ import {
   categorizedBranch,
   categorizedDate,
   computeTotalCost,
+  generateWarrantyStatus,
 } from "../AllComponents/function";
 import TotalCostCard from "../TotalCostCard";
 import BranchPieGateway from "../ChartComponents/ChartGateWay/BranchPieGateway";
 import DateChartGateway from "../ChartComponents/ChartGateWay/DateChartGateway";
+import LifeSpanGateWay from "../ChartComponents/ChartGateWay/LifeSpanGateWay";
 
 const PeripheralComponent = ({ dashboardData }) => {
   return (
@@ -24,6 +26,9 @@ const PeripheralComponent = ({ dashboardData }) => {
         </div>
         <div className='border relative  rounded-md p-2 overflow-auto resize'>
           <BranchPieGateway chartData={categorizedBranch(dashboardData)} />
+        </div>
+        <div className='border relative max-w-[650px]  rounded-md p-2 w-full overflow-auto resize'>
+          <LifeSpanGateWay chartData={generateWarrantyStatus(dashboardData)} />
         </div>
         <div className='border relative  rounded-md p-2 w-full'>
           <DateChartGateway chartData={categorizedDate(dashboardData)} />
