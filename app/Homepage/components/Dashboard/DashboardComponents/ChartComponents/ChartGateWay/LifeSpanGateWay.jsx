@@ -57,7 +57,6 @@ const LifeSpanGateWay = ({ chartData }) => {
     const status = warrantyLabels.find((s) => s.name === label);
     return status ? status.borderColor : "rgba(0, 0, 0, 1)";
   });
-  console.log("Dta for table at warranty: ", dataforTable);
   const options = {
     responsive: true,
     plugins: {
@@ -107,18 +106,6 @@ const LifeSpanGateWay = ({ chartData }) => {
         data: dataValues,
         backgroundColor: backgroundColors,
         borderColor: borderColors,
-        // backgroundColor: [
-        //   "rgba(60, 179, 113, 0.7)",
-        //   "rgba(255, 99, 132, 0.7)",
-        //   "rgba(54, 162, 235, 0.7)",
-        //   "rgba(255, 206, 86, 0.7)",
-        // ],
-        // borderColor: [
-        //   "rgba(60, 179, 113, 1)",
-        //   "rgba(255, 99, 132, 1)",
-        //   "rgba(54, 162, 235, 1)",
-        //   "rgba(255, 206, 86, 1)",
-        // ],
         fill: true,
         borderWidth: 1,
       },

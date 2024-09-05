@@ -118,4 +118,6 @@
     - revisions of datechartgateway function to have and option of `daily`, `monthly` and `yearly` options
     - Get the max value amount within date chart data and added 10k  for better presentation of data inside the chart
 
+    - Added ytdGateway 
+    - implemented its functionality and logic and make it as static
     

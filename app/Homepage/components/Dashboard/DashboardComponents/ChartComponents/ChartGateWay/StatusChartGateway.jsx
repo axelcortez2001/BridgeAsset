@@ -17,8 +17,6 @@ const StatusChartGateway = ({ chartData, chartOpen }) => {
     selectedValueDataAtom
   );
   const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
-  console.log("chartData", chartData);
-  console.log("newChartData", newChartData);
 
   useEffect(() => {
     if (
@@ -37,13 +35,10 @@ const StatusChartGateway = ({ chartData, chartOpen }) => {
       setNewChartData(chartData);
     }
   }, [selectedValueData, chartData]);
-  console.log("SelectedValueData", selectedValueData);
   const labels = Object.keys(newChartData.newAsset);
   const dataValues = labels.map(
     (label) => newChartData.newAsset[label]?.length
   );
-  console.log("Labels: ", labels);
-  console.log("dataValues: ", dataValues);
   // Map labels to their respective colors
   const backgroundColors = labels.map((label) => {
     const status = statusLabels.find((s) => s.name === label);
