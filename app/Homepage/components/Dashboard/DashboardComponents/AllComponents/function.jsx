@@ -1,4 +1,5 @@
 import { addYears, format, isValid } from "date-fns";
+import { computeYTD } from "../../../Assets/TableComponents/TableFunction";
 
 export const computeTotalCost = (data) => {
   let totalCost = 0;
@@ -170,6 +171,36 @@ export const filterCategoryStatus = (chartData, labels, stat) => {
   });
   return data;
 };
+
+export const generateYTD = (data) => {
+  const ytdData = data.reduce((acc, item) => {
+    const ytdDate = new Date(item.dop);
+    const newItem = item?.item;
+    if (!acc[newItem]) {
+      acc[newItem] = [];
+    }
+
+    acc[newItem] = isNaN(computeYTD(ytdDate)) ? "No Data" : computeYTD(ytdDate);
+    console.log(acc);
+    return acc;
+  }, []);
+  return ytdData;
+};
+export const sortYTDData = (ytdData) => {
+  const sortableArray = Object.entries(ytdData).map(([item, value]) => ({
+    item,
+    value: value === "No Data" ? -Infinity : value,
+  }));
+
+  sortableArray.sort((a, b) => b.value - a.value);
+  const sortedYTD = sortableArray.reduce((acc, { item, value }) => {
+    acc[item] = value === -Infinity ? "No Data" : value;
+    return acc;
+  }, {});
+
+  return sortedYTD;
+};
+
 export const categorizedStatus = (data) => {
   let Stock = [];
   let Active = [];
@@ -195,7 +226,6 @@ export const categorizedStatus = (data) => {
     Defective: Defective,
     Others: Others,
   };
-  console.log("New Asset :", newAsset);
   return { newAsset };
 };
 export const dynamicValues = (chartData, labels, expandIndex) => {

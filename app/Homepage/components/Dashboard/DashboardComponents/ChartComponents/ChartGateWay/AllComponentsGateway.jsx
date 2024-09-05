@@ -14,8 +14,7 @@ const AllComponentsGateway = ({ chartData, chartOpen }) => {
   const filterType = useAtomValue(filterTypeAtom);
   const labels = Object.keys(chartData.newAsset);
   const data = dynamicValues(chartData, labels, expandIndex);
-  console.log(data);
-  console.log("Labels: ", labels);
+ 
   const options = {
     responsive: true,
     maintainAspectRatio: true,

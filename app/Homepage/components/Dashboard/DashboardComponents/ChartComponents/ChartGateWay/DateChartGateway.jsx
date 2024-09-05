@@ -8,7 +8,6 @@ import {
   isBranchOpenAtom,
   selectedValueDataAtom,
 } from "../../ExpandComponents/ExpandStore";
-import { elements } from "chart.js";
 
 const DateChartGateway = ({ chartData }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();

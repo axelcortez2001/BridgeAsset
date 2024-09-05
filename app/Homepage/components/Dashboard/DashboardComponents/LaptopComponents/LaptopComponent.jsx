@@ -7,6 +7,7 @@ import {
   categorizedStatus,
   computeTotalCost,
   generateWarrantyStatus,
+  generateYTD,
 } from "../AllComponents/function";
 import BranchPieGateway from "../ChartComponents/ChartGateWay/BranchPieGateway";
 import DateChartGateway from "../ChartComponents/ChartGateWay/DateChartGateway";
@@ -14,6 +15,7 @@ import LifeSpanGateWay from "../ChartComponents/ChartGateWay/LifeSpanGateWay";
 import StatusChartGateway from "../ChartComponents/ChartGateWay/StatusChartGateway";
 import { useAtomValue } from "jotai";
 import { filterTypeAtom } from "../ExpandComponents/ExpandStore";
+import YTDGateway from "../ChartComponents/ChartGateWay/YTDGateway";
 
 const LaptopComponent = ({ dashboardData }) => {
   const filterType = useAtomValue(filterTypeAtom);
@@ -39,6 +41,9 @@ const LaptopComponent = ({ dashboardData }) => {
           <DateChartGateway
             chartData={categorizedDate(dashboardData, filterType)}
           />
+        </div>
+        <div className='border relative  rounded-md p-2 w-full overflow-auto resize'>
+          <YTDGateway chartData={generateYTD(dashboardData)} />
         </div>
       </div>
     </div>

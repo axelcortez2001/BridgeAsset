@@ -15,7 +15,6 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
     selectedValueDataAtom
   );
   const branchLabels = useAtomValue(branchLabelsAtom);
-  console.log("New Chart Data: ", chartData);
   const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
   useEffect(() => {
     if (
