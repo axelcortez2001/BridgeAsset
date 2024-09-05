@@ -3,6 +3,7 @@ import CustomChart from "../CustomChart";
 import ExpandGateway from "../../ExpandComponents/ExpandGateway";
 import { useAtom, useAtomValue } from "jotai";
 import {
+  branchLabelsAtom,
   isBranchOpenAtom,
   selectedValueDataAtom,
 } from "../../ExpandComponents/ExpandStore";
@@ -13,6 +14,8 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
   const [selectedValueData, setSelectedValueData] = useAtom(
     selectedValueDataAtom
   );
+  const branchLabels = useAtomValue(branchLabelsAtom);
+  console.log("New Chart Data: ", chartData);
   const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
   useEffect(() => {
     if (
@@ -27,8 +30,6 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
           [selectedValueData.label]: filteredData,
         },
       }));
-      console.log("selectedValueData.label: ", filteredData);
-      console.log("filteredData: ", chartData);
     } else if (isBranchOpen === false) {
       setNewChartData(chartData);
     }
@@ -38,13 +39,22 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
   const dataValues = labels.map(
     (branch) => newChartData.newAsset[branch.toLocaleLowerCase()]?.length
   );
+  const backgroundColors = labels.map((label) => {
+    const status = branchLabels.find((s) => s.name === label);
+    return status ? status.backgroundColor : "rgba(0, 0, 0, 0.1)";
+  });
+
+  const borderColors = labels.map((label) => {
+    const status = branchLabels.find((s) => s.name === label);
+    return status ? status.borderColor : "rgba(0, 0, 0, 1)";
+  });
 
   const options = {
     responsive: true,
     maintainAspectRatio: true,
     plugins: {
       legend: {
-        position: "bottom",
+        position: "top",
         labels: {
           pointStyle: "circle",
           usePointStyle: true,
@@ -77,7 +87,6 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
           setNewChartData(chartData);
           setSelectedValueData(null);
         }
-        console.log("Selected Data: ", selectedItemData); // For debugging
       }
     },
   };
@@ -87,30 +96,21 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
       setIsBranchOpen(true);
     }
   };
-  console.log("filteredData: ", chartData);
   const data = {
     labels: labels,
     datasets: [
       {
         label: "Number of Assets",
         data: dataValues,
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.7)",
-          "rgba(54, 162, 235, 0.7)",
-          "rgba(255, 206, 86, 0.7)",
-        ],
-        borderColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-        ],
+        backgroundColor: backgroundColors,
+        borderColor: borderColors,
         borderWidth: 1,
       },
     ],
   };
   const chartTitle = "Branches Asset Collection";
   return (
-    <div className='w-full max-h-[300px] flex items-center flex-col  p-2 '>
+    <div className='w-full max-h-[400px] flex items-center flex-col  p-2 '>
       <div className='w-full p-2 flex flex-row justify-between items-center'>
         <ExpandGateway
           chartTitle={chartTitle}

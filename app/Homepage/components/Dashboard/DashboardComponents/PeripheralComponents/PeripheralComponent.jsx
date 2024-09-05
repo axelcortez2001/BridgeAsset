@@ -3,6 +3,7 @@ import React from "react";
 import {
   categorizedBranch,
   categorizedDate,
+  categorizedStatus,
   computeTotalCost,
   generateWarrantyStatus,
 } from "../AllComponents/function";
@@ -10,8 +11,12 @@ import TotalCostCard from "../TotalCostCard";
 import BranchPieGateway from "../ChartComponents/ChartGateWay/BranchPieGateway";
 import DateChartGateway from "../ChartComponents/ChartGateWay/DateChartGateway";
 import LifeSpanGateWay from "../ChartComponents/ChartGateWay/LifeSpanGateWay";
+import StatusChartGateway from "../ChartComponents/ChartGateWay/StatusChartGateway";
+import { useAtomValue } from "jotai";
+import { filterTypeAtom } from "../ExpandComponents/ExpandStore";
 
 const PeripheralComponent = ({ dashboardData }) => {
+  const filterType = useAtomValue(filterTypeAtom);
   return (
     <div className='w-full flex flex-col'>
       <p>
@@ -25,13 +30,18 @@ const PeripheralComponent = ({ dashboardData }) => {
           />
         </div>
         <div className='border relative  rounded-md p-2 overflow-auto resize'>
+          <StatusChartGateway chartData={categorizedStatus(dashboardData)} />
+        </div>
+        <div className='border relative  rounded-md p-2 overflow-auto resize'>
           <BranchPieGateway chartData={categorizedBranch(dashboardData)} />
         </div>
-        <div className='border relative max-w-[650px]  rounded-md p-2 w-full overflow-auto resize'>
+        <div className='border relative max-w-[410px]   rounded-md p-2 overflow-auto resize'>
           <LifeSpanGateWay chartData={generateWarrantyStatus(dashboardData)} />
         </div>
         <div className='border relative  rounded-md p-2 w-full'>
-          <DateChartGateway chartData={categorizedDate(dashboardData)} />
+          <DateChartGateway
+            chartData={categorizedDate(dashboardData, filterType)}
+          />
         </div>
       </div>
     </div>
