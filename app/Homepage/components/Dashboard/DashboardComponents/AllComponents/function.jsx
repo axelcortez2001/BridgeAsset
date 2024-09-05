@@ -1,4 +1,4 @@
-import { addYears } from "date-fns";
+import { addYears, format, isValid } from "date-fns";
 
 export const computeTotalCost = (data) => {
   let totalCost = 0;
@@ -76,31 +76,46 @@ export const generateWarrantyStatus = (data) => {
   return { newAsset };
 };
 
-export const categorizedDate = (data) => {
+export const categorizedDate = (data, filterType) => {
+  //filter date first
+  const formatDate = (date, filterType) => {
+    const d = new Date(date);
+    switch (filterType) {
+      case "daily":
+        return isValid(d) ? format(d, "PP") : "No Date";
+
+      case "monthly":
+        return isValid(d) ? format(d, "MMMM yyyy") : "No Date";
+      case "yearly":
+        return isValid(d) ? format(d, "yyyy") : "No Date";
+      default:
+        return isValid(d) ? format(d, "PP") : "No Date";
+    }
+  };
+
   // Step 1: Sort Data by Date in Descending Order
   const sortedData = data.sort((a, b) => new Date(b.dop) - new Date(a.dop));
   // Step 2: Group by Date and Sum Unit Prices
   const dateMap = sortedData.reduce((acc, item) => {
-    const date = item.dop;
-    if (!acc[date]) {
-      acc[date] = 0;
+    const formattedDate = formatDate(item.dop, filterType);
+    if (!acc[formattedDate]) {
+      acc[formattedDate] = 0;
     }
-    acc[date] += item.unit_price;
+    acc[formattedDate] += item.unit_price;
     return acc;
   }, {});
-  // Initialize accumulator for grouping items by date
   const dateValue = sortedData.reduce((acc, item) => {
-    const date = item.dop;
-    if (!acc[date]) {
-      acc[date] = [];
+    const formattedDate = formatDate(item.dop, filterType);
+    if (!acc[formattedDate]) {
+      acc[formattedDate] = [];
     }
-    acc[date].push(item);
+    acc[formattedDate].push(item);
     return acc;
   }, {});
+
   // Step 3: Convert Grouped Data to Arrays
   const labels = Object.keys(dateMap);
   const unitPrices = Object.values(dateMap);
-
   // Step 4: Sort Arrays by Date (Ascending)
   const sortedLabels = labels.sort((a, b) => new Date(a) - new Date(b));
   const sortedUnitPrices = sortedLabels.map((label) => dateMap[label]);
@@ -154,6 +169,34 @@ export const filterCategoryStatus = (chartData, labels, stat) => {
     return filteredArray;
   });
   return data;
+};
+export const categorizedStatus = (data) => {
+  let Stock = [];
+  let Active = [];
+  let Defective = [];
+  let Others = [];
+  data.forEach((item) => {
+    if (item.category === "laptop") {
+      if (item.item_stats === "SOH") Stock.push(item);
+      else if (item.item_stats === "Active") Active.push(item);
+      else if (item.item_stats === "For Repair") Defective.push(item);
+      else Others.push(item);
+    } else if (item.category === "monitor" || item.category === "peripheral") {
+      if (item.status.name === "Stock") Stock.push(item);
+      else if (item.status.name === "Active" || item.status.name === "Issued")
+        Active.push(item);
+      else if (item.status.name === "Defective") Defective.push(item);
+      else Others.push(item);
+    }
+  });
+  const newAsset = {
+    Stock: Stock,
+    Active: Active,
+    Defective: Defective,
+    Others: Others,
+  };
+  console.log("New Asset :", newAsset);
+  return { newAsset };
 };
 export const dynamicValues = (chartData, labels, expandIndex) => {
   const statusLabels = [

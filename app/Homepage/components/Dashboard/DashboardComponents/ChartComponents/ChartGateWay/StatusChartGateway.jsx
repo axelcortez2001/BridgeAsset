@@ -1,40 +1,30 @@
 import React, { useState, useEffect } from "react";
 import CustomChart from "../CustomChart";
-import { Button, useDisclosure } from "@nextui-org/react";
 import ExpandGateway from "../../ExpandComponents/ExpandGateway";
 import { useAtom, useAtomValue } from "jotai";
 import {
   isBranchOpenAtom,
   selectedValueDataAtom,
-  warrantyLabelsAtom,
+  statusLabelsAtom,
 } from "../../ExpandComponents/ExpandStore";
-const LifeSpanGateWay = ({ chartData }) => {
-  const [newChartData, setNewChartData] = useState(chartData);
+import { Button, useDisclosure } from "@nextui-org/react";
+import { categorizedStatus } from "../../AllComponents/function";
+const StatusChartGateway = ({ chartData, chartOpen }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const labelMapping = {
-    Good: "Good",
-    above: "More than 3 years",
-    outOfWarranty: "Out of Warranty",
-    invalid: "No Date",
-  };
-
-  const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
+  const [newChartData, setNewChartData] = useState(chartData);
+  const statusLabels = useAtomValue(statusLabelsAtom);
   const [selectedValueData, setSelectedValueData] = useAtom(
     selectedValueDataAtom
   );
-  const warrantyLabels = useAtomValue(warrantyLabelsAtom);
-  // Get the keys
-  const oldLabels = Object.keys(newChartData.newAsset);
-  // Map old labels to new labels
-  const labels = oldLabels.map((label) => labelMapping[label] || label);
-  const dataValues = oldLabels.map(
-    (label) => newChartData.newAsset[label]?.length
-  );
+  const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
+  console.log("chartData", chartData);
+  console.log("newChartData", newChartData);
+
   useEffect(() => {
     if (
       selectedValueData &&
       selectedValueData.label &&
-      selectedValueData.location === "warranty"
+      selectedValueData.location === "status"
     ) {
       const filteredData = chartData.newAsset[selectedValueData.label] || [];
       setNewChartData((prevData) => ({
@@ -47,19 +37,27 @@ const LifeSpanGateWay = ({ chartData }) => {
       setNewChartData(chartData);
     }
   }, [selectedValueData, chartData]);
-  const dataforTable = oldLabels.map((label) => newChartData.newAsset[label]);
-  const backgroundColors = oldLabels.map((label) => {
-    const status = warrantyLabels.find((s) => s.name === label);
+  console.log("SelectedValueData", selectedValueData);
+  const labels = Object.keys(newChartData.newAsset);
+  const dataValues = labels.map(
+    (label) => newChartData.newAsset[label]?.length
+  );
+  console.log("Labels: ", labels);
+  console.log("dataValues: ", dataValues);
+  // Map labels to their respective colors
+  const backgroundColors = labels.map((label) => {
+    const status = statusLabels.find((s) => s.name === label);
     return status ? status.backgroundColor : "rgba(0, 0, 0, 0.1)";
   });
 
-  const borderColors = oldLabels.map((label) => {
-    const status = warrantyLabels.find((s) => s.name === label);
+  const borderColors = labels.map((label) => {
+    const status = statusLabels.find((s) => s.name === label);
     return status ? status.borderColor : "rgba(0, 0, 0, 1)";
   });
-  console.log("Dta for table at warranty: ", dataforTable);
+
   const options = {
     responsive: true,
+    maintainAspectRatio: true,
     plugins: {
       legend: {
         position: "top",
@@ -68,7 +66,6 @@ const LifeSpanGateWay = ({ chartData }) => {
           usePointStyle: true,
         },
       },
-
       tooltip: {
         callbacks: {
           label: (context) => `${context.label}: ${context.raw} items`,
@@ -78,13 +75,13 @@ const LifeSpanGateWay = ({ chartData }) => {
     onClick: (event, elements, context) => {
       if (elements.length > 0) {
         const elementIndex = elements[0].index;
-        const selectedLabel = oldLabels[elementIndex];
+        const selectedLabel = labels[elementIndex];
         const selectedValue = dataValues[elementIndex];
         const selectedItemData = {
           label: selectedLabel,
           value: selectedValue,
-          data: dataforTable[elementIndex],
-          location: "warranty",
+          data: chartData.newAsset[selectedLabel],
+          location: "status",
         };
         setIsBranchOpen(true);
         if (!isBranchOpen) {
@@ -99,40 +96,27 @@ const LifeSpanGateWay = ({ chartData }) => {
       }
     },
   };
-  const data = {
-    labels: labels,
-    datasets: [
-      {
-        label: "Warranty Status",
-        data: dataValues,
-        backgroundColor: backgroundColors,
-        borderColor: borderColors,
-        // backgroundColor: [
-        //   "rgba(60, 179, 113, 0.7)",
-        //   "rgba(255, 99, 132, 0.7)",
-        //   "rgba(54, 162, 235, 0.7)",
-        //   "rgba(255, 206, 86, 0.7)",
-        // ],
-        // borderColor: [
-        //   "rgba(60, 179, 113, 1)",
-        //   "rgba(255, 99, 132, 1)",
-        //   "rgba(54, 162, 235, 1)",
-        //   "rgba(255, 206, 86, 1)",
-        // ],
-        fill: true,
-        borderWidth: 1,
-      },
-    ],
-  };
   const handleModal = () => {
     if (!isBranchOpen) {
       onOpenChange(true);
       setIsBranchOpen(true);
     }
   };
-  const chartTitle = "Asset Warranty Status";
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "Number of Assets",
+        data: dataValues,
+        backgroundColor: backgroundColors,
+        borderColor: borderColors,
+        borderWidth: 1,
+      },
+    ],
+  };
+  const chartTitle = "Status Asset Collection";
   return (
-    <div className='w-full max-h-[400px] flex items-center flex-col  p-2 '>
+    <div className='w-full max-h-[300px] flex items-center flex-col  p-2 '>
       <div className='w-full p-2 flex flex-row justify-between items-center'>
         <ExpandGateway
           chartTitle={chartTitle}
@@ -150,4 +134,4 @@ const LifeSpanGateWay = ({ chartData }) => {
   );
 };
 
-export default LifeSpanGateWay;
+export default StatusChartGateway;

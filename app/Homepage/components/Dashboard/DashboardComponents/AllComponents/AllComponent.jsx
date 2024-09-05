@@ -16,10 +16,12 @@ import { tabLocationAtom } from "./Charts/AllComponentsStore";
 import DateChartGateway from "../ChartComponents/ChartGateWay/DateChartGateway";
 import { dashBoardDataAtom } from "../../DashboardStore/MainStore";
 import LifeSpanGateWay from "../ChartComponents/ChartGateWay/LifeSpanGateWay";
+import { filterTypeAtom } from "../ExpandComponents/ExpandStore";
 
 const AllComponent = () => {
   const dashboardData = useAtomValue(dashBoardDataAtom);
   const tabLocation = useAtomValue(tabLocationAtom);
+  const filterType = useAtomValue(filterTypeAtom);
   const filteredLaptop = dashboardData.filter(
     (data) => data?.category.toLowerCase() === "laptop"
   );
@@ -56,11 +58,13 @@ const AllComponent = () => {
         <div className='border relative max-w-[500px]  rounded-md p-2 overflow-auto resize'>
           <BranchPieGateway chartData={categorizedBranch(dashboardData)} />
         </div>
-        <div className='border relative max-w-[650px]  rounded-md p-2 w-full overflow-auto resize'>
+        <div className='border relative max-w-[410px]  rounded-md p-2 overflow-auto resize'>
           <LifeSpanGateWay chartData={generateWarrantyStatus(dashboardData)} />
         </div>
         <div className='border relative  rounded-md p-2 w-full overflow-auto resize'>
-          <DateChartGateway chartData={categorizedDate(dashboardData)} />
+          <DateChartGateway
+            chartData={categorizedDate(dashboardData, filterType)}
+          />
         </div>
       </div>
     </div>

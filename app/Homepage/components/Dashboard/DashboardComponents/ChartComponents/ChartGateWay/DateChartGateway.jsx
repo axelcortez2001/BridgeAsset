@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
 import CustomChart from "../CustomChart";
 import ExpandGateway from "../../ExpandComponents/ExpandGateway";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure, Select, SelectItem } from "@nextui-org/react";
 import { useAtom } from "jotai";
 import {
+  filterTypeAtom,
   isBranchOpenAtom,
   selectedValueDataAtom,
 } from "../../ExpandComponents/ExpandStore";
+import { elements } from "chart.js";
 
 const DateChartGateway = ({ chartData }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [newChartData, setNewChartData] = useState(chartData);
   const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
+  const [filterType, setFilterType] = useAtom(filterTypeAtom);
   const [selectedValueData, setSelectedValueData] = useAtom(
     selectedValueDataAtom
   );
@@ -31,23 +34,36 @@ const DateChartGateway = ({ chartData }) => {
         newAsset: filteredData,
       });
       setNewChartData(newData());
-      console.log("New Data: ", newData());
-      console.log("selectedValueData.label: ", filteredData);
-      console.log("filteredData: ", chartData);
     } else if (isBranchOpen === false) {
       setNewChartData(chartData);
     }
   }, [selectedValueData, chartData]);
   const labels = newChartData?.newAsset?.labels;
   const dataValues = newChartData?.newAsset?.unitPrices;
-  console.log("Data Values: ", dataValues);
-
+  const maxValue = Math.max(...dataValues);
   const options = {
-    responsive: true,
     maintainAspectRatio: true,
+    layout: {
+      padding: 10,
+    },
+    scales: {
+      y: {
+        ticks: {
+          min: 0,
+        },
+        suggestedMax: maxValue + 10000,
+      },
+      x: {
+        ticks: {
+          autoSkip: false,
+        },
+      },
+    },
+    responsive: true,
+
     plugins: {
       legend: {
-        position: "top",
+        position: "right",
       },
       tooltip: {
         callbacks: {
@@ -93,23 +109,15 @@ const DateChartGateway = ({ chartData }) => {
       }
     },
   };
-  console.log("aaa: ", chartData);
+
   const data = {
     labels: labels,
     datasets: [
       {
         label: "Total Amount",
         data: dataValues,
-        backgroundColor: [
-          //   "rgba(255, 99, 132, 0.2)",
-          //   "rgba(54, 162, 235, 0.2)",
-          "rgba(255, 206, 86, 0.2)",
-        ],
-        borderColor: [
-          //   "rgba(255, 99, 132, 1)",
-          //   "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-        ],
+        backgroundColor: ["rgba(54, 162, 235, 0.2)"],
+        borderColor: ["rgba(54, 162, 235, 1)"],
         borderJoinStyle: "bevel",
         borderWidth: 2,
       },
@@ -123,7 +131,7 @@ const DateChartGateway = ({ chartData }) => {
   };
   const chartTitle = "Cost Accumulated";
   return (
-    <div className='w-full max-h-screen flex items-center flex-col  p-2 '>
+    <div className='w-full border  max-h-[550px] flex items-center flex-col  p-4 '>
       <div className='w-full p-2 flex flex-row justify-between items-center'>
         <ExpandGateway
           chartTitle={chartTitle}
@@ -136,6 +144,23 @@ const DateChartGateway = ({ chartData }) => {
           handleModal={handleModal}
         />
       </div>
+      <Select
+        label='filter'
+        placeholder=''
+        className='max-w-xs mb-2'
+        size='sm'
+        selectedValue={filterType}
+      >
+        <SelectItem key='daily' onClick={() => setFilterType("daily")}>
+          Daily
+        </SelectItem>
+        <SelectItem key='monthly' onClick={() => setFilterType("monthly")}>
+          Monthly
+        </SelectItem>
+        <SelectItem key='yearly' onClick={() => setFilterType("yearly")}>
+          Yearly
+        </SelectItem>
+      </Select>
       <CustomChart chartData={data} options={options} type='Line' />
     </div>
   );
