@@ -1,9 +1,7 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./Components/provider";
 import { Toaster } from "sonner";
-
-const inter = Inter({ subsets: ["latin"] });
+import { helveticaNowDisplay } from "@/public/Font/fontTypeWeight";
 
 export const metadata = {
   title: "Bridge Asset Management",
@@ -12,8 +10,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang='en'>
-      <body className={inter.className}>
+    <html lang="en">
+      <body className={`${helveticaNowDisplay.className} text-base`}>
         <Providers>
           {children}
           <Toaster />

@@ -15,21 +15,18 @@
     "categories": {
       "function": {
         "bridgeassetfunction": {
+          "mongodbUri": "mongodb+srv://axelcortez:are-text2024@are-text.kye05rk.mongodb.net/BridgeAssets",
           "deploymentBucketName": "amplify-bridgeasset-dev-2f238-deployment",
-          "s3Key": "amplify-builds/bridgeassetfunction-785231654e75486d3631-build.zip",
-          "mongodbUri": "mongodb+srv://axelcortez:are-text2024@are-text.kye05rk.mongodb.net/BridgeAssets"
+          "s3Key": "amplify-builds/bridgeassetfunction-785231654e75486d3631-build.zip"
         },
         "bridgeassetusers": {
+          "mongodbUri": "mongodb+srv://axelcortez:are-text2024@are-text.kye05rk.mongodb.net/BridgeAssets",
           "deploymentBucketName": "amplify-bridgeasset-dev-2f238-deployment",
-          "s3Key": "amplify-builds/bridgeassetusers-4761517470696b4e4258-build.zip",
-          "mongodbUri": "mongodb+srv://axelcortez:are-text2024@are-text.kye05rk.mongodb.net/BridgeAssets"
+          "s3Key": "amplify-builds/bridgeassetusers-4761517470696b4e4258-build.zip"
         }
       },
       "auth": {
         "bridgeasset": {}
-      },
-      "api": {
-        "BridgeAssetAPI": {}
       }
     }
   }
