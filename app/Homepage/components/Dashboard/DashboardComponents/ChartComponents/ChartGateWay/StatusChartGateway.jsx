@@ -3,24 +3,26 @@ import CustomChart from "../CustomChart";
 import ExpandGateway from "../../ExpandComponents/ExpandGateway";
 import { useAtom, useAtomValue } from "jotai";
 import {
-  branchLabelsAtom,
   isBranchOpenAtom,
   selectedValueDataAtom,
+  statusLabelsAtom,
 } from "../../ExpandComponents/ExpandStore";
 import { Button, useDisclosure } from "@nextui-org/react";
-const BranchPieGateway = ({ chartData, chartOpen }) => {
+import { categorizedStatus } from "../../AllComponents/function";
+const StatusChartGateway = ({ chartData, chartOpen }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [newChartData, setNewChartData] = useState(chartData);
+  const statusLabels = useAtomValue(statusLabelsAtom);
   const [selectedValueData, setSelectedValueData] = useAtom(
     selectedValueDataAtom
   );
-  const branchLabels = useAtomValue(branchLabelsAtom);
   const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
+
   useEffect(() => {
     if (
       selectedValueData &&
       selectedValueData.label &&
-      selectedValueData.location === "branch"
+      selectedValueData.location === "status"
     ) {
       const filteredData = chartData.newAsset[selectedValueData.label] || [];
       setNewChartData((prevData) => ({
@@ -33,18 +35,18 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
       setNewChartData(chartData);
     }
   }, [selectedValueData, chartData]);
-
   const labels = Object.keys(newChartData.newAsset);
   const dataValues = labels.map(
-    (branch) => newChartData.newAsset[branch.toLocaleLowerCase()]?.length
+    (label) => newChartData.newAsset[label]?.length
   );
+  // Map labels to their respective colors
   const backgroundColors = labels.map((label) => {
-    const status = branchLabels.find((s) => s.name === label);
+    const status = statusLabels.find((s) => s.name === label);
     return status ? status.backgroundColor : "rgba(0, 0, 0, 0.1)";
   });
 
   const borderColors = labels.map((label) => {
-    const status = branchLabels.find((s) => s.name === label);
+    const status = statusLabels.find((s) => s.name === label);
     return status ? status.borderColor : "rgba(0, 0, 0, 1)";
   });
 
@@ -73,8 +75,8 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
         const selectedItemData = {
           label: selectedLabel,
           value: selectedValue,
-          data: chartData.newAsset[selectedLabel.toLocaleLowerCase()],
-          location: "branch",
+          data: chartData.newAsset[selectedLabel],
+          location: "status",
         };
         setIsBranchOpen(true);
         if (!isBranchOpen) {
@@ -107,9 +109,9 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
       },
     ],
   };
-  const chartTitle = "Branches Asset Collection";
+  const chartTitle = "Status Asset Collection";
   return (
-    <div className='w-full max-h-[400px] flex items-center flex-col  p-2 '>
+    <div className='w-full max-h-[300px] flex items-center flex-col  p-2 '>
       <div className='w-full p-2 flex flex-row justify-between items-center'>
         <ExpandGateway
           chartTitle={chartTitle}
@@ -127,4 +129,4 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
   );
 };
 
-export default BranchPieGateway;
+export default StatusChartGateway;

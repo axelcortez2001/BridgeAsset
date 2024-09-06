@@ -1,3 +1,6 @@
+import { addYears, format, isValid } from "date-fns";
+import { computeYTD } from "../../../Assets/TableComponents/TableFunction";
+
 export const computeTotalCost = (data) => {
   let totalCost = 0;
   data.forEach((item) => {
@@ -41,26 +44,89 @@ export const categorizedBranch = (data) => {
   return { newAsset };
 };
 
-export const categorizedDate = (data) => {
+export const generateWarrantyStatus = (data) => {
+  let Good = [];
+  let above = [];
+  let outOfWarranty = [];
+  let invalid = [];
+  //loop through data and set its warranty status
+  data.forEach((item) => {
+    const opt = item?.warranty_period;
+    const dop = item?.dop;
+    if (opt && dop) {
+      const dateToday = new Date();
+      const newDop = addYears(new Date(dop), parseFloat(opt));
+      const threeYearsDop = addYears(new Date(dop), 3);
+      if (dateToday <= newDop) {
+        Good.push(item);
+      } else if (dateToday > threeYearsDop) {
+        above.push(item);
+      } else {
+        outOfWarranty.push(item);
+      }
+    } else {
+      invalid.push(item);
+    }
+  });
+  const newAsset = {
+    Good: Good,
+    above: above,
+    outOfWarranty: outOfWarranty,
+    invalid: invalid,
+  };
+  return { newAsset };
+};
+
+export const categorizedDate = (data, filterType) => {
+  //filter date first
+  const formatDate = (date, filterType) => {
+    const d = new Date(date);
+    switch (filterType) {
+      case "daily":
+        return isValid(d) ? format(d, "PP") : "No Date";
+
+      case "monthly":
+        return isValid(d) ? format(d, "MMMM yyyy") : "No Date";
+      case "yearly":
+        return isValid(d) ? format(d, "yyyy") : "No Date";
+      default:
+        return isValid(d) ? format(d, "PP") : "No Date";
+    }
+  };
+
   // Step 1: Sort Data by Date in Descending Order
   const sortedData = data.sort((a, b) => new Date(b.dop) - new Date(a.dop));
   // Step 2: Group by Date and Sum Unit Prices
   const dateMap = sortedData.reduce((acc, item) => {
-    const date = item.dop;
-    if (!acc[date]) {
-      acc[date] = 0;
+    const formattedDate = formatDate(item.dop, filterType);
+    if (!acc[formattedDate]) {
+      acc[formattedDate] = 0;
     }
-    acc[date] += item.unit_price;
+    acc[formattedDate] += item.unit_price;
     return acc;
   }, {});
+  const dateValue = sortedData.reduce((acc, item) => {
+    const formattedDate = formatDate(item.dop, filterType);
+    if (!acc[formattedDate]) {
+      acc[formattedDate] = [];
+    }
+    acc[formattedDate].push(item);
+    return acc;
+  }, {});
+
   // Step 3: Convert Grouped Data to Arrays
   const labels = Object.keys(dateMap);
   const unitPrices = Object.values(dateMap);
   // Step 4: Sort Arrays by Date (Ascending)
   const sortedLabels = labels.sort((a, b) => new Date(a) - new Date(b));
   const sortedUnitPrices = sortedLabels.map((label) => dateMap[label]);
-
-  const newAsset = { labels: sortedLabels, unitPrices: sortedUnitPrices };
+  // Get sorted values based on sorted labels
+  const sortedValue = sortedLabels.map((label) => dateValue[label]);
+  const newAsset = {
+    labels: sortedLabels,
+    unitPrices: sortedUnitPrices,
+    value: sortedValue,
+  };
   return { newAsset };
 };
 export const filterCategoryStatus = (chartData, labels, stat) => {
@@ -104,6 +170,63 @@ export const filterCategoryStatus = (chartData, labels, stat) => {
     return filteredArray;
   });
   return data;
+};
+
+export const generateYTD = (data) => {
+  const ytdData = data.reduce((acc, item) => {
+    const ytdDate = new Date(item.dop);
+    const newItem = item?.item;
+    if (!acc[newItem]) {
+      acc[newItem] = [];
+    }
+
+    acc[newItem] = isNaN(computeYTD(ytdDate)) ? "No Data" : computeYTD(ytdDate);
+    console.log(acc);
+    return acc;
+  }, []);
+  return ytdData;
+};
+export const sortYTDData = (ytdData) => {
+  const sortableArray = Object.entries(ytdData).map(([item, value]) => ({
+    item,
+    value: value === "No Data" ? -Infinity : value,
+  }));
+
+  sortableArray.sort((a, b) => b.value - a.value);
+  const sortedYTD = sortableArray.reduce((acc, { item, value }) => {
+    acc[item] = value === -Infinity ? "No Data" : value;
+    return acc;
+  }, {});
+
+  return sortedYTD;
+};
+
+export const categorizedStatus = (data) => {
+  let Stock = [];
+  let Active = [];
+  let Defective = [];
+  let Others = [];
+  data.forEach((item) => {
+    if (item.category === "laptop") {
+      if (item.item_stats === "SOH") Stock.push(item);
+      else if (item.item_stats === "Active") Active.push(item);
+      else if (item.item_stats === "For Repair") Defective.push(item);
+      else Others.push(item);
+    } else if (item.category === "monitor" || item.category === "peripheral") {
+      if (item.status.name === "Stock") Stock.push(item);
+      else if (item.status.name === "Active" || item.status.name === "Issued")
+        Active.push(item);
+      else if (item.status.name === "Defective") Defective.push(item);
+      else Others.push(item);
+    }
+  });
+  const newAsset = {
+    Stock: Stock,
+    Active: Active,
+    Defective: Defective,
+    Others: Others,
+  };
+  return { newAsset };
 };
 export const dynamicValues = (chartData, labels, expandIndex) => {
   const statusLabels = [

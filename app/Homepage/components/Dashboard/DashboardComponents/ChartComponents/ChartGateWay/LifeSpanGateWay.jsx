@@ -1,26 +1,40 @@
 import React, { useState, useEffect } from "react";
 import CustomChart from "../CustomChart";
+import { Button, useDisclosure } from "@nextui-org/react";
 import ExpandGateway from "../../ExpandComponents/ExpandGateway";
 import { useAtom, useAtomValue } from "jotai";
 import {
-  branchLabelsAtom,
   isBranchOpenAtom,
   selectedValueDataAtom,
+  warrantyLabelsAtom,
 } from "../../ExpandComponents/ExpandStore";
-import { Button, useDisclosure } from "@nextui-org/react";
-const BranchPieGateway = ({ chartData, chartOpen }) => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+const LifeSpanGateWay = ({ chartData }) => {
   const [newChartData, setNewChartData] = useState(chartData);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const labelMapping = {
+    Good: "Good",
+    above: "More than 3 years",
+    outOfWarranty: "Out of Warranty",
+    invalid: "No Date",
+  };
+
+  const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
   const [selectedValueData, setSelectedValueData] = useAtom(
     selectedValueDataAtom
   );
-  const branchLabels = useAtomValue(branchLabelsAtom);
-  const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
+  const warrantyLabels = useAtomValue(warrantyLabelsAtom);
+  // Get the keys
+  const oldLabels = Object.keys(newChartData.newAsset);
+  // Map old labels to new labels
+  const labels = oldLabels.map((label) => labelMapping[label] || label);
+  const dataValues = oldLabels.map(
+    (label) => newChartData.newAsset[label]?.length
+  );
   useEffect(() => {
     if (
       selectedValueData &&
       selectedValueData.label &&
-      selectedValueData.location === "branch"
+      selectedValueData.location === "warranty"
     ) {
       const filteredData = chartData.newAsset[selectedValueData.label] || [];
       setNewChartData((prevData) => ({
@@ -33,24 +47,18 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
       setNewChartData(chartData);
     }
   }, [selectedValueData, chartData]);
-
-  const labels = Object.keys(newChartData.newAsset);
-  const dataValues = labels.map(
-    (branch) => newChartData.newAsset[branch.toLocaleLowerCase()]?.length
-  );
-  const backgroundColors = labels.map((label) => {
-    const status = branchLabels.find((s) => s.name === label);
+  const dataforTable = oldLabels.map((label) => newChartData.newAsset[label]);
+  const backgroundColors = oldLabels.map((label) => {
+    const status = warrantyLabels.find((s) => s.name === label);
     return status ? status.backgroundColor : "rgba(0, 0, 0, 0.1)";
   });
 
-  const borderColors = labels.map((label) => {
-    const status = branchLabels.find((s) => s.name === label);
+  const borderColors = oldLabels.map((label) => {
+    const status = warrantyLabels.find((s) => s.name === label);
     return status ? status.borderColor : "rgba(0, 0, 0, 1)";
   });
-
   const options = {
     responsive: true,
-    maintainAspectRatio: true,
     plugins: {
       legend: {
         position: "top",
@@ -59,6 +67,7 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
           usePointStyle: true,
         },
       },
+
       tooltip: {
         callbacks: {
           label: (context) => `${context.label}: ${context.raw} items`,
@@ -68,13 +77,13 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
     onClick: (event, elements, context) => {
       if (elements.length > 0) {
         const elementIndex = elements[0].index;
-        const selectedLabel = labels[elementIndex];
+        const selectedLabel = oldLabels[elementIndex];
         const selectedValue = dataValues[elementIndex];
         const selectedItemData = {
           label: selectedLabel,
           value: selectedValue,
-          data: chartData.newAsset[selectedLabel.toLocaleLowerCase()],
-          location: "branch",
+          data: dataforTable[elementIndex],
+          location: "warranty",
         };
         setIsBranchOpen(true);
         if (!isBranchOpen) {
@@ -89,25 +98,26 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
       }
     },
   };
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "Warranty Status",
+        data: dataValues,
+        backgroundColor: backgroundColors,
+        borderColor: borderColors,
+        fill: true,
+        borderWidth: 1,
+      },
+    ],
+  };
   const handleModal = () => {
     if (!isBranchOpen) {
       onOpenChange(true);
       setIsBranchOpen(true);
     }
   };
-  const data = {
-    labels: labels,
-    datasets: [
-      {
-        label: "Number of Assets",
-        data: dataValues,
-        backgroundColor: backgroundColors,
-        borderColor: borderColors,
-        borderWidth: 1,
-      },
-    ],
-  };
-  const chartTitle = "Branches Asset Collection";
+  const chartTitle = "Asset Warranty Status";
   return (
     <div className='w-full max-h-[400px] flex items-center flex-col  p-2 '>
       <div className='w-full p-2 flex flex-row justify-between items-center'>
@@ -127,4 +137,4 @@ const BranchPieGateway = ({ chartData, chartOpen }) => {
   );
 };
 
-export default BranchPieGateway;
+export default LifeSpanGateWay;

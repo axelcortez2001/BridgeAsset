@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Button, useDisclosure } from "@nextui-org/react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { expandIndexAtom } from "../../AllComponents/Charts/AllComponentsStore";
 import { dynamicValues } from "../../AllComponents/function";
 import { IoMdExpand } from "react-icons/io";
 import ExpandableCategories from "../../AllComponents/Charts/ExpandableCategories";
 import CustomChart from "../CustomChart";
+import { filterTypeAtom } from "../../ExpandComponents/ExpandStore";
 
 const AllComponentsGateway = ({ chartData, chartOpen }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [expandIndex, setExpandIndex] = useAtom(expandIndexAtom);
+  const filterType = useAtomValue(filterTypeAtom);
   const labels = Object.keys(chartData.newAsset);
   const data = dynamicValues(chartData, labels, expandIndex);
+ 
   const options = {
     responsive: true,
     maintainAspectRatio: true,
@@ -23,7 +26,7 @@ const AllComponentsGateway = ({ chartData, chartOpen }) => {
     },
     plugins: {
       legend: {
-        position: "right",
+        position: "top",
       },
       tooltip: {
         callbacks: {
@@ -51,7 +54,7 @@ const AllComponentsGateway = ({ chartData, chartOpen }) => {
     }
   };
   return (
-    <div className='w-full max-h-[700px] flex items-center flex-col  p-2 '>
+    <div className='w-auto max-h-[600px] flex items-center flex-col  p-2 '>
       <div className='w-full p-2 flex flex-row justify-between items-center'>
         <h2>Asset Categories</h2>
         {!chartOpen && (

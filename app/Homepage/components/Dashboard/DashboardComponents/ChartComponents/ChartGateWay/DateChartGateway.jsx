@@ -1,13 +1,65 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import CustomChart from "../CustomChart";
+import ExpandGateway from "../../ExpandComponents/ExpandGateway";
+import { Button, useDisclosure, Select, SelectItem } from "@nextui-org/react";
+import { useAtom } from "jotai";
+import {
+  filterTypeAtom,
+  isBranchOpenAtom,
+  selectedValueDataAtom,
+} from "../../ExpandComponents/ExpandStore";
 
 const DateChartGateway = ({ chartData }) => {
-  const labels = chartData?.newAsset?.labels;
-  const dataValues = chartData?.newAsset?.unitPrices;
-  console.log("chart Data at Date: ", chartData);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [newChartData, setNewChartData] = useState(chartData);
+  const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
+  const [filterType, setFilterType] = useAtom(filterTypeAtom);
+  const [selectedValueData, setSelectedValueData] = useAtom(
+    selectedValueDataAtom
+  );
+
+  useEffect(() => {
+    if (
+      selectedValueData &&
+      selectedValueData.label &&
+      selectedValueData.location === "date"
+    ) {
+      const filteredData = {
+        labels: [chartData.newAsset.labels[selectedValueData.index]],
+        unitPrices: [chartData.newAsset.unitPrices[selectedValueData.index]],
+      };
+      const newData = (prevData) => ({
+        ...prevData,
+        newAsset: filteredData,
+      });
+      setNewChartData(newData());
+    } else if (isBranchOpen === false) {
+      setNewChartData(chartData);
+    }
+  }, [selectedValueData, chartData]);
+  const labels = newChartData?.newAsset?.labels;
+  const dataValues = newChartData?.newAsset?.unitPrices;
+  const maxValue = Math.max(...dataValues);
   const options = {
-    responsive: true,
     maintainAspectRatio: true,
+    layout: {
+      padding: 10,
+    },
+    scales: {
+      y: {
+        ticks: {
+          min: 0,
+        },
+        suggestedMax: maxValue + 10000,
+      },
+      x: {
+        ticks: {
+          autoSkip: false,
+        },
+      },
+    },
+    responsive: true,
+
     plugins: {
       legend: {
         position: "right",
@@ -17,33 +69,97 @@ const DateChartGateway = ({ chartData }) => {
           label: (context) => `${context.label}: ${context.raw} Php`,
         },
       },
+      datalabels: {
+        //remove labels for pie and dou
+        display: true,
+        anchor: "end",
+        align: "end",
+        color: "black",
+        font: {
+          weight: "bold",
+        },
+        formatter: (value, context) => {
+          return value;
+        },
+      },
+    },
+    onClick: (event, elements, context) => {
+      if (elements.length > 0) {
+        const elementIndex = elements[0].index;
+        const selectedLabel = labels[elementIndex];
+        const selectedValue = dataValues[elementIndex];
+        const selectedItemData = {
+          label: selectedLabel,
+          value: selectedValue,
+          data: chartData.newAsset.value[elementIndex],
+          location: "date",
+          index: elementIndex,
+        };
+        setIsBranchOpen(true);
+        if (!isBranchOpen) {
+          onOpenChange(true);
+        }
+        if (selectedValueData === null) {
+          setSelectedValueData(selectedItemData);
+        } else {
+          setNewChartData(chartData);
+          setSelectedValueData(null);
+        }
+      }
     },
   };
+
   const data = {
     labels: labels,
     datasets: [
       {
         label: "Total Amount",
         data: dataValues,
-        backgroundColor: [
-          //   "rgba(255, 99, 132, 0.2)",
-          //   "rgba(54, 162, 235, 0.2)",
-          "rgba(255, 206, 86, 0.2)",
-        ],
-        borderColor: [
-          //   "rgba(255, 99, 132, 1)",
-          //   "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-        ],
-        borderWidth: 1,
+        backgroundColor: ["rgba(54, 162, 235, 0.2)"],
+        borderColor: ["rgba(54, 162, 235, 1)"],
+        borderJoinStyle: "bevel",
+        borderWidth: 2,
       },
     ],
   };
+  const handleModal = () => {
+    if (!isBranchOpen) {
+      onOpenChange(true);
+      setIsBranchOpen(true);
+    }
+  };
+  const chartTitle = "Cost Accumulated";
   return (
-    <div className='w-full max-h-screen flex items-center flex-col  p-2 '>
+    <div className='w-full border  max-h-[550px] flex items-center flex-col  p-4 '>
       <div className='w-full p-2 flex flex-row justify-between items-center'>
-        <h2>Cost Accumulated</h2>
+        <ExpandGateway
+          chartTitle={chartTitle}
+          chartData={data}
+          options={options}
+          type='Line'
+          onOpen={onOpen}
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          handleModal={handleModal}
+        />
       </div>
+      <Select
+        label='filter'
+        placeholder=''
+        className='max-w-xs mb-2'
+        size='sm'
+        selectedValue={filterType}
+      >
+        <SelectItem key='daily' onClick={() => setFilterType("daily")}>
+          Daily
+        </SelectItem>
+        <SelectItem key='monthly' onClick={() => setFilterType("monthly")}>
+          Monthly
+        </SelectItem>
+        <SelectItem key='yearly' onClick={() => setFilterType("yearly")}>
+          Yearly
+        </SelectItem>
+      </Select>
       <CustomChart chartData={data} options={options} type='Line' />
     </div>
   );

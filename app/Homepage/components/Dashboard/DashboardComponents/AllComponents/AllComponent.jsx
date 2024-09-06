@@ -5,6 +5,7 @@ import {
   categorizedBranch,
   categorizedDate,
   computeTotalCost,
+  generateWarrantyStatus,
 } from "./function";
 import { Card } from "@nextui-org/react";
 import TotalCostCard from "../TotalCostCard";
@@ -14,10 +15,13 @@ import { useAtomValue } from "jotai";
 import { tabLocationAtom } from "./Charts/AllComponentsStore";
 import DateChartGateway from "../ChartComponents/ChartGateWay/DateChartGateway";
 import { dashBoardDataAtom } from "../../DashboardStore/MainStore";
+import LifeSpanGateWay from "../ChartComponents/ChartGateWay/LifeSpanGateWay";
+import { filterTypeAtom } from "../ExpandComponents/ExpandStore";
 
 const AllComponent = () => {
   const dashboardData = useAtomValue(dashBoardDataAtom);
   const tabLocation = useAtomValue(tabLocationAtom);
+  const filterType = useAtomValue(filterTypeAtom);
   const filteredLaptop = dashboardData.filter(
     (data) => data?.category.toLowerCase() === "laptop"
   );
@@ -47,15 +51,20 @@ const AllComponent = () => {
           />
         </div>
 
-        <div className='border relative w-full rounded-md p-2 overflow-auto resize'>
+        <div className='border relative min-w-[700px]  rounded-md p-2 overflow-auto resize'>
           <AllComponentsGateway chartData={categorizedAsset(dashboardData)} />
         </div>
 
-        <div className='border relative  rounded-md p-2 overflow-auto resize'>
+        <div className='border relative max-w-[500px]  rounded-md p-2 overflow-auto resize'>
           <BranchPieGateway chartData={categorizedBranch(dashboardData)} />
         </div>
-        <div className='border relative  rounded-md p-2 w-full'>
-          <DateChartGateway chartData={categorizedDate(dashboardData)} />
+        <div className='border relative max-w-[410px]  rounded-md p-2 overflow-auto resize'>
+          <LifeSpanGateWay chartData={generateWarrantyStatus(dashboardData)} />
+        </div>
+        <div className='border relative  rounded-md p-2 w-full overflow-auto resize'>
+          <DateChartGateway
+            chartData={categorizedDate(dashboardData, filterType)}
+          />
         </div>
       </div>
     </div>

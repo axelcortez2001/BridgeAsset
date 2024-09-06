@@ -16,7 +16,6 @@ import useHandleSelectAssetMonitor from "../Functions/MonitorFunction";
 import useHandleSelectAssetPeripheral from "../Functions/PeripheralFunction";
 const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
   const data = assetData;
-  console.log("Data at table: ", data);
   const columns = laptopColumns;
   const table = useReactTable({
     data,
@@ -54,14 +53,13 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
     setSelectedTd(opt);
   };
   const handleSelectAsset = () => {
-    console.log("Selected TD: ", selectedTD);
-    if (selectedTD?.category === "laptop") {
+    if (selectedTD?.category.toLocaleLowerCase() === "laptop") {
       handleSelectLaptop(selectedTD);
       onOpenChange(false);
-    } else if (selectedTD?.category === "monitor") {
+    } else if (selectedTD?.category.toLocaleLowerCase() === "monitor") {
       handleSelectMonitor(selectedTD);
       onOpenChange(false);
-    } else if (selectedTD?.category === "peripheral") {
+    } else if (selectedTD?.category.toLocaleLowerCase() === "peripheral") {
       handleSelectPeripheral(selectedTD);
       onOpenChange(false);
     }
