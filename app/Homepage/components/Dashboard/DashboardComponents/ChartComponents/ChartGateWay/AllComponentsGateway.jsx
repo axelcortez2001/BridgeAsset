@@ -14,7 +14,7 @@ const AllComponentsGateway = ({ chartData, chartOpen }) => {
   const filterType = useAtomValue(filterTypeAtom);
   const labels = Object.keys(chartData.newAsset);
   const data = dynamicValues(chartData, labels, expandIndex);
- 
+
   const options = {
     responsive: true,
     maintainAspectRatio: true,
@@ -54,32 +54,38 @@ const AllComponentsGateway = ({ chartData, chartOpen }) => {
     }
   };
   return (
-    <div className='w-auto max-h-[600px] flex items-center flex-col  p-2 '>
-      <div className='w-full p-2 flex flex-row justify-between items-center'>
-        <h2>Asset Categories</h2>
+    <div className="w-full h-full flex items-center flex-col p-2 ">
+      <div className="w-full h-[40px] flex flex-row justify-between items-center">
+        <h2 className="font-bold tracking-wide ss:text-lg">Asset Categories</h2>
         {!chartOpen && (
-          <IoMdExpand
-            size={20}
-            title='Expand'
-            className='hover:cursor-pointer hover:bg-gray-200'
-            onClick={() => handleModalIndex(null)}
-          />
+          <div className="absolute right-2">
+            <Button
+              isIconOnly
+              variant="light"
+              onClick={() => handleModalIndex(null)}
+            >
+              <IoMdExpand size={20} title="Expand" />
+            </Button>
+          </div>
         )}
         {expandIndex !== null && (
           <div
-            className='border rounded-md'
+            className="border rounded-md"
             onClick={() => handleModalIndex(null)}
           >
             Clear
           </div>
         )}
       </div>
-      {data && <CustomChart chartData={data} options={options} type='Bar' />}
+
+      <div className="w-full h-[calc(100%-40px)] flex items-center justify-center border-t border-a-grey">
+        {data && <CustomChart chartData={data} options={options} type="Bar" />}
+      </div>
       <ExpandableCategories
         onOpen={onOpen}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        className='p-2 max-h-screen'
+        className="p-2 max-h-screen"
         chartData={chartData}
         data={data}
       />

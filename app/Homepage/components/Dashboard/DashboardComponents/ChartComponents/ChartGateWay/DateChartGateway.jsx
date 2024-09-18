@@ -130,37 +130,50 @@ const DateChartGateway = ({ chartData }) => {
   };
   const chartTitle = "Cost Accumulated";
   return (
-    <div className='w-full border  max-h-[550px] flex items-center flex-col  p-4 '>
-      <div className='w-full p-2 flex flex-row justify-between items-center'>
+    <div className="w-full h-full flex items-center flex-col p-2 ">
+      <div className="w-full h-[40px] flex flex-row justify-between items-center">
         <ExpandGateway
           chartTitle={chartTitle}
           chartData={data}
           options={options}
-          type='Line'
+          type="Line"
           onOpen={onOpen}
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           handleModal={handleModal}
+          middleContent={
+            <>
+              <Select
+                label="filter"
+                placeholder=""
+                classNames={{trigger:"min-h-[0px] h-[32px] bg-a-grey/80"}}
+                size="sm"
+                selectedValue={filterType}
+              >
+                <SelectItem key="daily" onClick={() => setFilterType("daily")}>
+                  Daily
+                </SelectItem>
+                <SelectItem
+                  key="monthly"
+                  onClick={() => setFilterType("monthly")}
+                >
+                  Monthly
+                </SelectItem>
+                <SelectItem
+                  key="yearly"
+                  onClick={() => setFilterType("yearly")}
+                >
+                  Yearly
+                </SelectItem>
+              </Select>
+            </>
+          }
         />
       </div>
-      <Select
-        label='filter'
-        placeholder=''
-        className='max-w-xs mb-2'
-        size='sm'
-        selectedValue={filterType}
-      >
-        <SelectItem key='daily' onClick={() => setFilterType("daily")}>
-          Daily
-        </SelectItem>
-        <SelectItem key='monthly' onClick={() => setFilterType("monthly")}>
-          Monthly
-        </SelectItem>
-        <SelectItem key='yearly' onClick={() => setFilterType("yearly")}>
-          Yearly
-        </SelectItem>
-      </Select>
-      <CustomChart chartData={data} options={options} type='Line' />
+
+      <div className="w-full h-[calc(100%-40px)] flex items-center justify-center border-t border-a-grey">
+        <CustomChart chartData={data} options={options} type="Line" />
+      </div>
     </div>
   );
 };

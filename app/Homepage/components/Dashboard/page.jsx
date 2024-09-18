@@ -10,7 +10,7 @@ import DashboardHome from "./DashboardComponents/DashboardHome";
 import AssetLoading from "../LoadingComponents/AssetLoading";
 import { updateStatusAtom } from "../../AssetStore";
 
-const Dashboard = () => {
+const Dashboard = ({ isSideNavBar, setSideNavBar }) => {
   const [dashboardLoading, setDashboardLoading] = useState(false);
   const fetchDashBoard = useSetAtom(fetchDashboardDataAtom);
   const [updateStatus, setUpdateStatus] = useAtom(updateStatusAtom);
@@ -45,8 +45,12 @@ const Dashboard = () => {
   ) : dashboardData && dashboardData?.length <= 0 ? (
     <div>No Data Available</div>
   ) : (
-    <div className='relative max-h-screen border overflow-y-auto w-full'>
-      <DashboardHome dashboardLoading={dashboardLoading} />
+    <div className="h-full w-full">
+      <DashboardHome
+        dashboardLoading={dashboardLoading}
+        isSideNavBar={isSideNavBar}
+        setSideNavBar={setSideNavBar}
+      />
     </div>
   );
 };

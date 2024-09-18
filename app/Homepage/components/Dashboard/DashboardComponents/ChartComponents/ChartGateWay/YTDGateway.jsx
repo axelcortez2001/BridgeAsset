@@ -47,11 +47,13 @@ const YTDGateway = ({ chartData }) => {
   };
   const chartTitle = "Ytd Chart Data";
   return (
-    <div className='w-full max-h-screen overflow-y-auto'>
-      <div className='w-full p-2 flex flex-row justify-between items-center'>
+    <div className="w-full h-full flex items-center flex-col p-2">
+      <div className="w-full h-[40px] flex flex-row justify-between items-center">
         {chartTitle}
       </div>
-      <CustomChart chartData={data} options={options} type='Bar' />
+      <div className="w-full h-[calc(100%-40px)] flex items-center justify-center border-t border-a-grey">
+        <CustomChart chartData={data} options={options} type="Bar" />
+      </div>
     </div>
   );
 };

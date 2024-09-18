@@ -1,28 +1,26 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import TotalCostCard from "../TotalCostCard";
 import {
-  categorizedAsset,
   categorizedBranch,
   categorizedDate,
+  categorizedStatus,
   computeTotalCost,
   generateWarrantyStatus,
-} from "./function";
-import { Card, CardBody } from "@nextui-org/react";
-import TotalCostCard from "../TotalCostCard";
-import AllComponentsGateway from "../ChartComponents/ChartGateWay/AllComponentsGateway";
+  generateYTD,
+} from "../AllComponents/function";
 import BranchPieGateway from "../ChartComponents/ChartGateWay/BranchPieGateway";
-import { useAtomValue } from "jotai";
-import { tabLocationAtom } from "./Charts/AllComponentsStore";
 import DateChartGateway from "../ChartComponents/ChartGateWay/DateChartGateway";
-import { dashBoardDataAtom } from "../../DashboardStore/MainStore";
 import LifeSpanGateWay from "../ChartComponents/ChartGateWay/LifeSpanGateWay";
+import StatusChartGateway from "../ChartComponents/ChartGateWay/StatusChartGateway";
+import { useAtomValue } from "jotai";
 import { filterTypeAtom } from "../ExpandComponents/ExpandStore";
-import ResizableSnapContainer from "@/app/Homepage/components/Dashboard/DashboardComponents/ResizableSnapContainer";
+import YTDGateway from "../ChartComponents/ChartGateWay/YTDGateway";
+import ResizableSnapContainer from "../ResizableSnapContainer";
 
-const AllComponent = () => {
-  const dashboardData = useAtomValue(dashBoardDataAtom);
-  const tabLocation = useAtomValue(tabLocationAtom);
+const FilteredComponents = ({ dashboardData }) => {
   const filterType = useAtomValue(filterTypeAtom);
+
   const [mouseIsUp, setMouseIsUp] = useState(true);
 
   const [parentForResizable, setParentForResizable] = useState(0);
@@ -47,16 +45,6 @@ const AllComponent = () => {
     };
   }, [parentContainer]);
 
-  const filteredLaptop = dashboardData.filter(
-    (data) => data?.category.toLowerCase() === "laptop"
-  );
-  const filteredMonitor = dashboardData.filter(
-    (data) => data?.category.toLowerCase() === "monitor"
-  );
-  const filteredPeripheral = dashboardData.filter(
-    (data) => data?.category.toLowerCase() === "peripheral"
-  );
-
   const handleMouseDown = () => {
     setMouseIsUp(false);
   };
@@ -66,47 +54,68 @@ const AllComponent = () => {
   };
 
   return (
+    // <div className="w-full h-full flex flex-col  ">
+    //   <div className="flex flex-wrap gap-5 p-3">
+    //     <div className="flex flex-wrap w-full gap-4" id="Cost">
+    //       <TotalCostCard cost={computeTotalCost(dashboardData)} loc="laptop" />
+    //     </div>
+    //     <div
+    //       className="border relative  rounded-md p-2 overflow-auto resize"
+    //       id="Status Asset Collection"
+    //     >
+    //       <StatusChartGateway chartData={categorizedStatus(dashboardData)} />
+    //     </div>
+    //     <div
+    //       className="border relative  rounded-md p-2 overflow-auto resize"
+    //       id="Branches Asset Collection"
+    //     >
+    //       <BranchPieGateway chartData={categorizedBranch(dashboardData)} />
+    //     </div>
+    //     <div
+    //       className="border relative max-w-[410px]  rounded-md p-2 w-full overflow-auto resize"
+    //       id="Asset Warranty Status"
+    //     >
+    //       <LifeSpanGateWay chartData={generateWarrantyStatus(dashboardData)} />
+    //     </div>
+    //     <div
+    //       className="border relative  rounded-md p-2 w-full overflow-auto resize"
+    //       id="Cost Accumulated"
+    //     >
+    //       <DateChartGateway
+    //         chartData={categorizedDate(dashboardData, filterType)}
+    //       />
+    //     </div>
+    //     <div
+    //       className="border relative  rounded-md p-2 w-full overflow-auto resize"
+    //       id="Ytd Chart Data"
+    //     >
+    //       <YTDGateway chartData={generateYTD(dashboardData)} />
+    //     </div>
+    //   </div>
+    // </div>
+
     <div
       className="w-full h-[calc(100vh-48px)] overflow-auto mt-2 space-y-2 ss:mt-0 p-0 ss:p-2 "
       onMouseUp={handleMouseUp}
       onMouseDown={handleMouseDown}
       ref={parentContainer}
     >
-      <div
-        className="grid grid-cols-1 ss:grid-cols-2 lg:grid-cols-4 gap-2"
-        id="Cost"
-      >
-        <div className="ss:col-span-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2" id="Cost">
+        <div>
           <TotalCostCard cost={dashboardData?.length} loc="total item" />
         </div>
-        <div className="lg:col-span-2 hidden lg:block" />
         <div>
           <TotalCostCard cost={computeTotalCost(dashboardData)} loc="total" />
-        </div>
-        <div>
-          <TotalCostCard cost={computeTotalCost(filteredLaptop)} loc="laptop" />
-        </div>
-        <div>
-          <TotalCostCard
-            cost={computeTotalCost(filteredMonitor)}
-            loc="monitor"
-          />
-        </div>
-        <div>
-          <TotalCostCard
-            cost={computeTotalCost(filteredPeripheral)}
-            loc="peripheral"
-          />
         </div>
       </div>
 
       <div className="flex flex-wrap flex-none gap-2 px-2">
         <ResizableSnapContainer
-          divId="Asset Categories"
+          divId="Status Asset Collection"
           parentForResizable={parentForResizable}
           mouseIsUp={mouseIsUp}
           content={
-            <AllComponentsGateway chartData={categorizedAsset(dashboardData)} />
+            <StatusChartGateway chartData={categorizedStatus(dashboardData)} />
           }
         />
 
@@ -140,9 +149,16 @@ const AllComponent = () => {
             />
           }
         />
+
+        <ResizableSnapContainer
+          divId="Ytd Chart Data"
+          parentForResizable={parentForResizable}
+          mouseIsUp={mouseIsUp}
+          content={<YTDGateway chartData={generateYTD(dashboardData)} />}
+        />
       </div>
     </div>
   );
 };
 
-export default AllComponent;
+export default FilteredComponents;

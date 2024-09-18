@@ -18,3 +18,8 @@
   background: blue;
   opacity: 1;
 }
+
+*,
+html {
+  scroll-behavior: smooth !important;
+}
