@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AssetLoading from "../../LoadingComponents/AssetLoading";
-import { Listbox, ListboxItem, Tab, Tabs } from "@nextui-org/react";
+import { Listbox, ListboxItem, Skeleton, Tab, Tabs } from "@nextui-org/react";
 import AllComponent from "./AllComponents/AllComponent";
 import LaptopComponent from "./LaptopComponents/LaptopComponent";
 import MonitorComponent from "./MonitorComponents/MonitorComponent";
@@ -21,7 +21,7 @@ import {
 import DropdownFilter from "@/app/SharedComponents/DropdownFilter";
 import FilteredComponents from "./FilteredComponents/FilteredComponents";
 
-const DashboardHome = ({ isSideNavBar, setSideNavBar }) => {
+const DashboardHome = ({ isSideNavBar, setSideNavBar, dashboardLoading }) => {
   const dashboardData = useAtomValue(dashBoardDataAtom);
   const [tabLocation, setTabLocation] = useAtom(tabLocationAtom);
   const [filteredData, setFileteredData] = useState([]);

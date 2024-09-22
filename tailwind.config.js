@@ -11,6 +11,9 @@ module.exports = {
     extend: {
       animation: {},
       keyframes: {},
+      dropShadow: {
+        brShadow: "0px 3px 8px rgba(0, 0, 0, 0.24)",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

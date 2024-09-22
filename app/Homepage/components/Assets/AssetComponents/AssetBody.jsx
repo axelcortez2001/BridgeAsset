@@ -9,13 +9,11 @@ import {
   globalActionStatusAtom,
   selectedTypeAtom,
 } from "@/app/Homepage/AssetStore";
-import LaptopBlockView from "../AssetBlockView/LaptopBlockView";
-import MonitorBlockView from "../AssetBlockView/MonitorBlockView";
-import PeripheralBlockVIew from "../AssetBlockView/PeripheralBlockVIew";
-import { IoAddSharp } from "react-icons/io5";
-import { Input, Tab, Tabs } from "@nextui-org/react";
-import Table from "../TableComponents/Table";
-import TableGateWay from "../TableComponents/TableGateWay";
+import { Tab, Tabs } from "@nextui-org/react";
+import SearchBar from "@/app/SharedComponents/SearchBar";
+
+import BlockView from "../AssetBlockView/BlockView";
+import TableView from "../TableComponents/TableView";
 
 const AssetBody = () => {
   const [globalActionStatus, setGlobalActionStatus] = useAtom(
@@ -28,14 +26,31 @@ const AssetBody = () => {
   const [assetLoading, setAssetLoading] = useState(false);
   const fetchAssetData = useSetAtom(fetchAssetDataAtom);
   const [selected, setSelected] = useState(selectedType);
-  const [tabState, setTabState] = useState("Block");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [isViewBlock, setView] = useState(true);
+
+  const [isAddModal, setAddModal] = useState(false);
 
   const handleActionStatus = (stat) => {
     setActionStatus(!stat);
   };
-  const handleTabChange = (tab) => {
-    setTabState(tab);
+
+  const handleAddModal = () => {
+    setAddModal((prev) => !prev);
+  };
+
+  const accordionItemOptions = {
+    laptop: ["Active", "SOH", "For Repair", "Irreparable", "OTHERS"],
+    monitor: ["Active", "Stock", "Issued", "Defective", "Archive", "Transfer"],
+    peripheral: [
+      "Active",
+      "Stock",
+      "Issued",
+      "Defective",
+      "Archive",
+      "Transfer",
+    ],
   };
 
   useEffect(() => {
@@ -62,115 +77,149 @@ const AssetBody = () => {
     };
     handleFetchData();
   }, [assetData, selectedType]);
-  const [searchQuery, setSearchQuery] = useState("");
-  console.log(assetData);
+
   useEffect(() => {
-    if (isSearchOpen) {
-      if (searchQuery === "") {
-        setAssetData(oldAssetData);
-      } else {
-        const filtered = oldAssetData.filter(
-          (asset) =>
-            asset?.item?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            asset?.serial_number
-              ?.toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            asset?.asset_holder?.name
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            asset?.branch?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            asset?.peripheral_type
-              ?.toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            asset?.supplier?.name
-              ?.toLowerCase()
-              .includes(searchQuery.toLowerCase())
-        );
-        setAssetData(filtered);
-      }
+    setSearchQuery("");
+  }, [selectedType]);
+
+  useEffect(() => {
+    if (searchQuery === "") {
+      setAssetData(oldAssetData);
+    } else {
+      const filtered = oldAssetData.filter(
+        (asset) =>
+          asset?.item?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          asset?.serial_number
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          asset?.asset_holder?.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          asset?.branch?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          asset?.peripheral_type
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          asset?.supplier?.name
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase())
+      );
+      setAssetData(filtered);
     }
   }, [searchQuery]);
+
+  const handleChangeView = () => {
+    setView((prev) => !prev);
+  };
+
+  const filterAsset = (item) => {
+    const newFilteredAsset = assetData?.filter((asset) => {
+      if (selectedType === "laptop") {
+        return asset?.item_stats === item;
+      } else if (selectedType === "monitor" || selectedType === "peripheral") {
+        return asset?.status?.name === item;
+      }
+    });
+    return newFilteredAsset;
+  };
+
   return (
-    <div className=''>
-      <div className='w-full sticky top-0 z-50  bg-white'>
-        <AnimatePresence>
-          {actionStatus && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "" }} // 24rem is equivalent to h-96 in Tailwind CSS
-              exit={{ opacity: 0, height: 0 }}
-              className='border w-full overflow-hidden'
-            >
-              <AddAsset
-                setActionStatus={handleActionStatus}
-                actionStatus={actionStatus}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <div className='flex items-center gap-2'>
-          {!actionStatus ? (
-            <div>
-              <button
-                className='border rounded-md p-2 bg-amber-500'
-                onClick={() => handleActionStatus(actionStatus)}
-              >
-                <IoAddSharp />
-              </button>
-            </div>
-          ) : null}
-          <div>
-            <Tabs selectedKey={tabState} onSelectionChange={handleTabChange}>
-              <Tab key='Block' title='Block' />
-              <Tab key='Table' title='Table' />
-            </Tabs>
-          </div>
-          <div>
-            <Input
-              className='min-w-60 h-full border rounded-md'
-              placeholder='Search here...'
-              size='sm'
-              onFocus={() => setIsSearchOpen(true)}
-              onBlur={() => setIsSearchOpen(false)}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
+    <div className="overflow-hidden h-full">
+      <div className="h-[40px]">
+        <SearchBar
+          searchValue={searchQuery}
+          setSearchValue={setSearchQuery}
+          viewOption={true}
+          addOption={true}
+          isViewBlock={isViewBlock}
+          changeView={handleChangeView}
+          addAction={handleAddModal}
+        />
       </div>
-      {tabState === "Block" ? (
-        <div className='flex flex-col gap-x-5'>
-          {selectedType === "laptop" ? (
-            <LaptopBlockView
-              setActionStatus={handleActionStatus}
-              actionStatus={actionStatus}
-              assetLoading={assetLoading}
-            />
-          ) : selectedType === "monitor" ? (
-            <MonitorBlockView
-              setActionStatus={handleActionStatus}
-              actionStatus={actionStatus}
-              assetLoading={assetLoading}
-            />
-          ) : (
-            <PeripheralBlockVIew
-              setActionStatus={handleActionStatus}
-              actionStatus={actionStatus}
-              assetLoading={assetLoading}
-            />
-          )}
-        </div>
-      ) : (
-        <div className='flex gap-x-5'>
-          <TableGateWay
-            assetData={assetData}
-            setActionStatus={handleActionStatus}
-            actionStatus={actionStatus}
-            assetLoading={assetLoading}
-            selectedType={selectedType}
-          />
-        </div>
-      )}
+      <div className="px-2 pb-2 mt-2 h-[calc(100%-40px)]">
+        <Tabs
+          aria-label="tabs_for_option"
+          classNames={{
+            base: "w-full",
+            panel:
+              "p-2 overflow-y-auto border-a-white bg-a-white h-[calc(100%-40px)] sm:rounded-tr-xl rounded-b-xl shadow-lg",
+            tabList:
+              "rounded-none p-0 pt-2 pr-2 gap-0 w-full sm:w-min overflow-x-auto flex-none",
+            tab: "px-8 bg-a-grey rounded-t-lg rounded-b-none drop-shadow-brShadow data-[hover=true]:bg-a-grey",
+            tabContent:
+              "text-a-black tracking-wider font-medium group-data-[selected=true]:font-bold",
+            cursor:
+              "group-data-[selected=true]:bg-a-white rounded-b-none rounded-t-md",
+          }}
+        >
+          {accordionItemOptions?.[selectedType].map((item, index) => (
+            <Tab
+              key={index}
+              title={
+                <div className="flex flex-row gap-2 items-center">
+                  <p>{item.toUpperCase()}</p>
+                  {filterAsset(item)?.length > 0 && (
+                    <div
+                      className={`drop-shadow-xl rounded-full px-2 w-min h-[16px] flex text-[10px] items-center justify-center 
+                        ${
+                          (item === "Active" ||
+                            item === "SOH" ||
+                            item === "Stock" ||
+                            item === "Issued") &&
+                          "bg-a-green text-a-black"
+                        } 
+                        ${
+                          (item === "For Repair" ||
+                            item === "Defective" ||
+                            item === "Irreparable") &&
+                          "bg-a-red text-a-white"
+                        }
+                        ${
+                          (item === "Archive" ||
+                            item === "OTHERS" ||
+                            item === "Transfer") &&
+                          "bg-a-orange text-a-white"
+                        }
+                        `}
+                    >
+                      {filterAsset(item)?.length}
+                    </div>
+                  )}
+                </div>
+              }
+            >
+              <div>
+                {isViewBlock ? (
+                  <div className="p-2">
+                    <BlockView
+                      setActionStatus={handleActionStatus}
+                      type={selectedType}
+                      optionTab={item}
+                    />
+                  </div>
+                ) : (
+                  <div className="p-2">
+                    <TableView
+                      optionTab={item}
+                      selectedType={selectedType}
+                      assetData={assetData}
+                      setActionStatus={setActionStatus}
+                      actionStatus={actionStatus}
+                      assetLoading={assetLoading}
+                    />
+                  </div>
+                )}
+              </div>
+            </Tab>
+          ))}
+        </Tabs>
+      </div>
+
+      <AddAsset
+        setActionStatus={handleActionStatus}
+        actionStatus={actionStatus}
+        isOpen={isAddModal}
+        onclose={handleAddModal}
+      />
     </div>
   );
 };

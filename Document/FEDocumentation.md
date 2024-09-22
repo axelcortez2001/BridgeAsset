@@ -15,5 +15,17 @@
 `sideNavbar for filters and navigations`
 
 ## September 16, 2024
-`delete laptop, monitor and peripheral component`
+`delete laptop, monitor and peripheral component` 
 `change to filtered component`
+
+## September 19,2024
+`added skeleton`
+`finish manage user design`
+`updated filter for manage user design`
+`added a new searchbar shared component`
+`delete asset header component`
+
+## September 23, 2024
+`merge table gateways into one table view`
+`added a new file - TableView`
+`delete TableGateway, laptopTableGateway, PeripheralTableGateway, SubTableGateway` 

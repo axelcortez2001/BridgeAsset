@@ -7,8 +7,10 @@ import {
   userAtom,
 } from "../../AssetStore";
 import AssetLoading from "../LoadingComponents/AssetLoading";
-import { Tabs, Tab, Input } from "@nextui-org/react";
+import { Tabs, Tab, Input, Skeleton } from "@nextui-org/react";
 import UserCard from "./Components/UserCard";
+import SearchBar from "@/app/SharedComponents/SearchBar";
+import UserCardSkeleton from "./Components/UserCardSkeleton";
 
 const UserPage = () => {
   const [loading, setLoading] = useState(false);
@@ -19,10 +21,14 @@ const UserPage = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [tabSelect, setTabSelect] = useState("All");
 
+  const [filterOption, setFilterOption] = useState(["All", "All", "All"]);
+
   const tabSelection = ["All", "Laptop", "Monitor", "Peripheral"];
   //setatom
   const fetchUsers = useSetAtom(fetchUserAtom);
   const fetchAssetData = useSetAtom(fetchAssetDataAtom);
+
+  console.log("isloading", loading);
 
   //handler
   useEffect(() => {
@@ -41,7 +47,9 @@ const UserPage = () => {
       } catch (error) {
         console.log("Error: ", error);
       } finally {
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     };
 
@@ -58,6 +66,7 @@ const UserPage = () => {
       setFilteredUsers(filtered);
     }
   }, [searchQuery]);
+
   //check if user have an asset based from category
   const IsAssetActive = (opt, category) => {
     let returnedAsset = null;
@@ -90,48 +99,60 @@ const UserPage = () => {
     }
     return returnedAsset;
   };
+
+  const handleApplyFilter = (e) => {
+    setFilterOption(e);
+  };
+
+  const SkeletonCount = [1, 2, 3, 4, 5, 6];
+
   return loading ? (
-    <AssetLoading />
-  ) : (
-    <div className='w-full h-screen overflow-y-auto p-3'>
-      <div className=' '>
-        <Input
-          size='lg'
-          className=' rounded-md'
-          placeholder='Search asset holder...'
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+    <div className="p-4 w-full h-screen p-4 space-y-4">
+      <div className="sticky top-[12px] z-[46] drop-shadow-xl">
+        <SearchBar
+          searchValue={searchQuery}
+          setSearchValue={setSearchQuery}
+          filterOption={true}
+          applyFilter={(e) => handleApplyFilter(e)}
+          dataIsLoading={loading}
         />
       </div>
-      <div className='w-full border my-4'></div>
-      <Tabs>
-        {tabSelection.map((tab, index) => (
-          <Tab key={index} title={tab}>
-            {tab !== "All" && (
-              <Tabs onSelectionChange={setTabSelect}>
-                <Tab key='All' title='All' />
-                <Tab key='Active' title='Active' />
-                <Tab key='No Issued' title='No Issued' />
-              </Tabs>
-            )}
-            {filteredUsers && filteredUsers?.length > 0 ? (
-              <div className='grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4'>
-                {filteredUsers.map((user) => (
-                  <UserCard
-                    key={user._id}
-                    user={user}
-                    checkStat={IsAssetActive}
-                    tabLoc={tab}
-                    tabSelect={tabSelect}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div>No Data</div>
-            )}
-          </Tab>
+      <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        {SkeletonCount.map((item) => (
+          <UserCardSkeleton key={item} />
         ))}
-      </Tabs>
+      </div>
+    </div>
+  ) : (
+    <div className="w-full h-screen p-4">
+      <div className="sticky top-[12px] z-[46] drop-shadow-xl">
+        <SearchBar
+          searchValue={searchQuery}
+          setSearchValue={setSearchQuery}
+          filterOption={true}
+          applyFilter={(e) => handleApplyFilter(e)}
+        />
+      </div>
+      <div>
+        <div>
+          {filteredUsers && filteredUsers?.length > 0 ? (
+            <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-4">
+              {filteredUsers.map((user, index) => (
+                <UserCard
+                  key={index}
+                  user={user}
+                  checkStat={IsAssetActive}
+                  tabLoc={filterOption[0]}
+                  tabSelect={filterOption[1]}
+                  userComplete={filterOption[2]}
+                />
+              ))}
+            </div>
+          ) : (
+            <div>No Data</div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -15,6 +15,12 @@ import ViewModal from "../AssetOtherComponents/ViewModal";
 import useHandleSelectAssetMonitor from "../Functions/MonitorFunction";
 import useHandleSelectAssetPeripheral from "../Functions/PeripheralFunction";
 const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
+  const [isViewModal, setViewModal] = useState(false);
+
+  const handleViewModal = () => {
+    setViewModal((prev) => !prev);
+  };
+
   const data = assetData;
   const columns = laptopColumns;
   const table = useReactTable({
@@ -48,34 +54,36 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
   const handleSelectMonitor = useHandleSelectAssetMonitor(setActionStatus);
   const handleSelectPeripheral =
     useHandleSelectAssetPeripheral(setActionStatus);
+
   const handleSelectFromTable = (opt) => {
-    onOpenChange(true);
+    handleViewModal();
     setSelectedTd(opt);
   };
+
   const handleSelectAsset = () => {
     if (selectedTD?.category.toLocaleLowerCase() === "laptop") {
       handleSelectLaptop(selectedTD);
-      onOpenChange(false);
+      handleViewModal();
     } else if (selectedTD?.category.toLocaleLowerCase() === "monitor") {
       handleSelectMonitor(selectedTD);
-      onOpenChange(false);
+      handleViewModal();
     } else if (selectedTD?.category.toLocaleLowerCase() === "peripheral") {
       handleSelectPeripheral(selectedTD);
-      onOpenChange(false);
+      handleViewModal();
     }
   };
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   return (
-    <div className='w-full'>
-      <div className='w-full overflow-x-auto border '>
+    <>
+      <div className="w-full bg-a-grey text-a-black rounded-lg overflow-x-auto border ">
         {data ? (
           <table
-            className='min-w-full overflow-x-auto border-l'
+            className="min-w-full overflow-x-auto border-l"
             style={{ width: table?.getTotalSize() }}
           >
             <thead>
               {table?.getHeaderGroups()?.map((headerGroup) => (
-                <tr key={headerGroup.id} className='relative'>
+                <tr key={headerGroup.id} className="relative">
                   {headerGroup.headers.map((header) => {
                     const { column } = header;
 
@@ -117,7 +125,7 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
               {table?.getRowModel()?.rows?.map((row) => (
                 <tr
                   key={row.id}
-                  className='hover:cursor-pointer  hover:bg-gray-200  relative'
+                  className="hover:cursor-pointer  hover:bg-gray-200  relative"
                 >
                   {row.getVisibleCells().map((cell) => {
                     const { column } = cell;
@@ -146,24 +154,25 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
                   })}
                 </tr>
               ))}
-              <tr className='w-full'>
+              <tr className="w-full">
                 {columns.map((column, index) => (
                   <TableFooter key={index} column={column} data={data} />
                 ))}
               </tr>
             </tbody>
-            <ViewModal
-              isOpen={isOpen}
-              onOpenChange={onOpenChange}
-              asset={selectedTD}
-              selectAsset={handleSelectAsset}
-            />
           </table>
         ) : (
           <div>No Data Available</div>
         )}
       </div>
-    </div>
+
+      <ViewModal
+        isOpen={isViewModal}
+        onClose={handleViewModal}
+        asset={selectedTD}
+        selectAsset={handleSelectAsset}
+      />
+    </>
   );
 };
 

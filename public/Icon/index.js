@@ -9,6 +9,10 @@ import { LuMonitorPlay } from "react-icons/lu";
 import { IoMenu } from "react-icons/io5";
 import { FaListUl } from "react-icons/fa";
 import { IoFilter } from "react-icons/io5";
+import { IoSearch } from "react-icons/io5";
+import { IoIosAdd } from "react-icons/io";
+import { RxCardStack } from "react-icons/rx";
+import { CiViewTable } from "react-icons/ci";
 
 const dashboardIcon = (className) => {
   return <MdOutlineDashboard className={`${className} h-5 w-5`} />;
@@ -46,6 +50,22 @@ const filterIcon = (className) => {
   return <IoFilter className={`${className} h-5 w-5`} />;
 };
 
+const searchIcon = (className) => {
+  return <IoSearch className={`${className} h-5 w-5`} />;
+};
+
+const addIcon = (className) => {
+  return <IoIosAdd className={`${className} h-5 w-5`} />;
+};
+
+const cardIcon = (className) => {
+  return <RxCardStack className={`${className} h-5 w-5`} />;
+};
+
+const tableIcon = (className) => {
+  return <CiViewTable className={`${className} h-5 w-5`} />;
+};
+
 export {
   dashboardIcon,
   userIcon,
@@ -56,4 +76,8 @@ export {
   menuIcon,
   allIcon,
   filterIcon,
+  searchIcon,
+  addIcon,
+  cardIcon,
+  tableIcon,
 };

@@ -9,8 +9,15 @@ import {
 } from "@/app/Homepage/AssetStore";
 import Monitor from "../Monitor/Monitor";
 import Peripherals from "../Peripherals/Peripherals";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@nextui-org/react";
 
-const AddAsset = ({ setActionStatus, actionStatus }) => {
+const AddAsset = ({ setActionStatus, actionStatus, isOpen, onclose }) => {
   //category selection state management
   const [selectedType, setSelectedType] = useAtom(selectedTypeAtom);
   const setEmployeesToDefault = useSetAtom(handleReturnEmployeesDefaultAtom);
@@ -20,27 +27,34 @@ const AddAsset = ({ setActionStatus, actionStatus }) => {
   };
 
   return (
-    <div className='h-full w-full flex flex-col relative p-2'>
-      {selectedType === "laptop" ? (
-        <Laptops
-          selectedType={selectedType}
-          actionStatus={actionStatus}
-          setActionStatus={setActionStatus}
-        />
-      ) : selectedType === "monitor" ? (
-        <Monitor
-          selectedType={selectedType}
-          actionStatus={actionStatus}
-          setActionStatus={setActionStatus}
-        />
-      ) : (
-        <Peripherals
-          selectedType={selectedType}
-          actionStatus={actionStatus}
-          setActionStatus={setActionStatus}
-        />
-      )}
-    </div>
+    <>
+      <Modal isOpen={isOpen} onClose={() => onclose()}>
+        <ModalContent>
+          <ModalHeader>header</ModalHeader>
+          <ModalBody>
+            {selectedType === "laptop" ? (
+              <Laptops
+                selectedType={selectedType}
+                actionStatus={actionStatus}
+                setActionStatus={setActionStatus}
+              />
+            ) : selectedType === "monitor" ? (
+              <Monitor
+                selectedType={selectedType}
+                actionStatus={actionStatus}
+                setActionStatus={setActionStatus}
+              />
+            ) : (
+              <Peripherals
+                selectedType={selectedType}
+                actionStatus={actionStatus}
+                setActionStatus={setActionStatus}
+              />
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 

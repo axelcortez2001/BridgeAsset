@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { itemStatusOptionAtom } from "../../Assets/Store/LaptopStore";
 
 const UserDetails = ({ userData }) => {
+  const [isViewModal, setViewModal] = useState(false);
+
   const active = userData?.asset_holder_active;
   console.log("active: ", active);
 
@@ -62,35 +64,39 @@ const UserDetails = ({ userData }) => {
     onOpenChange(false);
   };
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const handleViewModal = () => {
+    setViewModal((prev) => !prev);
+  };
+
   return (
-    <div className='w-full flex flex-col p-2 gap-2'>
+    <div className="w-full flex flex-col p-2 gap-2">
       <p>Active Asset Data</p>
       {active &&
         active?.map((assetActive, index) => (
           <div
             key={index}
-            className='border rounded-md p-1 hover:bg-gray-200 hover:cursor-pointer'
+            className="border rounded-md p-1 hover:bg-gray-200 hover:cursor-pointer"
             onClick={() => handleOpen(assetActive)}
           >
-            <p className='font-semibold capitalize'> {assetActive.category} </p>
-            <p className=' indent-5'>
+            <p className="font-semibold capitalize"> {assetActive.category} </p>
+            <p className=" indent-5">
               {assetActive?.peripheral_type && (
-                <span className='capitalize'>
+                <span className="capitalize">
                   {assetActive.peripheral_type} {" :"}
                 </span>
               )}
               {assetActive?.asset_name}
             </p>
-            <p className=' indent-5'>
+            <p className=" indent-5">
               Received: <span>{formatDate(assetActive?.date_received)}</span>
             </p>
           </div>
         ))}
+
       {selectedAssetHere !== null && (
         <ViewModal
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
+          isOpen={isViewModal}
+          onClose={handleViewModal}
           asset={selectedAssetHere}
           selectAsset={handleSelect}
         />
