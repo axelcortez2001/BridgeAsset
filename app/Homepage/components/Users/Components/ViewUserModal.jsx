@@ -13,35 +13,31 @@ import {
 } from "@nextui-org/react";
 import UserDetails from "./UserDetails";
 import UserHistory from "./UserHistory";
-const ViewUserModal = ({ isOpen, onOpenChange, user }) => {
+const ViewUserModal = ({ isOpen, onClose, user }) => {
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='xl'>
+    <Modal isOpen={isOpen} onClose={() => onClose()} size="xl">
       <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className='flex flex-col gap-1'>
-              <div className='flex w-full items-center gap-3'>
-                <Avatar src={user?.picture} />
-                {user.name}
-              </div>
-            </ModalHeader>
-            <ModalBody>
-              <Tabs>
-                <Tab key='Details' title='Details'>
-                  <UserDetails userData={user} />
-                </Tab>
-                <Tab key='History Details' title='History Details'>
-                  <UserHistory userData={user} />
-                </Tab>
-              </Tabs>
-            </ModalBody>
-            <ModalFooter>
-              <Button color='danger' variant='light' onPress={onClose}>
-                Close
-              </Button>
-            </ModalFooter>
-          </>
-        )}
+        <ModalHeader className="flex flex-col gap-1">
+          <div className="flex w-full items-center gap-3">
+            <Avatar src={user?.picture} />
+            {user.name}
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          <Tabs>
+            <Tab key="Details" title="Details">
+              <UserDetails userData={user} />
+            </Tab>
+            <Tab key="History Details" title="History Details">
+              <UserHistory userData={user} />
+            </Tab>
+          </Tabs>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="danger" variant="light" onPress={() => onClose()}>
+            Close
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );

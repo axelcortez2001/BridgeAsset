@@ -23,6 +23,8 @@ const formatDate = (opt) => {
   }
 };
 
+const containerCellSharedStyle = "p-[4px] m-[4px] min-w-max";
+
 export const laptopColumns = [
   // {
   //   header: ({ table }) => (
@@ -50,42 +52,56 @@ export const laptopColumns = [
   //   size: 5,
   // },
   {
-    header: <div className=' '>Item</div>,
+    header: <div className=" ">Item</div>,
     id: "item",
     accessorKey: "item",
     cell: ({ row }) => (
-      <div className='p-2 relative  z-[100]'>
-        <p>{row?.original?.item}</p>
+      <div className={`z-[46] ${containerCellSharedStyle}`}>
+        <p className="">{row?.original?.item}</p>
       </div>
     ),
     pin: "left",
-    size: 300,
+    size: 280,
   },
   {
     header: "Serial No",
     id: "serial_number",
     accessorKey: "serial_number",
     cell: ({ row }) => (
-      <div className='z-10 relative '>{row?.original?.serial_number}</div>
+      <div className={`${containerCellSharedStyle}`}>
+        {row?.original?.serial_number}
+      </div>
     ),
   },
   {
     header: "Current User",
     id: "employee",
     accessorKey: "asset_holder",
-    cell: ({ row }) => <div>{row?.original?.asset_holder?.name}</div>,
+    cell: ({ row }) => (
+      <div className={`${containerCellSharedStyle}`}>
+        {row?.original?.asset_holder?.name}
+      </div>
+    ),
   },
   {
     header: "DOI",
     id: "doi",
     accessorKey: "doi",
-    cell: ({ row }) => <div>{formatDate(row?.original?.doi)}</div>,
+    cell: ({ row }) => (
+      <div className={`${containerCellSharedStyle}`}>
+        {formatDate(row?.original?.doi)}
+      </div>
+    ),
   },
   {
     header: "Supplier",
     id: "supplier",
     accessorKey: "supplier",
-    cell: ({ row }) => <div>{row?.original?.supplier?.name}</div>,
+    cell: ({ row }) => (
+      <div className={`${containerCellSharedStyle}`}>
+        {row?.original?.supplier?.name}
+      </div>
+    ),
   },
   {
     header: "Branch",
@@ -93,15 +109,21 @@ export const laptopColumns = [
     accessorKey: "branch",
     cell: ({ row }) =>
       row.original?.branch === "Laoag" ? (
-        <div className='bg-[#32449c]  text-white p-2 rounded-md'>
+        <div
+          className={`${containerCellSharedStyle} bg-a-blue text-white rounded-md`}
+        >
           {row?.original?.branch}
         </div>
       ) : row.original?.branch === "Makati" ? (
-        <div className='bg-[#F97316]  text-white p-2 rounded-md'>
+        <div
+          className={`${containerCellSharedStyle} bg-a-red text-white  rounded-md`}
+        >
           {row?.original?.branch}
         </div>
       ) : (
-        <div className='bg-yellow-800 text-white p-2 rounded-md'>
+        <div
+          className={`${containerCellSharedStyle} bg-a-green  text-white rounded-md`}
+        >
           {row?.original?.branch}
         </div>
       ),
@@ -112,7 +134,13 @@ export const laptopColumns = [
     accessorKey: "status",
     cell: ({ row }) => (
       <div
-        className={`${row?.original?.status?.color} p-2 rounded-md text-white`}
+        className={`${containerCellSharedStyle} ${
+          row?.original?.status?.color
+        } ${
+          row?.original?.status?.color === "bg-green-500"
+            ? "text-a-black"
+            : "text-a-white"
+        } rounded-md`}
       >
         {row?.original?.status?.name}
       </div>
@@ -122,47 +150,72 @@ export const laptopColumns = [
     header: "Inventory Filed",
     id: "inventory_filed",
     accessorKey: "inventory_filed",
-    cell: ({ row }) => <div>{formatDate(row?.original?.inventory_filed)}</div>,
+    cell: ({ row }) => (
+      <div className={`${containerCellSharedStyle}`}>
+        {formatDate(row?.original?.inventory_filed)}
+      </div>
+    ),
   },
   {
     header: "Unit Price",
     id: "unit_price",
     accessorKey: "unit_price",
-    cell: ({ row }) => <div>{row?.original?.unit_price}</div>,
+    cell: ({ row }) => (
+      <div className={`${containerCellSharedStyle}`}>
+        {row?.original?.unit_price}
+      </div>
+    ),
   },
   {
     header: "DOP",
     id: "dop",
     accessorKey: "dop",
-    cell: ({ row }) => <div>{formatDate(row?.original?.dop)}</div>,
+    cell: ({ row }) => (
+      <div className={`${containerCellSharedStyle}`}>
+        {formatDate(row?.original?.dop)}
+      </div>
+    ),
   },
 
   {
     header: "YTD",
     id: "ytd",
     accessorKey: "ytd",
-    cell: ({ row }) => <div>{computeYTD(row?.original?.dop)}</div>,
+    cell: ({ row }) => (
+      <div className={`${containerCellSharedStyle}`}>
+        {computeYTD(row?.original?.dop)}
+      </div>
+    ),
   },
   {
     header: "Warranty Period",
     id: "warranty_period",
     accessorKey: "warranty_period",
-    cell: ({ row }) =>
-      checkWarrantyPeriod(row?.original?.warranty_period, row?.original?.dop),
+    cell: ({ row }) => (
+      <div className={`${containerCellSharedStyle}`}>
+        {checkWarrantyPeriod(
+          row?.original?.warranty_period,
+          row?.original?.dop
+        )}
+      </div>
+    ),
   },
   {
     header: "Warranty Status",
     id: "warranty_status",
     accessorKey: "warranty_status",
-    cell: ({ row }) =>
-      checkWarrantStatus(row?.original?.warranty_period, row?.original?.dop),
+    cell: ({ row }) => (
+      <div className={`${containerCellSharedStyle}`}>
+        {checkWarrantStatus(row?.original?.warranty_period, row?.original?.dop)}
+      </div>
+    ),
   },
   {
     header: "Previous User",
     id: "previous_user",
     accessorKey: "previous_user",
     cell: ({ row }) => (
-      <div>
+      <div className={`${containerCellSharedStyle}`}>
         {row?.original?.asset_holder_history[0]
           ? row?.original?.asset_holder_history[0]?.name
           : "No Previous User"}
@@ -175,7 +228,7 @@ export const laptopColumns = [
     accessorKey: "asset_history",
     size: 500,
     cell: ({ row }) => (
-      <div className='w-full'>
+      <div className={`${containerCellSharedStyle}`}>
         {row?.original?.asset_history[0]?.actions_taken[0]}
       </div>
     ),
@@ -185,6 +238,10 @@ export const laptopColumns = [
     id: "remarks",
     accessorKey: "remarks",
     size: 500,
-    cell: ({ row }) => <div className='w-full'>{row?.original?.remarks}</div>,
+    cell: ({ row }) => (
+      <div className={`${containerCellSharedStyle}`}>
+        {row?.original?.remarks}
+      </div>
+    ),
   },
 ];

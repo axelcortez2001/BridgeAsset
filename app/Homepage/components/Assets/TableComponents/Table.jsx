@@ -15,8 +15,15 @@ import ViewModal from "../AssetOtherComponents/ViewModal";
 import useHandleSelectAssetMonitor from "../Functions/MonitorFunction";
 import useHandleSelectAssetPeripheral from "../Functions/PeripheralFunction";
 const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
+  const [isViewModal, setViewModal] = useState(false);
+
+  const handleViewModal = () => {
+    setViewModal((prev) => !prev);
+  };
+
   const data = assetData;
   const columns = laptopColumns;
+
   const table = useReactTable({
     data,
     columns,
@@ -30,66 +37,70 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
     },
   });
 
-  const getCommonPinningStyles = (column) => {
-    const isPinned = column.getIsPinned();
+  // const getCommonPinningStyles = (column) => {
+  //   const isPinned = column.getIsPinned();
 
-    return {
-      left: isPinned === "left" ? `${column.getStart("left")}px` : undefined,
-      // opacity: isPinned ? 0.95 : 1,
-      position: isPinned ? "sticky" : "relative",
-      width: column.getSize(),
-      zIndex: isPinned ? 1 : 0,
-      backgroundColor: isPinned ? "white" : "transparent",
-    };
-  };
+  //   return {
+  //     left: isPinned === "left" ? `${column.getStart("left")}px` : undefined,
+  //     // opacity: isPinned ? 0.95 : 1,
+  //     position: isPinned ? "sticky" : "relative",
+  //     width: column.getSize(),
+  //     zIndex: isPinned ? 1 : 0,
+  //     backgroundColor: isPinned ? "#F9F9F9" : "transparent",
+  //   };
+  // };
 
   const [selectedTD, setSelectedTd] = useState(null);
   const handleSelectLaptop = useHandleSelectAssetLaptop(setActionStatus);
   const handleSelectMonitor = useHandleSelectAssetMonitor(setActionStatus);
   const handleSelectPeripheral =
     useHandleSelectAssetPeripheral(setActionStatus);
+
   const handleSelectFromTable = (opt) => {
-    onOpenChange(true);
+    handleViewModal();
     setSelectedTd(opt);
   };
+
   const handleSelectAsset = () => {
     if (selectedTD?.category.toLocaleLowerCase() === "laptop") {
       handleSelectLaptop(selectedTD);
-      onOpenChange(false);
+      handleViewModal();
     } else if (selectedTD?.category.toLocaleLowerCase() === "monitor") {
       handleSelectMonitor(selectedTD);
-      onOpenChange(false);
+      handleViewModal();
     } else if (selectedTD?.category.toLocaleLowerCase() === "peripheral") {
       handleSelectPeripheral(selectedTD);
-      onOpenChange(false);
+      handleViewModal();
     }
   };
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   return (
-    <div className='w-full'>
-      <div className='w-full overflow-x-auto border '>
+    <>
+      <div className="w-full bg-a-lightgrey shadow-lg text-a-black rounded-lg overflow-x-auto border ">
         {data ? (
           <table
-            className='min-w-full overflow-x-auto border-l'
+            className="min-w-full overflow-x-auto"
             style={{ width: table?.getTotalSize() }}
           >
-            <thead>
+            <thead className="bg-a-white border-b border-a-grey">
               {table?.getHeaderGroups()?.map((headerGroup) => (
-                <tr key={headerGroup.id} className='relative'>
+                <tr key={headerGroup.id} className="relative">
                   {headerGroup.headers.map((header) => {
                     const { column } = header;
 
                     return (
                       <th
                         key={header.id}
+                        className={`bg-a-white text-a-black relative ${
+                          column.id === "item" &&
+                          "sm:sticky left-0 bg-a-white z-[11]"
+                        }`}
                         style={{
-                          position: "relative",
                           maxwidth: header.getSize(),
-                          ...getCommonPinningStyles(column),
                         }}
                       >
                         {header.isPlaceholder ? null : (
-                          <div className='border-b p-2 capitalize whitespace-nowrap" '>
+                          <div className="p-2 capitalize whitespace-nowrap">
                             {flexRender(
                               header.column.columnDef.header,
                               header.getContext()
@@ -117,7 +128,7 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
               {table?.getRowModel()?.rows?.map((row) => (
                 <tr
                   key={row.id}
-                  className='hover:cursor-pointer  hover:bg-gray-200  relative'
+                  className="hover:cursor-pointer hover:bg-a-grey relative"
                 >
                   {row.getVisibleCells().map((cell) => {
                     const { column } = cell;
@@ -126,7 +137,6 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
                         key={cell.id}
                         style={{
                           width: cell.column.getSize(),
-                          ...getCommonPinningStyles(column),
                         }}
                         onClick={() =>
                           handleSelectFromTable(cell?.row?.original)
@@ -135,35 +145,41 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
                           row.getIsSelected()
                             ? "bg-orange-700 text-red-400"
                             : ""
-                        }  text-center border-b `}
+                        } ${
+                          cell.column.id === "item" &&
+                          "sm:sticky left-0 bg-a-white z-[11]"
+                        } text-center border-b border-a-grey sm:drop-shadow-lg p-0`}
                       >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
+                        <div>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </div>
                       </td>
                     );
                   })}
                 </tr>
               ))}
-              <tr className='w-full'>
+
+              <tr className="w-full bg-a-lightgrey hover:bg-a-grey bg-a-white">
                 {columns.map((column, index) => (
                   <TableFooter key={index} column={column} data={data} />
                 ))}
               </tr>
             </tbody>
-            <ViewModal
-              isOpen={isOpen}
-              onOpenChange={onOpenChange}
-              asset={selectedTD}
-              selectAsset={handleSelectAsset}
-            />
           </table>
         ) : (
           <div>No Data Available</div>
         )}
       </div>
-    </div>
+
+      <ViewModal
+        isOpen={isViewModal}
+        onClose={handleViewModal}
+        asset={selectedTD}
+      />
+    </>
   );
 };
 

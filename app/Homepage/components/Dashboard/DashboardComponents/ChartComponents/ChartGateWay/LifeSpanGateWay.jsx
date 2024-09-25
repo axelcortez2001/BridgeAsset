@@ -119,20 +119,22 @@ const LifeSpanGateWay = ({ chartData }) => {
   };
   const chartTitle = "Asset Warranty Status";
   return (
-    <div className='w-full max-h-[400px] flex items-center flex-col  p-2 '>
-      <div className='w-full p-2 flex flex-row justify-between items-center'>
+    <div className="w-full h-full flex items-center flex-col p-2 ">
+      <div className="w-full h-[40px] flex flex-row justify-between items-center">
         <ExpandGateway
           chartTitle={chartTitle}
           chartData={data}
           options={options}
-          type='Pie'
+          type="Pie"
           onOpen={onOpen}
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           handleModal={handleModal}
         />
       </div>
-      <CustomChart chartData={data} options={options} type='Pie' />
+      <div className="w-full h-[calc(100%-40px)] flex items-center justify-center border-t border-a-grey">
+        <CustomChart chartData={data} options={options} type="Pie" />
+      </div>
     </div>
   );
 };

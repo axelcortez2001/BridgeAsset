@@ -11,21 +11,35 @@ const ExpandGateway = ({
   onOpen,
   onOpenChange,
   handleModal,
+  middleContent,
 }) => {
   return (
-    <div className='w-full flex flex-row justify-between'>
-      <p>{chartTitle}</p>
-      <IoMdExpand
-        size={20}
-        title='Expand'
-        className='hover:cursor-pointer hover:bg-gray-200'
-        onClick={handleModal}
-      />
+    <div className="relative w-full h-full flex flex-row justify-between items-center">
+      <div className="w-full">
+        <p className="w-full font-bold tracking-wide ss:text-lg">
+          {chartTitle}
+        </p>
+      </div>
+      {middleContent && (
+        <div className="mr-24 w-full">
+          <div>{middleContent}</div>
+        </div>
+      )}
+      <div>
+        <Button
+          isIconOnly
+          variant="light"
+          onClick={handleModal}
+          className="absolute top-0 right-0"
+        >
+          <IoMdExpand size={20} title="Expand" />
+        </Button>
+      </div>
       <ExpandGatewayModal
         onOpen={onOpen}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        className='p-2 max-h-screen'
+        className="p-2 max-h-screen"
         chartData={chartData}
         options={options}
         type={type}

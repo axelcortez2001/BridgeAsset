@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .resizer {
-  background: rgba(0, 0, 0, 0.5);
+  background: #d9d9d9;
   cursor: col-resize;
   height: 100%;
   position: absolute;
@@ -11,10 +11,57 @@
   top: 0;
   touch-action: none;
   user-select: none;
-  width: 2px;
+  width: 1px;
+  transition: all 0.1s linear;
+}
+
+.resizer:hover {
+  background: #a3a3a3;
+  cursor: col-resize;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  touch-action: none;
+  user-select: none;
+  width: 1px;
+  transform: scaleX(2);
+  transition: all 0.1s linear;
 }
 
 .resizer.isResizing {
-  background: blue;
+  background: #253375;
   opacity: 1;
+}
+
+/* start-scrollbar */
+/* width */
+::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #d9d9d9;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #32449C;
+  border-radius: 6px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #919191;
+  cursor: pointer;
+}
+
+/* end-scrollbar */
+
+*,
+html {
+  scroll-behavior: smooth !important;
 }

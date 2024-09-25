@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   categorizedAsset,
   categorizedBranch,
@@ -7,7 +7,7 @@ import {
   computeTotalCost,
   generateWarrantyStatus,
 } from "./function";
-import { Card } from "@nextui-org/react";
+import { Card, CardBody } from "@nextui-org/react";
 import TotalCostCard from "../TotalCostCard";
 import AllComponentsGateway from "../ChartComponents/ChartGateWay/AllComponentsGateway";
 import BranchPieGateway from "../ChartComponents/ChartGateWay/BranchPieGateway";
@@ -17,11 +17,36 @@ import DateChartGateway from "../ChartComponents/ChartGateWay/DateChartGateway";
 import { dashBoardDataAtom } from "../../DashboardStore/MainStore";
 import LifeSpanGateWay from "../ChartComponents/ChartGateWay/LifeSpanGateWay";
 import { filterTypeAtom } from "../ExpandComponents/ExpandStore";
+import ResizableSnapContainer from "@/app/Homepage/components/Dashboard/DashboardComponents/ResizableSnapContainer";
 
 const AllComponent = () => {
   const dashboardData = useAtomValue(dashBoardDataAtom);
   const tabLocation = useAtomValue(tabLocationAtom);
   const filterType = useAtomValue(filterTypeAtom);
+  const [mouseIsUp, setMouseIsUp] = useState(true);
+
+  const [parentForResizable, setParentForResizable] = useState(0);
+
+  const parentContainer = useRef(null);
+
+  useEffect(() => {
+    const parent = parentContainer.current;
+
+    if (!parent) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        setParentForResizable(entry.contentRect.width - 8);
+      }
+    });
+
+    observer.observe(parent);
+
+    return () => {
+      observer.unobserve(parent);
+    };
+  }, [parentContainer]);
+
   const filteredLaptop = dashboardData.filter(
     (data) => data?.category.toLowerCase() === "laptop"
   );
@@ -32,40 +57,89 @@ const AllComponent = () => {
     (data) => data?.category.toLowerCase() === "peripheral"
   );
 
+  const handleMouseDown = () => {
+    setMouseIsUp(false);
+  };
+
+  const handleMouseUp = () => {
+    setMouseIsUp(true);
+  };
+
   return (
-    <div className='w-full flex flex-col gap-5 h-screen mt-4'>
-      <p>
-        Total Items: <span>{dashboardData?.length}</span>
-      </p>
-      <div className='flex flex-wrap gap-5 p-3'>
-        <div className='flex flex-wrap w-full gap-4'>
-          <TotalCostCard cost={computeTotalCost(dashboardData)} loc='total' />
-          <TotalCostCard cost={computeTotalCost(filteredLaptop)} loc='laptop' />
+    <div
+      className="w-full h-[calc(100vh-48px)] overflow-y-scroll mt-2 space-y-2 ss:mt-0 p-0 ss:p-2 "
+      onMouseUp={handleMouseUp}
+      onMouseDown={handleMouseDown}
+      ref={parentContainer}
+    >
+      <div
+        className="grid grid-cols-1 ss:grid-cols-2 lg:grid-cols-4 gap-2"
+        id="Cost"
+      >
+        <div className="ss:col-span-2">
+          <TotalCostCard cost={dashboardData?.length} loc="total item" />
+        </div>
+        <div className="lg:col-span-2 hidden lg:block" />
+        <div>
+          <TotalCostCard cost={computeTotalCost(dashboardData)} loc="total" />
+        </div>
+        <div>
+          <TotalCostCard cost={computeTotalCost(filteredLaptop)} loc="laptop" />
+        </div>
+        <div>
           <TotalCostCard
             cost={computeTotalCost(filteredMonitor)}
-            loc='monitor'
+            loc="monitor"
           />
+        </div>
+        <div>
           <TotalCostCard
             cost={computeTotalCost(filteredPeripheral)}
-            loc='peripheral'
+            loc="peripheral"
           />
         </div>
+      </div>
 
-        <div className='border relative min-w-[700px]  rounded-md p-2 overflow-auto resize'>
-          <AllComponentsGateway chartData={categorizedAsset(dashboardData)} />
-        </div>
+      <div className="flex flex-wrap flex-none gap-2">
+        <ResizableSnapContainer
+          divId="Asset Categories"
+          parentForResizable={parentForResizable}
+          mouseIsUp={mouseIsUp}
+          content={
+            <AllComponentsGateway chartData={categorizedAsset(dashboardData)} />
+          }
+        />
 
-        <div className='border relative max-w-[500px]  rounded-md p-2 overflow-auto resize'>
-          <BranchPieGateway chartData={categorizedBranch(dashboardData)} />
-        </div>
-        <div className='border relative max-w-[410px]  rounded-md p-2 overflow-auto resize'>
-          <LifeSpanGateWay chartData={generateWarrantyStatus(dashboardData)} />
-        </div>
-        <div className='border relative  rounded-md p-2 w-full overflow-auto resize'>
-          <DateChartGateway
-            chartData={categorizedDate(dashboardData, filterType)}
-          />
-        </div>
+        <ResizableSnapContainer
+          divId="Branches Asset Collection"
+          parentForResizable={parentForResizable}
+          mouseIsUp={mouseIsUp}
+          content={
+            <BranchPieGateway chartData={categorizedBranch(dashboardData)} />
+          }
+        />
+
+        <ResizableSnapContainer
+          divId="Asset Warranty Status"
+          parentForResizable={parentForResizable}
+          mouseIsUp={mouseIsUp}
+          content={
+            <LifeSpanGateWay
+              chartData={generateWarrantyStatus(dashboardData)}
+            />
+          }
+        />
+
+        <ResizableSnapContainer
+          divId="Cost Accumulated"
+          parentForResizable={parentForResizable}
+          mouseIsUp={mouseIsUp}
+          content={
+            <DateChartGateway
+              chartData={categorizedDate(dashboardData, filterType)}
+            />
+          }
+        />
       </div>
     </div>
   );
