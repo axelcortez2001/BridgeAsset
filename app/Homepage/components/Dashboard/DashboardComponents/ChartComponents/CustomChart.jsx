@@ -11,6 +11,7 @@ import {
   BarElement,
   PointElement,
   LineElement,
+  Filler,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
@@ -24,7 +25,8 @@ ChartJS.register(
   BarElement,
   PointElement,
   LineElement,
-  ChartDataLabels
+  ChartDataLabels,
+  Filler,
 );
 
 const CustomChart = ({ chartData, options, type }) => {

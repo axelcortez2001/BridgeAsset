@@ -90,7 +90,6 @@ export const registerUser = atom(null, async (get, set) => {
 export const fetchAssetDataAtom = atom(null, async (get, set, loc) => {
   const assetFromDashboard = get(dashBoardDataAtom);
   const selectedType = get(selectedTypeAtom);
-  console.log("Selected type: ", selectedType);
   if (assetFromDashboard) {
     if (loc === "users") {
       set(allAssetDataAtom, assetFromDashboard);
@@ -279,7 +278,6 @@ export const fetchUserAtom = atom(null, async (get, set) => {
           userData = [...userData, returnedUser];
         }
       });
-      console.log("UserData: ", userData);
       set(userAtom, userData);
       return { success: true, message: "Users Found!", user: userData };
     } else {

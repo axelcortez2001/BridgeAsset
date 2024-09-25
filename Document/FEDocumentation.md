@@ -1,5 +1,17 @@
 # FRONT-END Documentation
 
+### NOTES
+`z-index`
+`sidebarContainer z-[50]`
+`sidebarBlurBackground z-[49]`
+`sideNavBarContainer z-[48]`
+`sideNavBarBlurBackground z-[47]`
+`searchBar z-[46]`
+`headerItem z-[46]`
+`tableFooter z-[11]`
+
+
+
 ## September 3, 2024
 `started front-end development for bridge asset`
 

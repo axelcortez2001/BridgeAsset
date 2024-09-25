@@ -1,6 +1,10 @@
+import AssetSkeleton from "../AssetComponents/AssetSkeleton";
 import Table from "./Table";
+import NoItems from "@/app/SharedComponents/NoItems";
+import { Divider } from "@nextui-org/react";
 
 const TableView = ({
+  all,
   optionTab,
   assetData,
   setActionStatus,
@@ -23,13 +27,31 @@ const TableView = ({
   };
 
   return (
-    <div>
-      <Table
-        assetData={filterAsset(optionTab)}
-        setActionStatus={setActionStatus}
-        actionStatus={actionStatus}
-        assetLoading={assetLoading}
-      />
+    <div className="h-full">
+      {filterAsset(optionTab)?.length > 0 ? (
+        <div>
+          <p
+            className={`font-medium px-2 tracking-wider ${
+              all ? "block" : "hidden"
+            }`}
+          >
+            {optionTab.toUpperCase()}
+          </p>
+          <div className="py-2">
+            <Table
+              assetData={filterAsset(optionTab)}
+              setActionStatus={setActionStatus}
+              actionStatus={actionStatus}
+              assetLoading={assetLoading}
+            />
+          </div>
+          <Divider className={`my-2 ${all ? "block" : "hidden"}`} />
+        </div>
+      ) : (
+        <div className={`h-full ${all ? "hidden" : "block"}`}>
+          <NoItems item={optionTab} />
+        </div>
+      )}
     </div>
   );
 };

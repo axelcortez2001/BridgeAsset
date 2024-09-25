@@ -67,7 +67,7 @@ const AllComponent = () => {
 
   return (
     <div
-      className="w-full h-[calc(100vh-48px)] overflow-auto mt-2 space-y-2 ss:mt-0 p-0 ss:p-2 "
+      className="w-full h-[calc(100vh-48px)] overflow-y-scroll mt-2 space-y-2 ss:mt-0 p-0 ss:p-2 "
       onMouseUp={handleMouseUp}
       onMouseDown={handleMouseDown}
       ref={parentContainer}
@@ -100,7 +100,7 @@ const AllComponent = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap flex-none gap-2 px-2">
+      <div className="flex flex-wrap flex-none gap-2">
         <ResizableSnapContainer
           divId="Asset Categories"
           parentForResizable={parentForResizable}

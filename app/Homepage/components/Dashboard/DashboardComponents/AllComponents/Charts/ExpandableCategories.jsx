@@ -46,7 +46,7 @@ const ExpandableCategories = ({
     const triggerFunctions = () => {
       if (filteredData === null) {
         const filterD = expandAllFiltering(data, expandIndex);
-        console.log("Filtered data: ", filterD);
+       
         setFilteredData(filterD);
         setTabLocationState(tabLocation);
       }

@@ -8,10 +8,8 @@ import {
   Button,
   Card,
   CardHeader,
-  Divider,
+  Image,
   CardBody,
-  Avatar,
-  useDisclosure,
   CardFooter,
 } from "@nextui-org/react";
 import { isValid } from "date-fns";
@@ -71,7 +69,7 @@ const Blocks = ({ selectAsset, asset, delAsset }) => {
 
   return (
     <>
-      <Card className="rounded-md bg-a-white">
+      <Card className="rounded-md bg-a-white p-2">
         <CardHeader className="flex h-12 justify-between items-center border-b w-full">
           <p className=" font-semibold"> {asset?.item}</p>
           {optionDropdown}
@@ -154,7 +152,18 @@ const Blocks = ({ selectAsset, asset, delAsset }) => {
             <p className="text-sm font-semibold">Current Holder:</p>
             {asset?.asset_holder !== null ? (
               <div className="flex gap-3 items-center">
-                <Avatar src={asset?.asset_holder?.picture} />
+                {/* bug: disableanimation in avatar, search will fix in nextui version v2.4.3, sept 25 - not yet fix ill just change it to img */}
+                {/* https://github.com/nextui-org/nextui/issues/3257 */}
+                {/* <Avatar src={asset?.asset_holder?.picture} /> */}
+
+                <div>
+                  <Image
+                    src={asset?.asset_holder?.picture}
+                    alt="user_picture"
+                    className="rounded-full h-10 w-10"
+                  />
+                </div>
+
                 <div className="flex flex-col mt-1 ">
                   <p className="text-sm font-semibold">
                     {asset?.asset_holder?.name}{" "}

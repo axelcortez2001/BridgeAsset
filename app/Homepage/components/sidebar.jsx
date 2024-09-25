@@ -214,9 +214,10 @@ const Sidebar = ({ onClose }) => {
                 content: "p-0 py-1",
               }}
             >
-              <Listbox className="p-0 m-0 pl-4">
+              <Listbox className="p-0 m-0 pl-4" aria-label="sidebar options">
                 {sidebarAssetOptions.map((item, index) => (
                   <ListboxItem
+                    aria-label="sidebar options"
                     key={item.key}
                     startContent={item.icon}
                     onPress={item.action}

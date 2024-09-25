@@ -51,6 +51,7 @@ module.exports = {
       md: "1024px",
       lg: "1440px",
       xl: "1560px",
+      "2xl": "1900px",
     },
   },
   darkMode: "class",

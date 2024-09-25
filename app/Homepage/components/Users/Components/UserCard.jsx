@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Avatar,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Button,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Avatar, Card, CardBody, CardHeader, Image } from "@nextui-org/react";
 import ViewUserModal from "./ViewUserModal";
 
 const UserCard = ({ user, checkStat, tabLoc, tabSelect, userComplete }) => {
@@ -106,8 +97,17 @@ const UserCard = ({ user, checkStat, tabLoc, tabSelect, userComplete }) => {
           <CardBody>
             <div className="space-y-2">
               <div className="flex w-full items-center gap-3 border-b border-a-grey pb-2">
-                {/* bug: disableanimation in avatar, search will fix in nextui version v2.4.3 */}
-                <Avatar src={user?.picture} />
+                {/* bug: disableanimation in avatar, search will fix in nextui version v2.4.3, sept 25 - not yet fix ill just change it to img */}
+                {/* https://github.com/nextui-org/nextui/issues/3257 */}
+                {/* <Avatar src={user?.picture} alt="user_picture" /> */}
+                <div>
+                  <Image
+                    src={user?.picture}
+                    alt="user_picture"
+                    className="rounded-full h-10 w-10"
+                  />
+                </div>
+
                 <div className="leading-none">
                   <p className=" text-md font-semibold">{user?.name}</p>
                   <p className="text-sm">{user?.email}</p>

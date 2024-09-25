@@ -37,7 +37,7 @@ const SearchBar = ({
         classNames={{ inputWrapper: "bg-a-white drop-shadow-md" }}
         value={searchValue}
         onValueChange={setSearchValue}
-        isDisabled={dataIsLoading}
+        // isDisabled={dataIsLoading}
         endContent={
           <>
             <TiDeleteOutline
@@ -68,6 +68,7 @@ const SearchBar = ({
           <Button
             onClick={() => changeView()}
             className="bg-a-white drop-shadow-md"
+            isDisabled={dataIsLoading}
           >
             <div>{isViewBlock ? cardIcon() : tableIcon()}</div>
             <div>{isViewBlock ? "Card View" : "Table View"}</div>
@@ -80,6 +81,7 @@ const SearchBar = ({
           <Button
             className="bg-a-white drop-shadow-md"
             onPress={() => addAction()}
+            isDisabled={dataIsLoading}
             isIconOnly
           >
             {addIcon()}

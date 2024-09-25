@@ -72,7 +72,7 @@ const TableFooter = ({ column, data }) => {
     return Object.values(statusData).map((item, index) => (
       <div
         key={index}
-        className={`border ${item.color} h-8 hover:cursor-pointer`}
+        className={`border ${item.color} h-8 hover:cursor-pointer rounded-md mx-[2px]`}
         style={{
           backgroundColor: item.color,
           width: `${(item.count / totalCount) * 100}%`,
@@ -82,42 +82,48 @@ const TableFooter = ({ column, data }) => {
       ></div>
     ));
   };
+
   return (
-    <td>
+    <td
+      className={`${
+        column.id === "item" && "bg-a-white sm:sticky left-0 z-[11] "
+      } h-[40px] 
+      `}
+    >
       {totalRow()?.accessorKey?.startsWith("unit_price") ? (
-        <div className='flex items-center' title={formulaState}>
-          <Dropdown className=''>
+        <div className="flex items-center" title={formulaState}>
+          <Dropdown className="">
             <DropdownTrigger>
-              <button className='h-full  w-full text-center hover:bg-gray-400 flex items-center justify-center p-1 rounded-md border'>
+              <button className="h-full  w-full text-center hover:bg-gray-400 flex items-center justify-center p-1 rounded-md border">
                 {totalRow()?.Footer &&
                   totalRow()?.Footer[formulaState] &&
                   totalRow()?.Footer[formulaState]}
               </button>
             </DropdownTrigger>
-            <DropdownMenu variant='faded' aria-label='Dropdown menu with icons'>
-              <DropdownItem key='Sum' onClick={() => setFormulaState("Sum")}>
+            <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
+              <DropdownItem key="Sum" onClick={() => setFormulaState("Sum")}>
                 Sum
               </DropdownItem>
               <DropdownItem
-                key='Average'
+                key="Average"
                 onClick={() => setFormulaState("Average")}
               >
                 Average
               </DropdownItem>
               <DropdownItem
-                key='Count'
+                key="Count"
                 onClick={() => setFormulaState("Count")}
               >
                 Count
               </DropdownItem>
-              <DropdownItem key='Min' onClick={() => setFormulaState("Min")}>
+              <DropdownItem key="Min" onClick={() => setFormulaState("Min")}>
                 Min
               </DropdownItem>
-              <DropdownItem key='Max' onClick={() => setFormulaState("Max")}>
+              <DropdownItem key="Max" onClick={() => setFormulaState("Max")}>
                 Max
               </DropdownItem>
               <DropdownItem
-                key='Median'
+                key="Median"
                 onClick={() => setFormulaState("Median")}
               >
                 Median

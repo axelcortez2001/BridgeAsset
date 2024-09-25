@@ -23,6 +23,7 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
 
   const data = assetData;
   const columns = laptopColumns;
+
   const table = useReactTable({
     data,
     columns,
@@ -36,18 +37,18 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
     },
   });
 
-  const getCommonPinningStyles = (column) => {
-    const isPinned = column.getIsPinned();
+  // const getCommonPinningStyles = (column) => {
+  //   const isPinned = column.getIsPinned();
 
-    return {
-      left: isPinned === "left" ? `${column.getStart("left")}px` : undefined,
-      // opacity: isPinned ? 0.95 : 1,
-      position: isPinned ? "sticky" : "relative",
-      width: column.getSize(),
-      zIndex: isPinned ? 1 : 0,
-      backgroundColor: isPinned ? "white" : "transparent",
-    };
-  };
+  //   return {
+  //     left: isPinned === "left" ? `${column.getStart("left")}px` : undefined,
+  //     // opacity: isPinned ? 0.95 : 1,
+  //     position: isPinned ? "sticky" : "relative",
+  //     width: column.getSize(),
+  //     zIndex: isPinned ? 1 : 0,
+  //     backgroundColor: isPinned ? "#F9F9F9" : "transparent",
+  //   };
+  // };
 
   const [selectedTD, setSelectedTd] = useState(null);
   const handleSelectLaptop = useHandleSelectAssetLaptop(setActionStatus);
@@ -75,13 +76,13 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
 
   return (
     <>
-      <div className="w-full bg-a-grey text-a-black rounded-lg overflow-x-auto border ">
+      <div className="w-full bg-a-lightgrey shadow-lg text-a-black rounded-lg overflow-x-auto border ">
         {data ? (
           <table
-            className="min-w-full overflow-x-auto border-l"
+            className="min-w-full overflow-x-auto"
             style={{ width: table?.getTotalSize() }}
           >
-            <thead>
+            <thead className="bg-a-white border-b border-a-grey">
               {table?.getHeaderGroups()?.map((headerGroup) => (
                 <tr key={headerGroup.id} className="relative">
                   {headerGroup.headers.map((header) => {
@@ -90,14 +91,16 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
                     return (
                       <th
                         key={header.id}
+                        className={`bg-a-white text-a-black relative ${
+                          column.id === "item" &&
+                          "sm:sticky left-0 bg-a-white z-[11]"
+                        }`}
                         style={{
-                          position: "relative",
                           maxwidth: header.getSize(),
-                          ...getCommonPinningStyles(column),
                         }}
                       >
                         {header.isPlaceholder ? null : (
-                          <div className='border-b p-2 capitalize whitespace-nowrap" '>
+                          <div className="p-2 capitalize whitespace-nowrap">
                             {flexRender(
                               header.column.columnDef.header,
                               header.getContext()
@@ -125,7 +128,7 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
               {table?.getRowModel()?.rows?.map((row) => (
                 <tr
                   key={row.id}
-                  className="hover:cursor-pointer  hover:bg-gray-200  relative"
+                  className="hover:cursor-pointer hover:bg-a-grey relative"
                 >
                   {row.getVisibleCells().map((cell) => {
                     const { column } = cell;
@@ -134,7 +137,6 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
                         key={cell.id}
                         style={{
                           width: cell.column.getSize(),
-                          ...getCommonPinningStyles(column),
                         }}
                         onClick={() =>
                           handleSelectFromTable(cell?.row?.original)
@@ -143,18 +145,24 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
                           row.getIsSelected()
                             ? "bg-orange-700 text-red-400"
                             : ""
-                        }  text-center border-b `}
+                        } ${
+                          cell.column.id === "item" &&
+                          "sm:sticky left-0 bg-a-white z-[11]"
+                        } text-center border-b border-a-grey sm:drop-shadow-lg p-0`}
                       >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
+                        <div>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </div>
                       </td>
                     );
                   })}
                 </tr>
               ))}
-              <tr className="w-full">
+
+              <tr className="w-full bg-a-lightgrey hover:bg-a-grey bg-a-white">
                 {columns.map((column, index) => (
                   <TableFooter key={index} column={column} data={data} />
                 ))}
@@ -170,7 +178,6 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
         isOpen={isViewModal}
         onClose={handleViewModal}
         asset={selectedTD}
-        selectAsset={handleSelectAsset}
       />
     </>
   );

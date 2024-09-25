@@ -1,23 +1,12 @@
 import React, { useState, useEffect } from "react";
-import AssetLoading from "../../LoadingComponents/AssetLoading";
 import { Listbox, ListboxItem, Skeleton, Tab, Tabs } from "@nextui-org/react";
 import AllComponent from "./AllComponents/AllComponent";
-import LaptopComponent from "./LaptopComponents/LaptopComponent";
-import MonitorComponent from "./MonitorComponents/MonitorComponent";
-import PeripheralComponent from "./PeripheralComponents/PeripheralComponent";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   expandIndexAtom,
   tabLocationAtom,
 } from "./AllComponents/Charts/AllComponentsStore";
 import { dashBoardDataAtom } from "../DashboardStore/MainStore";
-import {
-  allIcon,
-  dotlistIcon,
-  laptopIcon,
-  monitorIcon,
-  peripheralsIcon,
-} from "@/public/Icon";
 import DropdownFilter from "@/app/SharedComponents/DropdownFilter";
 import FilteredComponents from "./FilteredComponents/FilteredComponents";
 
@@ -34,9 +23,6 @@ const DashboardHome = ({ isSideNavBar, setSideNavBar, dashboardLoading }) => {
   };
 
   const [allData, setAllData] = useState([]);
-  const [laptopData, setLaptopData] = useState([]);
-  const [monitorData, setMonitorData] = useState([]);
-  const [peripheralData, setPeripheralData] = useState([]);
 
   useEffect(() => {
     const handleFilterData = () => {
@@ -129,10 +115,11 @@ const DashboardHome = ({ isSideNavBar, setSideNavBar, dashboardLoading }) => {
           </div>
           <div>
             <p className="font-bold">On this page</p>
-            <Listbox>
+            <Listbox aria-label="mini sidebar options">
               {tabLocation === "All"
                 ? sidebarNavOptions["All"]?.map((item) => (
                     <ListboxItem
+                      aria-label="mini sidebar options"
                       key={item}
                       href={`#${item}`}
                       onPress={handleSideNavbarClose}

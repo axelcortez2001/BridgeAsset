@@ -4,14 +4,17 @@ import {
   fetchEmployeeAtom,
   selectedAssetDataAtom,
 } from "@/app/Homepage/AssetStore";
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import { Accordion, AccordionItem, Divider } from "@nextui-org/react";
 import { useAtomValue, useSetAtom } from "jotai";
 import Blocks from "../AssetOtherComponents/Blocks";
 import useHandleSelectAssetLaptop from "../Functions/laptopFunction";
 import { setDataToDefaultAtom } from "../Store/LaptopStore";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import AssetSkeleton from "../AssetComponents/AssetSkeleton";
+import NoItems from "@/app/SharedComponents/NoItems";
 
-const BlockView = ({ setActionStatus, type, optionTab }) => {
+const BlockView = ({ isLoading, setActionStatus, type, optionTab, all }) => {
   const assetData = useAtomValue(assetDataAtom);
 
   const handleSelect = useHandleSelectAssetLaptop(setActionStatus);
@@ -68,20 +71,34 @@ const BlockView = ({ setActionStatus, type, optionTab }) => {
     }
   };
 
+  const skeletonCount = [1, 2, 3, 4, 5, 6];
+  const layoutSharedStyle =
+    "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2";
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-      {filterAsset(optionTab) &&
-        filterAsset(optionTab)?.length > 0 &&
-        filterAsset(optionTab)?.map((asset, index) => (
-          <>
-            <Blocks
-              key={index}
-              selectAsset={handleSelectAsset}
-              asset={asset}
-              delAsset={handleDelete}
-            />
-          </>
-        ))}
+    <div className="h-full">
+      {filterAsset(optionTab) && filterAsset(optionTab)?.length ? (
+        <div>
+          <p className={`font-medium px-2 tracking-wider ${all ? "block" : "hidden"}`}>
+            {optionTab.toUpperCase()}
+          </p>
+          <div className={`${layoutSharedStyle} ${all && "py-2"}`}>
+            {filterAsset(optionTab)?.map((asset, index) => (
+              <Blocks
+                key={index}
+                selectAsset={handleSelectAsset}
+                asset={asset}
+                delAsset={handleDelete}
+              />
+            ))}
+          </div>
+          <Divider className={`my-2 ${all ? "block" : "hidden"}`} />
+        </div>
+      ) : (
+        <div className={`h-full ${all ? "hidden" : "block"}`}>
+          <NoItems item={optionTab} />
+        </div>
+      )}
     </div>
   );
 };

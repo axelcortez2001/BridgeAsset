@@ -28,20 +28,16 @@ const UserPage = () => {
   const fetchUsers = useSetAtom(fetchUserAtom);
   const fetchAssetData = useSetAtom(fetchAssetDataAtom);
 
-  console.log("isloading", loading);
-
   //handler
   useEffect(() => {
     const userHandler = async () => {
       setLoading(true);
       try {
-        console.log("Tigger use effect");
         const assets = await fetchAssetData("users");
         if (assets?.success === true) {
           const res = await fetchUsers();
           if (res?.success) {
-            setFilteredUsers(res.user);
-            console.log(res.message);
+            setFilteredUsers(res.user);  
           }
         }
       } catch (error) {
@@ -117,7 +113,7 @@ const UserPage = () => {
           dataIsLoading={loading}
         />
       </div>
-      <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+      <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
         {SkeletonCount.map((item) => (
           <UserCardSkeleton key={item} />
         ))}
@@ -136,7 +132,7 @@ const UserPage = () => {
       <div>
         <div>
           {filteredUsers && filteredUsers?.length > 0 ? (
-            <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-4">
+            <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mt-4">
               {filteredUsers.map((user, index) => (
                 <UserCard
                   key={index}

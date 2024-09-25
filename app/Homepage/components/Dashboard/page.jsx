@@ -21,16 +21,9 @@ const Dashboard = ({ isSideNavBar, setSideNavBar }) => {
   useEffect(() => {
     const getDashboardData = async () => {
       if (dashboardData === null || updateStatus === true) {
-        console.log("Trigger main event");
         setDashboardLoading(true);
         try {
           const res = await fetchDashBoard();
-          console.log("res: ", res);
-          if (res?.success) {
-            console.log("Response: ", res?.message);
-          } else {
-            console.log("Response: ", res?.error);
-          }
         } catch (error) {
           console.log("Error: ", error);
         } finally {
@@ -70,7 +63,7 @@ const Dashboard = ({ isSideNavBar, setSideNavBar }) => {
           isSideNavBar
             ? "translate-x-[0px]  lg:translate-x-[0px]"
             : "translate-x-[240px]  lg:translate-x-[0px]"
-        } h-[calc(100vh-48px)] fixed p-2 right-0 top-[48px] shadow-xl space-y-2 z-[48] bg-a-lightgrey/60`}
+        } h-[calc(100vh-48px)] fixed p-2 right-0 top-[48px] shadow-xl space-y-2 z-[48] bg-a-lightgrey lg:bg-a-lightgrey/20`}
       >
         <DashboardSkeleton type="sidebar" />
       </div>
