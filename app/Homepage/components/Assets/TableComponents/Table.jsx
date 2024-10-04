@@ -9,13 +9,20 @@ import {
 import { laptopColumns } from "./TableData";
 import { Button, select, useDisclosure } from "@nextui-org/react";
 import TableFooter from "./TableFooter";
-import useHandleSelectAssetLaptop from "../Functions/laptopFunction";
-
 import ViewModal from "../AssetOtherComponents/ViewModal";
+
+import useHandleSelectAssetLaptop from "../Functions/laptopFunction";
 import useHandleSelectAssetMonitor from "../Functions/MonitorFunction";
 import useHandleSelectAssetPeripheral from "../Functions/PeripheralFunction";
-const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
+
+import AddAsset from "../AssetComponents/Asset";
+const Table = ({ assetData, actionStatus, assetLoading }) => {
   const [isViewModal, setViewModal] = useState(false);
+  const [isAddModal, setAddModal] = useState(false);
+
+  const handleAddModal = () => {
+    setAddModal((prev) => !prev);
+  };
 
   const handleViewModal = () => {
     setViewModal((prev) => !prev);
@@ -51,10 +58,9 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
   // };
 
   const [selectedTD, setSelectedTd] = useState(null);
-  const handleSelectLaptop = useHandleSelectAssetLaptop(setActionStatus);
-  const handleSelectMonitor = useHandleSelectAssetMonitor(setActionStatus);
-  const handleSelectPeripheral =
-    useHandleSelectAssetPeripheral(setActionStatus);
+  const handleSelectLaptop = useHandleSelectAssetLaptop();
+  const handleSelectMonitor = useHandleSelectAssetMonitor();
+  const handleSelectPeripheral = useHandleSelectAssetPeripheral();
 
   const handleSelectFromTable = (opt) => {
     handleViewModal();
@@ -64,13 +70,13 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
   const handleSelectAsset = () => {
     if (selectedTD?.category.toLocaleLowerCase() === "laptop") {
       handleSelectLaptop(selectedTD);
-      handleViewModal();
+      handleAddModal();
     } else if (selectedTD?.category.toLocaleLowerCase() === "monitor") {
       handleSelectMonitor(selectedTD);
-      handleViewModal();
+      handleAddModal();
     } else if (selectedTD?.category.toLocaleLowerCase() === "peripheral") {
       handleSelectPeripheral(selectedTD);
-      handleViewModal();
+      handleAddModal();
     }
   };
 
@@ -178,7 +184,10 @@ const Table = ({ assetData, setActionStatus, actionStatus, assetLoading }) => {
         isOpen={isViewModal}
         onClose={handleViewModal}
         asset={selectedTD}
+        handleSelectAsset={handleSelectAsset}
       />
+
+      <AddAsset isOpen={isAddModal} onclose={handleAddModal} from="modal" type="update" />
     </>
   );
 };

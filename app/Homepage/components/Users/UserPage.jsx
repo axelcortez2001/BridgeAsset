@@ -11,6 +11,7 @@ import { Tabs, Tab, Input, Skeleton } from "@nextui-org/react";
 import UserCard from "./Components/UserCard";
 import SearchBar from "@/app/SharedComponents/SearchBar";
 import UserCardSkeleton from "./Components/UserCardSkeleton";
+import NoItems from "@/app/SharedComponents/NoItems";
 
 const UserPage = () => {
   const [loading, setLoading] = useState(false);
@@ -37,7 +38,7 @@ const UserPage = () => {
         if (assets?.success === true) {
           const res = await fetchUsers();
           if (res?.success) {
-            setFilteredUsers(res.user);  
+            setFilteredUsers(res.user);
           }
         }
       } catch (error) {
@@ -120,7 +121,7 @@ const UserPage = () => {
       </div>
     </div>
   ) : (
-    <div className="w-full h-screen p-4">
+    <div className="w-full h-[calc(100%-60px)] p-4">
       <div className="sticky top-[12px] z-[46] drop-shadow-xl">
         <SearchBar
           searchValue={searchQuery}
@@ -129,25 +130,25 @@ const UserPage = () => {
           applyFilter={(e) => handleApplyFilter(e)}
         />
       </div>
-      <div>
-        <div>
-          {filteredUsers && filteredUsers?.length > 0 ? (
-            <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mt-4">
-              {filteredUsers.map((user, index) => (
-                <UserCard
-                  key={index}
-                  user={user}
-                  checkStat={IsAssetActive}
-                  tabLoc={filterOption[0]}
-                  tabSelect={filterOption[1]}
-                  userComplete={filterOption[2]}
-                />
-              ))}
-            </div>
-          ) : (
-            <div>No Data</div>
-          )}
-        </div>
+      <div className="h-full">
+        {filteredUsers && filteredUsers?.length > 0 ? (
+          <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 mt-4 ">
+            {filteredUsers.map((user, index) => (
+              <UserCard
+                key={index}
+                user={user}
+                checkStat={IsAssetActive}
+                tabLoc={filterOption[0]}
+                tabSelect={filterOption[1]}
+                userComplete={filterOption[2]}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="h-full ">
+            <NoItems item={"User"} />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,43 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
   Button,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 const BranchDropDown = ({ branch, setBranch, isDisabled }) => {
+  const [selectedKeys, setSelectedKeys] = useState(new Set([branch]));
+
+  const selectOption = [
+    {
+      label: "Australia",
+      action: () => setBranch("Australia"),
+    },
+    {
+      label: "Makati",
+      action: () => setBranch("Makati"),
+    },
+    {
+      label: "Laoag",
+      action: () => setBranch("Laoag"),
+    },
+  ];
+
   return (
-    <div className='flex flex-col'>
-      <p className='text-sm text-gray-500'>Branch</p>
-      <Dropdown>
-        <DropdownTrigger>
-          <Button
-            variant='bordered'
-            className='capitalize'
-            isDisabled={isDisabled}
-          >
-            {branch}
-          </Button>
-        </DropdownTrigger>
-        <DropdownMenu
-          aria-label='Single selection example'
-          variant='flat'
-          disallowEmptySelection
-          selectionMode='single'
-        >
-          <DropdownItem key='Australia' onClick={() => setBranch("Australia")}>
-            Australia
-          </DropdownItem>
-          <DropdownItem key='Makati' onClick={() => setBranch("Makati")}>
-            Makati
-          </DropdownItem>
-          <DropdownItem key='Laoag' onClick={() => setBranch("Laoag")}>
-            Laoag
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
-    </div>
+    <Select
+      classNames={{ trigger: "min-h-[0px] h-[48px] rounded-lg" }}
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+      aria-label="selectOption"
+      label="Location"
+    >
+      {selectOption.map((item, index) => (
+        <SelectItem key={item.label} onClick={item.action} className="h-[40px]">
+          {item.label}
+        </SelectItem>
+      ))}
+    </Select>
   );
 };
 

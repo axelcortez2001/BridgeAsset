@@ -16,25 +16,15 @@ import {
   sideBarLocation,
 } from "@/app/Homepage/AssetStore";
 import AllComponentsGateway from "../../ChartComponents/ChartGateWay/AllComponentsGateway";
+import { laptopIcon, monitorIcon, peripheralsIcon } from "@/public/Icon";
 
-const ExpandableCategories = ({
-  isOpen,
-  onOpen,
-  onOpenChange,
-  chartData,
-  data,
-}) => {
+const ExpandableCategories = ({ isOpen, onClose, chartData, data }) => {
   const [expandIndex, setExpandIndex] = useAtom(expandIndexAtom);
   const [filteredData, setFilteredData] = useState(null);
   const [actionStatus, setActionStatus] = useAtom(globalActionStatusAtom);
   const tabLocation = useAtomValue(tabLocationAtom);
   const [tabLocationState, setTabLocationState] = useState(tabLocation);
   const setSideBar = useSetAtom(sideBarLocation);
-  const handleActionStatus = (stat) => {
-    onOpenChange(false);
-    setSideBar("assets");
-    setActionStatus(!stat);
-  };
 
   const indexDir = [
     { id: 0, name: "Stock" },
@@ -42,11 +32,12 @@ const ExpandableCategories = ({
     { id: 2, name: "Defective" },
     { id: 3, name: "Others" },
   ];
+
   useEffect(() => {
     const triggerFunctions = () => {
       if (filteredData === null) {
         const filterD = expandAllFiltering(data, expandIndex);
-       
+
         setFilteredData(filterD);
         setTabLocationState(tabLocation);
       }
@@ -58,86 +49,72 @@ const ExpandableCategories = ({
 
   const handleCloseModal = () => {
     setExpandIndex(null);
-    onOpenChange(false);
+    onClose();
   };
+
+  const titleSharedStyle = "tracking-widest font-bold p-2";
+
   return (
     <Modal
       isOpen={isOpen}
-      onOpenChange={onOpenChange}
-      className='max-h-[95%] overflow-y-auto max-w-[90%]'
+      onClose={handleCloseModal}
+      className="!m-0 overflow-hidden pb-2 "
     >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className='flex flex-col gap-1 sticky top-0 w-full bg-white'>
-              Asset Categories
-            </ModalHeader>
-            <ModalBody>
-              <div className='border rounded-md p-2 flex w-full flex-col items-center justify-start'>
-                <div className='w-3/4'>
-                  <AllComponentsGateway
-                    chartData={chartData}
-                    chartOpen={true}
-                  />
+      <ModalContent className="min-w-[90%] h-[calc(100%-80px)]">
+        <ModalHeader className="flex flex-col justify-center w-full h-[40px] border-b border-a-grey bg-a-lightgrey">
+          Asset Categories
+        </ModalHeader>
+        <ModalBody className="flex lg:flex-row w-full gap-2 p-0 md:p-4 overflow-y-auto">
+          <div
+            className={` w-full ${
+              expandIndex !== null
+                ? "lg:w-[calc(40%-4px)] h-[calc(50%-4px)] lg:h-full"
+                : "h-full"
+            } flex-none`}
+          >
+            <AllComponentsGateway chartData={chartData} chartOpen={true} />
+          </div>
+          {expandIndex !== null && (
+            <div className="flex-initial w-full lg:w-[calc(60%-4px)] h-[calc(50%-4px)] lg:h-full">
+              <div
+                className={`text-center bg-a-lightgrey rounded-t-lg ${titleSharedStyle}`}
+              >
+                INFORMATION
+              </div>
+              <div className="p-4 space-y-4 border border-a-lightgrey">
+                <div>
+                  <div className="flex flex-row items-center">
+                    {laptopIcon()}
+                    <p className={`${titleSharedStyle}`}>LAPTOP</p>
+                  </div>
+                  <div className="text-sm">
+                    <Table assetData={filteredData?.laptop?.[returnText]} />
+                  </div>
                 </div>
 
-                {expandIndex !== null && (
-                  <>
-                    <div className='w-full flex flex-col'>
-                      <p>Informations</p>
-                    </div>
-                    <div className='max-w-full'>
-                      <div className='w-full flex flex-col items-center mt-3 border '>
-                        <div className='w-full border'>
-                          <div>
-                            <p>Laptop</p>
-                            <div className='text-xs'>
-                              <Table
-                                assetData={filteredData?.laptop?.[returnText]}
-                                setActionStatus={handleActionStatus}
-                              />
-                            </div>
-                          </div>
-                        </div>
+                <div>
+                  <div className="flex flex-row items-center">
+                    {monitorIcon()}
+                    <p className={`${titleSharedStyle}`}>MONITOR</p>
+                  </div>
+                  <div className="text-sm">
+                    <Table assetData={filteredData?.monitor?.[returnText]} />
+                  </div>
+                </div>
 
-                        <div className='w-full border'>
-                          <div>
-                            <p>Monitor</p>
-                            <div className='text-xs'>
-                              <Table
-                                assetData={filteredData?.monitor?.[returnText]}
-                                setActionStatus={handleActionStatus}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className='w-full border'>
-                          <div>
-                            <p>Peripheral</p>
-                            <div className='text-xs'>
-                              <Table
-                                assetData={
-                                  filteredData?.peripheral?.[returnText]
-                                }
-                                setActionStatus={handleActionStatus}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
+                <div>
+                  <div className="flex flex-row items-center">
+                    {peripheralsIcon()}
+                    <p className={`${titleSharedStyle}`}>PERIPHERAL</p>
+                  </div>
+                  <div className="text-sm">
+                    <Table assetData={filteredData?.peripheral?.[returnText]} />
+                  </div>
+                </div>
               </div>
-            </ModalBody>
-            <ModalFooter className='sticky bottom-0'>
-              <Button color='danger' variant='light' onPress={handleCloseModal}>
-                Close
-              </Button>
-            </ModalFooter>
-          </>
-        )}
+            </div>
+          )}
+        </ModalBody>
       </ModalContent>
     </Modal>
   );

@@ -2,17 +2,43 @@ import React from "react";
 import { RadioGroup, Radio } from "@nextui-org/react";
 const UserRadioOption = ({ userType, setUserType, isDisabled }) => {
   return (
-    <RadioGroup
-      label=' User Type'
-      orientation='horizontal'
-      value={userType}
-      onValueChange={setUserType}
-      isDisabled={isDisabled}
-    >
-      <Radio value='Employee'>Employee</Radio>
-      <Radio value='Interns'>Interns</Radio>
-      <Radio value='Admin'>Admin</Radio>
-    </RadioGroup>
+    <>
+      <p className="text-sm text-a-black">User Type</p>
+      <RadioGroup
+        orientation="horizontal"
+        value={userType}
+        onValueChange={setUserType}
+        isDisabled={isDisabled}
+      >
+        <Radio
+          classNames={{
+            control: "bg-a-blue",
+            wrapper: "border-2 !border-a-blue",
+          }}
+          value="Employee"
+        >
+          Employee
+        </Radio>
+        <Radio
+          classNames={{
+            control: "bg-a-blue",
+            wrapper: "border-2 !border-a-blue",
+          }}
+          value="Interns"
+        >
+          Interns
+        </Radio>
+        <Radio
+          classNames={{
+            control: "bg-a-blue",
+            wrapper: "border-2 !border-a-blue",
+          }}
+          value="Admin"
+        >
+          Admin
+        </Radio>
+      </RadioGroup>
+    </>
   );
 };
 

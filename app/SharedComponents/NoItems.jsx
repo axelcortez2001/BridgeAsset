@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-const NoItems = ({ item }) => {
+const NoItems = ({ item = "" }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full">
       <div className="flex items-center justify-center mr-4">

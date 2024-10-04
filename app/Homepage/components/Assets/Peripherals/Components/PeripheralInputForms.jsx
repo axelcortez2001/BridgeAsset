@@ -21,7 +21,6 @@ import {
 import { Input, Textarea } from "@nextui-org/react";
 import LaptopSupplierDropDown from "../../DropDownComponents/LaptopSupplierDropDown";
 import BranchDropDown from "../../DropDownComponents/BranchDropDown";
-import MonitorStatus from "../../DropDownComponents/MonitorStatus";
 import PeripheralTypeDropdown from "../../DropDownComponents/PeripheralTypeDropdown";
 import EmployeeDropDown from "../../DropDownComponents/EmployeeDropDown";
 import {
@@ -32,8 +31,14 @@ import {
 import { format } from "date-fns";
 import { historyPeripheralActionFunction } from "../../Functions/functionAtom";
 import UserRadioOption from "../../DropDownComponents/UserRadioOption";
+import InputFields from "@/app/SharedComponents/InputFields";
+import StatusOption from "../../DropDownComponents/StatusOption";
 
-const PeripheralInputForms = ({ employeeOptions }) => {
+const PeripheralInputForms = ({
+  selectedType,
+  itemStatusOption,
+  employeeOptions,
+}) => {
   const [item, setItem] = useAtom(itemNameAtom);
   const [serialNo, setSerialNo] = useAtom(serialNumberAtom);
   const [tagCode, setTagCode] = useAtom(tagCodeAtom);
@@ -53,7 +58,6 @@ const PeripheralInputForms = ({ employeeOptions }) => {
 
   //set atoms
   const setLogicAssetHolder = useSetAtom(setLogicAssetHolderAtom);
-  const setHistory = useSetAtom(historyPeripheralActionFunction);
   const globalSelected = useAtomValue(globalSelectedassetAtom);
   const [selectedAssetData, setSelectedAssetData] = useAtom(
     selectedAssetDataAtom
@@ -67,36 +71,28 @@ const PeripheralInputForms = ({ employeeOptions }) => {
       setAssetDataFromSelected(globalSelected);
     }
   }, [globalSelected, setSelectedAssetData]);
-  //handlers
-  //for history
-  const handleInput = (field, newData, oldData) => {
-    if (selectedAssetData !== null) {
-      if (newData !== oldData) {
-        setHistory(field, newData, oldData);
-      }
-    }
-  };
+
   const handleSupplier = (opt) => {
     setSupplier(opt);
-    handleInput(" Supplier ", opt?.name, supplier?.name);
   };
+
   const handleBranch = (opt) => {
     setBranch(opt);
-    handleInput(" Branch ", opt, branch);
   };
+
   const handleStatus = (opt) => {
     setStatus(opt);
-    handleInput(" Status ", opt?.name, status?.name);
   };
+
   const handlePeripheral = (opt) => {
     console.log(opt);
     setPeripheralType(opt);
-    handleInput(" Peripheral Type ", opt, peripheralType);
   };
+
   const handleUserType = (opt) => {
     setUserType(opt);
-    handleInput(" User Type ", opt, userType);
   };
+
   const handleAssetHolder = (opt) => {
     console.log("beofre: ", employeeOptions);
     setLogicAssetHolder(selectedAssetData?.asset_holder);
@@ -107,135 +103,126 @@ const PeripheralInputForms = ({ employeeOptions }) => {
       setDoi("");
     }
     setAssetHolder(opt);
-    handleInput(" Asset Holder ", opt?.name, assetHolder?.name);
   };
+
   return (
-    <div className='w-full flex flex-wrap p-1 gap-3'>
-      <div className='p-2 border rounded-md'>
-        <p className='p-1 font-bold'>Asset Data</p>
-        <PeripheralTypeDropdown
-          peripheralType={peripheralType}
-          setPeripheralType={handlePeripheral}
-        />
+    <div>
+      <div className="flex flex-col gap-2">
+        <div className="md:col-span-2">
+          <p className="font-bold text-lg px-2">Basic Information</p>
+        </div>
+
+        <div className="col-span-2">
+          <PeripheralTypeDropdown
+            peripheralType={peripheralType}
+            setPeripheralType={handlePeripheral}
+          />
+        </div>
         {peripheralType !== "" && (
-          <div>
-            <div className='w-full flex flex-wrap p-1 gap-3'>
-              <Input
-                isRequired
-                type='text'
-                label='Item'
-                size={"sm"}
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <InputFields
+                isRequired={true}
+                label={"Item"}
                 value={item}
-                onChange={(e) => setItem(e.target.value)}
-                onBlur={() =>
-                  handleInput(" Item ", item, selectedAssetData?.item)
-                }
-                className='max-w-[500px]'
+                setValue={setItem}
               />
-              <Input
-                type='text'
-                label='Tag Code'
+
+              <InputFields
+                isRequired={false}
+                label={"Tag Code"}
                 value={tagCode}
-                onChange={(e) => setTagCode(e.target.value)}
-                onBlur={() =>
-                  handleInput(" Tag Code ", tagCode, selectedAssetData?.tagCode)
-                }
-                size={"sm"}
-                className='max-w-40'
-              />{" "}
-              <Input
-                type='text'
-                size={"sm"}
-                label='Serial Number'
+                setValue={setTagCode}
+              />
+
+              <InputFields
+                isRequired={false}
+                label={"Serial Number"}
                 value={serialNo}
-                onChange={(e) => setSerialNo(e.target.value)}
-                onBlur={() =>
-                  handleInput(
-                    " Serial Number ",
-                    serialNo,
-                    selectedAssetData?.serial_number
-                  )
-                }
-                className='max-w-xs'
+                setValue={setSerialNo}
               />
-              <Input
-                type='number'
-                label='Unit Price'
+
+              <InputFields
+                type="number"
+                isRequired={false}
+                label={"Unit Price"}
                 value={unitPrice}
-                onChange={(e) => setUnitPrice(e.target.value)}
-                onBlur={() =>
-                  handleInput(
-                    " Unit Price ",
-                    unitPrice,
-                    selectedAssetData?.unit_price
-                  )
-                }
-                size={"sm"}
-                className='max-w-40'
+                setValue={setUnitPrice}
               />
-              <Input
-                type='number'
-                label='Warranty Period'
+
+              <InputFields
+                type="date"
+                isRequired={false}
+                label={"Warranty Period"}
                 value={warrantyPeriod}
-                onChange={(e) => setWarrantyPeriod(e.target.value)}
-                onBlur={() =>
-                  handleInput(
-                    " Warranty Period ",
-                    warrantyPeriod,
-                    selectedAssetData?.warranty_period
-                  )
-                }
-                size={"sm"}
-                className='max-w-40'
+                setValue={setWarrantyPeriod}
               />
-              <Input
-                type='date'
-                size={"sm"}
-                label='DOP'
+
+              <InputFields
+                type="date"
+                isRequired={false}
+                label={"DOP"}
                 value={dop}
-                onBlur={() => handleInput(" DOP ", dop, selectedAssetData?.dop)}
-                onChange={(e) => setDop(e.target.value)}
-                className='w-auto'
+                setValue={setDop}
               />
-              <LaptopSupplierDropDown
-                supplier={supplier}
-                setSupplier={handleSupplier}
-              />
-              <Textarea
-                type='text'
-                label='Remarks'
-                size={"sm"}
-                value={remarks}
-                onChange={(e) => setRemarks(e.target.value)}
-                className='w-full'
-              />
+
+              <div className="md:col-span-2">
+                <LaptopSupplierDropDown
+                  supplier={supplier}
+                  setSupplier={handleSupplier}
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <InputFields
+                  isRequired={false}
+                  label={"Remarks"}
+                  value={remarks}
+                  setValue={setRemarks}
+                  textArea={true}
+                />
+              </div>
             </div>
-            <p className='p-1 font-bold'>User Data</p>
-            <div className='w-full flex flex-wrap p-1 gap-3'>
-              <EmployeeDropDown
-                employeeOptions={employeeOptions}
-                assetHolder={assetHolder}
-                setAssetHolder={handleAssetHolder}
-              />
-              <Input
-                type='date'
-                size={"sm"}
-                label='DOI Current User'
-                value={doi}
-                onChange={(e) => setDoi(e.target.value)}
-                className='max-w-xs'
-              />
+
+            {itemStatusOption === "Active" && (
+              <div>
+                <p className="font-bold text-lg px-2">User Data</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <EmployeeDropDown
+                    employeeOptions={employeeOptions}
+                    assetHolder={assetHolder}
+                    setAssetHolder={handleAssetHolder}
+                  />
+
+                  <InputFields
+                    type="date"
+                    isRequired={false}
+                    label={"DOI Current User"}
+                    value={doi}
+                    setValue={setDoi}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div>
+              <p className="font-bold text-lg px-2">Status</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <BranchDropDown branch={branch} setBranch={handleBranch} />
+                <StatusOption
+                  status={status}
+                  setStatus={handleStatus}
+                  selectedType={selectedType}
+                />
+                <div className="px-2 md:col-span-2">
+                  <UserRadioOption
+                    userType={userType}
+                    setUserType={handleUserType}
+                  />
+                </div>
+              </div>
             </div>
-            <p className='p-1 font-bold'>Status</p>
-            <div className='w-full flex flex-wrap p-1 gap-3'>
-              <BranchDropDown branch={branch} setBranch={handleBranch} />
-              <MonitorStatus status={status} setStatus={handleStatus} />
-              <UserRadioOption
-                userType={userType}
-                setUserType={handleUserType}
-              />
-            </div>
-          </div>
+          </>
         )}
       </div>
     </div>

@@ -5,15 +5,15 @@ import { Button, useDisclosure, Select, SelectItem } from "@nextui-org/react";
 import { useAtom } from "jotai";
 import {
   filterTypeAtom,
-  isBranchOpenAtom,
   selectedValueDataAtom,
 } from "../../ExpandComponents/ExpandStore";
 
 const DateChartGateway = ({ chartData }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [newChartData, setNewChartData] = useState(chartData);
-  const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
   const [filterType, setFilterType] = useAtom(filterTypeAtom);
+  const [isExpandChart, setExpandChart] = useState(false);
+
   const [selectedValueData, setSelectedValueData] = useAtom(
     selectedValueDataAtom
   );
@@ -33,15 +33,25 @@ const DateChartGateway = ({ chartData }) => {
         newAsset: filteredData,
       });
       setNewChartData(newData());
-    } else if (isBranchOpen === false) {
+    } else if (isExpandChart === false) {
       setNewChartData(chartData);
     }
   }, [selectedValueData, chartData]);
+
+  const handleExpandChart = () => {
+    setExpandChart((prev) => !prev);
+
+    if (isExpandChart) {
+      setSelectedValueData(null);
+    }
+  };
+
   const labels = newChartData?.newAsset?.labels;
   const dataValues = newChartData?.newAsset?.unitPrices;
   const maxValue = Math.max(...dataValues);
   const options = {
-    maintainAspectRatio: true,
+    responsive: true,
+    maintainAspectRatio: false,
     layout: {
       padding: 10,
     },
@@ -58,7 +68,6 @@ const DateChartGateway = ({ chartData }) => {
         },
       },
     },
-    responsive: true,
 
     plugins: {
       legend: {
@@ -83,6 +92,11 @@ const DateChartGateway = ({ chartData }) => {
         },
       },
     },
+    onHover: (event, chartElement) => {
+      event.native.target.style.cursor = chartElement[0]
+        ? "pointer"
+        : "default";
+    },
     onClick: (event, elements, context) => {
       if (elements.length > 0) {
         const elementIndex = elements[0].index;
@@ -95,10 +109,11 @@ const DateChartGateway = ({ chartData }) => {
           location: "date",
           index: elementIndex,
         };
-        setIsBranchOpen(true);
-        if (!isBranchOpen) {
-          onOpenChange(true);
+
+        if (!isExpandChart) {
+          handleExpandChart();
         }
+
         if (selectedValueData === null) {
           setSelectedValueData(selectedItemData);
         } else {
@@ -122,13 +137,9 @@ const DateChartGateway = ({ chartData }) => {
       },
     ],
   };
-  const handleModal = () => {
-    if (!isBranchOpen) {
-      onOpenChange(true);
-      setIsBranchOpen(true);
-    }
-  };
+
   const chartTitle = "Cost Accumulated";
+
   return (
     <div className="w-full h-full flex items-center flex-col p-2 ">
       <div className="w-full h-[40px] flex flex-row justify-between items-center">
@@ -137,16 +148,14 @@ const DateChartGateway = ({ chartData }) => {
           chartData={data}
           options={options}
           type="Line"
-          onOpen={onOpen}
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          handleModal={handleModal}
+          isOpen={isExpandChart}
+          onClose={handleExpandChart}
           middleContent={
             <>
               <Select
                 label="filter"
                 placeholder=""
-                classNames={{trigger:"min-h-[0px] h-[32px] bg-a-grey/80"}}
+                classNames={{ trigger: "min-h-[0px] h-[32px] bg-a-grey/80" }}
                 size="sm"
                 selectedValue={filterType}
               >

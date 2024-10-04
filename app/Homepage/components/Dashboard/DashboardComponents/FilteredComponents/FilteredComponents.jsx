@@ -54,46 +54,6 @@ const FilteredComponents = ({ dashboardData }) => {
   };
 
   return (
-    // <div className="w-full h-full flex flex-col  ">
-    //   <div className="flex flex-wrap gap-5 p-3">
-    //     <div className="flex flex-wrap w-full gap-4" id="Cost">
-    //       <TotalCostCard cost={computeTotalCost(dashboardData)} loc="laptop" />
-    //     </div>
-    //     <div
-    //       className="border relative  rounded-md p-2 overflow-auto resize"
-    //       id="Status Asset Collection"
-    //     >
-    //       <StatusChartGateway chartData={categorizedStatus(dashboardData)} />
-    //     </div>
-    //     <div
-    //       className="border relative  rounded-md p-2 overflow-auto resize"
-    //       id="Branches Asset Collection"
-    //     >
-    //       <BranchPieGateway chartData={categorizedBranch(dashboardData)} />
-    //     </div>
-    //     <div
-    //       className="border relative max-w-[410px]  rounded-md p-2 w-full overflow-auto resize"
-    //       id="Asset Warranty Status"
-    //     >
-    //       <LifeSpanGateWay chartData={generateWarrantyStatus(dashboardData)} />
-    //     </div>
-    //     <div
-    //       className="border relative  rounded-md p-2 w-full overflow-auto resize"
-    //       id="Cost Accumulated"
-    //     >
-    //       <DateChartGateway
-    //         chartData={categorizedDate(dashboardData, filterType)}
-    //       />
-    //     </div>
-    //     <div
-    //       className="border relative  rounded-md p-2 w-full overflow-auto resize"
-    //       id="Ytd Chart Data"
-    //     >
-    //       <YTDGateway chartData={generateYTD(dashboardData)} />
-    //     </div>
-    //   </div>
-    // </div>
-
     <div
       className="w-full h-[calc(100vh-48px)] overflow-auto mt-2 space-y-2 ss:mt-0 p-0 ss:p-2 "
       onMouseUp={handleMouseUp}

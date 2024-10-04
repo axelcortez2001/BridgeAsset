@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
       <body className={`${helveticaNowDisplay.className} text-base`}>
         <Providers>
           {children}
-          <Toaster />
+          <Toaster richColors />
         </Providers>
       </body>
     </html>

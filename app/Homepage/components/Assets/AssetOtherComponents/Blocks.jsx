@@ -14,13 +14,19 @@ import {
 } from "@nextui-org/react";
 import { isValid } from "date-fns";
 import ViewModal from "./ViewModal";
+import AddAsset from "../AssetComponents/Asset";
 
-const Blocks = ({ selectAsset, asset, delAsset }) => {
+const Blocks = ({handleSelect, asset, delAsset }) => {
   const [isExpand, setExpand] = useState(false);
+  const [isAddModal, setAddmodal] = useState(false);
+
+  const handleAddModal = () => {
+    setAddmodal((prev) => !prev);
+  };
 
   const handleSelectAsset = () => {
-    selectAsset(asset);
-    onOpenChange(false);
+    handleSelect(asset)
+    handleAddModal();
   };
 
   const handleExpand = () => {
@@ -190,7 +196,14 @@ const Blocks = ({ selectAsset, asset, delAsset }) => {
         isOpen={isExpand}
         onClose={handleExpand}
         asset={asset}
-        selectAsset={handleSelectAsset}
+        handleSelectAsset={handleSelectAsset}
+      />
+
+      <AddAsset
+        isOpen={isAddModal}
+        onclose={handleAddModal}
+        from="modal"
+        type="update"
       />
     </>
   );

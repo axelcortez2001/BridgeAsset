@@ -26,19 +26,21 @@ ChartJS.register(
   PointElement,
   LineElement,
   ChartDataLabels,
-  Filler,
+  Filler
 );
 
-const CustomChart = ({ chartData, options, type }) => {
+const CustomChart = ({ chartData, options, type, className }) => {
   const data = chartData;
   // Chart options
 
   return type === "Bar" ? (
-    <Bar data={data} options={options} />
+    <Bar data={data} options={options} className={className} />
   ) : type === "Pie" ? (
-    <Doughnut data={data} options={options} />
+    <Doughnut data={data} options={options} className={className} />
   ) : (
-    type === "Line" && <Line data={data} options={options} />
+    type === "Line" && (
+      <Line data={data} options={options} className={className} />
+    )
   );
 };
 

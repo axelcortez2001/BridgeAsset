@@ -119,6 +119,7 @@ export const handleAddPeripheralAtom = atom(null, async (get, set) => {
       remarks: get(remarksAtom),
       peripheral_type: get(peripheralTypeAtom),
       warranty_period: get(warrantyPeriodAtom),
+      tagCode: get(tagCodeAtom),
     };
     console.log("will be added: ", assetData);
     const response = await restInsert("/assets", assetData);
