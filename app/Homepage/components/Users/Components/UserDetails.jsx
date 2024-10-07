@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   assetDataAtom,
   globalActionStatusAtom,
@@ -9,13 +8,35 @@ import {
 } from "@/app/Homepage/AssetStore";
 import { isValid } from "date-fns";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useDisclosure } from "@nextui-org/react";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Listbox,
+  ListboxItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  useDisclosure,
+} from "@nextui-org/react";
 import ViewModal from "../../Assets/AssetOtherComponents/ViewModal";
 import { toast } from "sonner";
 import { itemStatusOptionAtom } from "../../Assets/Store/LaptopStore";
+import AddAsset from "../../Assets/AssetComponents/Asset";
+import { useState } from "react";
+import NoItems from "@/app/SharedComponents/NoItems";
 
 const UserDetails = ({ userData }) => {
   const [isViewModal, setViewModal] = useState(false);
+  const [isUpdateModal, setUpdateModal] = useState(false);
+
+  const handleUpdateModal = () => {
+    setUpdateModal((prev) => !prev);
+  };
 
   const active = userData?.asset_holder_active;
   console.log("active: ", active);
@@ -42,17 +63,21 @@ const UserDetails = ({ userData }) => {
   const setGlobalActionStatus = useSetAtom(globalActionStatusAtom);
   const assetData = useAtomValue(assetDataAtom);
   const [selectedAssetHere, setSelectedAssetHere] = useState(null);
+
   const handleOpen = (asset) => {
     setSelectedAssetHere(asset?.asset);
-    onOpenChange(true);
+    setSelectedType(asset?.category);
+    handleViewModal();
   };
+
   const setGlobalSelected = useSetAtom(globalSelectedassetAtom);
+
   const setItemStatusOption = useSetAtom(itemStatusOptionAtom);
+
   const handleSelect = async () => {
     if (selectedAssetHere === null) {
       toast.error("Invalid Asset Data");
     } else {
-      setSideBar("assets");
       setSelectedType(selectedAssetHere?.category);
       setSelectedAssetData(selectedAssetHere);
       setGlobalActionStatus(true);
@@ -61,7 +86,7 @@ const UserDetails = ({ userData }) => {
         setItemStatusOption("Update");
       }
     }
-    onOpenChange(false);
+    handleUpdateModal();
   };
 
   const handleViewModal = () => {
@@ -69,39 +94,77 @@ const UserDetails = ({ userData }) => {
   };
 
   return (
-    <div className="w-full flex flex-col p-2 gap-2">
-      <p>Active Asset Data</p>
-      {active &&
-        active?.map((assetActive, index) => (
-          <div
-            key={index}
-            className="border rounded-md p-1 hover:bg-gray-200 hover:cursor-pointer"
-            onClick={() => handleOpen(assetActive)}
-          >
-            <p className="font-semibold capitalize"> {assetActive.category} </p>
-            <p className=" indent-5">
-              {assetActive?.peripheral_type && (
-                <span className="capitalize">
-                  {assetActive.peripheral_type} {" :"}
-                </span>
-              )}
-              {assetActive?.asset_name}
-            </p>
-            <p className=" indent-5">
-              Received: <span>{formatDate(assetActive?.date_received)}</span>
-            </p>
-          </div>
-        ))}
+    <>
+      {active.length > 0 ? (
+        <Table
+          shadow="md"
+          hideHeader
+          aria-label="ShowData"
+          classNames={{
+            wrapper: "rounded-lg p-0 mb-2",
+            td: "border",
+          }}
+        >
+          <TableHeader>
+            <TableColumn>Name</TableColumn>
+            <TableColumn>Item Type</TableColumn>
+            <TableColumn>Date Received</TableColumn>
+          </TableHeader>
+          <TableBody>
+            <TableRow className="cursor-default select-none">
+              <TableCell className="font-bold text-center">Name</TableCell>
+              <TableCell className="font-bold text-center">Item Type</TableCell>
+              <TableCell className="font-bold text-center">
+                Date Received
+              </TableCell>
+            </TableRow>
+
+            {active &&
+              active?.map((item, index) => (
+                <TableRow
+                  key={index}
+                  onClick={() => handleOpen(item)}
+                  className="cursor-pointer select-none hover:bg-a-blue/20 hover:text-a-blue/80 "
+                >
+                  <TableCell>{item?.asset_name}</TableCell>
+                  <TableCell>
+                    {item?.peripheral_type
+                      ? item?.peripheral_type
+                      : item?.category}
+                  </TableCell>
+                  <TableCell>{formatDate(item?.date_received)}</TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <div className="mb-2">
+          <NoItems
+            classNameImage={"h-[100px] w-auto"}
+            classNameLabel={"text-base"}
+            label="No Asset"
+          />
+        </div>
+      )}
 
       {selectedAssetHere !== null && (
-        <ViewModal
-          isOpen={isViewModal}
-          onClose={handleViewModal}
-          asset={selectedAssetHere}
-          selectAsset={handleSelect}
-        />
+        <>
+          <ViewModal
+            isOpen={isViewModal}
+            onClose={handleViewModal}
+            asset={selectedAssetHere}
+            handleSelectAsset={handleSelect}
+          />
+
+          <AddAsset
+            isOpen={isUpdateModal}
+            onclose={handleUpdateModal}
+            from="modal"
+            type="update"
+          />
+        </>
       )}
-    </div>
+    </>
   );
 };
 

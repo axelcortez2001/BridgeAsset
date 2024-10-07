@@ -190,7 +190,7 @@ const PeripheralInputForms = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <EmployeeDropDown
                     employeeOptions={employeeOptions}
-                    assetHolder={assetHolder}
+                    assetHolder={assetHolder?.name}
                     setAssetHolder={handleAssetHolder}
                   />
 

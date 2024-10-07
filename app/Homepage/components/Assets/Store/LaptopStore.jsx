@@ -164,10 +164,13 @@ export const updateLaptopAtom = atom(null, async (get, set) => {
       return [...oldAssetData?.asset_holder_history];
     }
   };
+
+  const user = await fetchUserAttributes();
+  const action = user?.name + " updated this asset"
   const history = {
     user_holder: oldAssetData?.asset_holder,
     date_updated: new Date(),
-    actions_taken: historyArray,
+    actions_taken: [action],
   };
   const assetData = {
     _id: oldAssetData?._id,

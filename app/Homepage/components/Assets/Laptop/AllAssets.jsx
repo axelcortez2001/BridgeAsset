@@ -47,6 +47,7 @@ import PeripheralInputForms from "../Peripherals/Components/PeripheralInputForms
 import { setMonitorDataToDefaultAtom } from "../Store/MonitorStore";
 import UpdatePeripheralInputForms from "../Peripherals/Components/UpdatePeripheralInputForms";
 import { handleAddPeripheralAtom } from "../Store/PeripheralStore";
+import { historyActionfunction } from "../Functions/functionAtom";
 
 const AllAssets = ({ selectedType, setActionStatus, from, handleClose }) => {
   const [isLoading, setLoading] = useState(false);
@@ -99,6 +100,8 @@ const AllAssets = ({ selectedType, setActionStatus, from, handleClose }) => {
   const updatePeripheral = useSetAtom(updatePeripheralAtom);
 
   const deleteAssetData = useSetAtom(deleteAssetDataAtom);
+
+  const setHistory = useSetAtom(historyActionfunction);
 
   //save new asset
   const handlesave = async () => {
@@ -164,6 +167,7 @@ const AllAssets = ({ selectedType, setActionStatus, from, handleClose }) => {
         : selectedType === "peripheral" && peripheralName !== ""
     ) {
       setLoading(true);
+
       const category = "laptop";
 
       async function promise() {

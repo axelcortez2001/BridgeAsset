@@ -17,12 +17,6 @@ const UserCard = ({ user, checkStat, tabLoc, tabSelect, userComplete }) => {
     }
   }, [checkLaptop, checkMonitor, checkPeripheral]);
 
-  // {
-  //   locationData.map((data) => {
-  //     console.log(checkStat(user, data.toLocaleLowerCase()));
-  //   });
-  // }
-
   const summaryData = (loc) => {
     if (loc === "All") {
       return locationData.map((data, index) => (
