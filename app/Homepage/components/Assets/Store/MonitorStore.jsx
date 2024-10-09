@@ -161,10 +161,12 @@ export const updateMonitorAtom = atom(null, async (get, set, action) => {
       return [...oldAssetData?.asset_holder_history];
     }
   };
+
+  const actionUpdate = user?.name + " updated this asset";
   const history = {
     user_holder: oldAssetData?.asset_holder,
     date_updated: new Date(),
-    actions_taken: historyArray,
+    actions_taken: [actionUpdate],
   };
   const assetData = {
     _id: oldAssetData?._id,

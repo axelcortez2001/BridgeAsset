@@ -81,9 +81,9 @@ const AssetBody = () => {
       } catch (e) {
         console.log(e);
       } finally {
-        setTimeout(() => {
-          setAssetLoading(false);
-        }, 2000);
+        // setTimeout(() => {
+        setAssetLoading(false);
+        // }, 2000);
       }
     };
     handleFetchData();
@@ -325,12 +325,7 @@ const AssetBody = () => {
         </Tabs>
       </div>
 
-      <AddAsset
-        setActionStatus={handleActionStatus}
-        actionStatus={actionStatus}
-        isOpen={isAddModal}
-        onclose={handleAddModal}
-      />
+      <AddAsset isOpen={isAddModal} onclose={handleAddModal} />
     </div>
   );
 };

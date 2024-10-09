@@ -9,82 +9,48 @@ import { fetchEmployeeAtom } from "@/app/Homepage/AssetStore";
 const PeripheralTypeDropdown = ({ peripheralType, setPeripheralType }) => {
   const peripheralData = peripheralTypeData;
   const fetchEmployee = useSetAtom(fetchEmployeeAtom);
+
   const handleSelectItem = async (opt) => {
     setPeripheralType(opt);
     await fetchEmployee("peripheral");
   };
+
+  const selectOption = [
+    {
+      label: "Mouse",
+      action: () => handleSelectItem("Mouse"),
+    },
+    {
+      label: "Keyboard",
+      action: () => handleSelectItem("Keyboard"),
+    },
+    {
+      label: "Headset",
+      action: () => handleSelectItem("Headset"),
+    },
+    {
+      label: "Others",
+      action: () => handleSelectItem("Others"),
+    },
+  ];
+
   return (
     <Select
-      variant='bordered'
-      label='Select Type'
-      className='w-60'
-      size='sm'
+      label="Select Type"
       selectedKeys={[peripheralType]}
+      aria-label="selectOption"
+      classNames={{ trigger: "min-h-[0px] h-[48px] rounded-lg bg-a-lightgrey" }}
     >
-      <SelectItem
-        key='Mouse'
-        textValue='Mouse'
-        onClick={() => handleSelectItem("Mouse")}
-      >
-        <div className='flex'>
-          <img
-            alt='Mouse'
-            className='flex-shrink-0 h-5 w-5 mr-4'
-            src='/mouse.png'
-          />
-          <div className='flex flex-col'>
-            <span className='text-small'>Mouse</span>
-          </div>
-        </div>
-      </SelectItem>
-      <SelectItem
-        key='Keyboard'
-        textValue='Keyboard'
-        onClick={() => handleSelectItem("Keyboard")}
-      >
-        <div className='flex'>
-          <img
-            alt='Keyboard'
-            className='flex-shrink-0 h-5 w-5 mr-4'
-            src='/keyboard.png'
-          />
-          <div className='flex flex-col'>
-            <span className='text-small'>Keyboard</span>
-          </div>
-        </div>
-      </SelectItem>
-      <SelectItem
-        key='Headset'
-        textValue='Headset'
-        onClick={() => handleSelectItem("Headset")}
-      >
-        <div className='flex'>
-          <img
-            alt='Headset'
-            className='flex-shrink-0 h-5 w-5 mr-4'
-            src='/headset.png'
-          />
-          <div className='flex flex-col'>
-            <span className='text-small'>Headset</span>
-          </div>
-        </div>
-      </SelectItem>
-      <SelectItem
-        key='Others'
-        textValue='Others'
-        onClick={() => handleSelectItem("Others")}
-      >
-        <div className='flex'>
-          <img
-            alt='Others'
-            className='flex-shrink-0 h-5 w-5 mr-4'
-            src='/ellipsis.png'
-          />
-          <div className='flex flex-col'>
-            <span className='text-small'>Others</span>
-          </div>
-        </div>
-      </SelectItem>
+      {selectOption.map((item) => (
+        <SelectItem
+          key={item.label}
+          textValue={item.label}
+          onClick={item.action}
+          className="h-[40px]"
+        >
+          {item.label}
+        </SelectItem>
+      ))}
     </Select>
   );
 };

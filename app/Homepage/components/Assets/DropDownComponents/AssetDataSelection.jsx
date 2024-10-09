@@ -32,7 +32,6 @@ const AssetDataSelection = ({ setData }) => {
   }, [searchTerm, assetData]);
 
   useEffect(() => {
-    console.log("dropdownRef: ", dropdownOpen);
     const handleKeyPress = (event) => {
       if (dropdownOpen.current) {
         setSearchTerm((prev) => prev + event.key);
@@ -68,8 +67,10 @@ const AssetDataSelection = ({ setData }) => {
   }, []);
 
   return (
-    <div className='flex gap-2 items-center w-full'>
-      <p className='text-sm text-gray-500'>Select Asset Data</p>
+    <div className="flex flex-col justify-center w-full">
+      <p className="text-sm text-a-black font-medium flex-none px-2">
+        Asset Data
+      </p>
       <Select
         onOpenChange={() => {
           dropdownOpen.current = true;
@@ -78,9 +79,9 @@ const AssetDataSelection = ({ setData }) => {
         onClose={() => {
           dropdownOpen.current = false;
         }}
-        className='w-3/4'
-        label='Select an Asset'
-        aria-label='Asset Selection'
+        classNames={{ trigger: "bg-a-lightgrey rounded-lg min-h-[0px] h-[48px]", label: "text-a-black" }}
+        label="Select an Asset"
+        aria-label="Asset Selection"
         size={"sm"}
       >
         {filteredAssets && filteredAssets.length > 0 ? (
@@ -90,12 +91,13 @@ const AssetDataSelection = ({ setData }) => {
               value={asset}
               onClick={() => setData(asset)}
               textValue={asset?.item}
+              className="h-[40px]"
             >
               {asset.item}
             </SelectItem>
           ))
         ) : (
-          <SelectItem key='no-result' disabled>
+          <SelectItem key="no-result" disabled>
             No results found
           </SelectItem>
         )}

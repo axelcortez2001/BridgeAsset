@@ -3,20 +3,27 @@ import CustomChart from "../CustomChart";
 import ExpandGateway from "../../ExpandComponents/ExpandGateway";
 import { useAtom, useAtomValue } from "jotai";
 import {
-  isBranchOpenAtom,
   selectedValueDataAtom,
   statusLabelsAtom,
 } from "../../ExpandComponents/ExpandStore";
 import { Button, useDisclosure } from "@nextui-org/react";
 import { categorizedStatus } from "../../AllComponents/function";
 const StatusChartGateway = ({ chartData, chartOpen }) => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isExpandChart, setExpandChart] = useState(false);
+
   const [newChartData, setNewChartData] = useState(chartData);
   const statusLabels = useAtomValue(statusLabelsAtom);
   const [selectedValueData, setSelectedValueData] = useAtom(
     selectedValueDataAtom
   );
-  const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
+
+  const handleExpandChart = () => {
+    setExpandChart((prev) => !prev);
+
+    if (isExpandChart) {
+      setSelectedValueData(null);
+    }
+  };
 
   useEffect(() => {
     if (
@@ -31,7 +38,7 @@ const StatusChartGateway = ({ chartData, chartOpen }) => {
           [selectedValueData.label]: filteredData,
         },
       }));
-    } else if (isBranchOpen === false) {
+    } else if (isExpandChart === false) {
       setNewChartData(chartData);
     }
   }, [selectedValueData, chartData]);
@@ -67,6 +74,11 @@ const StatusChartGateway = ({ chartData, chartOpen }) => {
         },
       },
     },
+    onHover: (event, chartElement) => {
+      event.native.target.style.cursor = chartElement[0]
+        ? "pointer"
+        : "default";
+    },
     onClick: (event, elements, context) => {
       if (elements.length > 0) {
         const elementIndex = elements[0].index;
@@ -78,10 +90,11 @@ const StatusChartGateway = ({ chartData, chartOpen }) => {
           data: chartData.newAsset[selectedLabel],
           location: "status",
         };
-        setIsBranchOpen(true);
-        if (!isBranchOpen) {
-          onOpenChange(true);
+
+        if (!isExpandChart) {
+          handleExpandChart();
         }
+
         if (selectedValueData === null) {
           setSelectedValueData(selectedItemData);
         } else {
@@ -91,12 +104,7 @@ const StatusChartGateway = ({ chartData, chartOpen }) => {
       }
     },
   };
-  const handleModal = () => {
-    if (!isBranchOpen) {
-      onOpenChange(true);
-      setIsBranchOpen(true);
-    }
-  };
+
   const data = {
     labels: labels,
     datasets: [
@@ -118,10 +126,8 @@ const StatusChartGateway = ({ chartData, chartOpen }) => {
           chartData={data}
           options={options}
           type="Pie"
-          onOpen={onOpen}
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          handleModal={handleModal}
+          onClose={handleExpandChart}
+          isOpen={isExpandChart}
         />
       </div>
       <div className="w-full h-[calc(100%-40px)] flex items-center justify-center border-t border-a-grey">

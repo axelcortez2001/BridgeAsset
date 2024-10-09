@@ -13,6 +13,7 @@ import { IoSearch } from "react-icons/io5";
 import { IoIosAdd } from "react-icons/io";
 import { RxCardStack } from "react-icons/rx";
 import { CiViewTable } from "react-icons/ci";
+import { FaRegEdit } from "react-icons/fa";
 
 const dashboardIcon = (className) => {
   return <MdOutlineDashboard className={`${className} h-5 w-5`} />;
@@ -66,6 +67,10 @@ const tableIcon = (className) => {
   return <CiViewTable className={`${className} h-5 w-5`} />;
 };
 
+const editIcon = (className) => {
+  return <FaRegEdit className={`${className} h-5 w-5`} />;
+};
+
 export {
   dashboardIcon,
   userIcon,
@@ -80,4 +85,5 @@ export {
   addIcon,
   cardIcon,
   tableIcon,
+  editIcon,
 };

@@ -23,7 +23,7 @@ export const laptopStatusData = [
   { name: "For Pull Out", id: 8, color: "bg-orange-700" },
 ];
 export const actionHistoryAtom = atom([]);
-export const itemStatusOptionAtom = atom("NONE");
+export const itemStatusOptionAtom = atom("");
 export const itemNameAtom = atom("");
 export const serialNumberAtom = atom("");
 export const FACodeAtom = atom("");
@@ -164,10 +164,13 @@ export const updateLaptopAtom = atom(null, async (get, set) => {
       return [...oldAssetData?.asset_holder_history];
     }
   };
+
+  const user = await fetchUserAttributes();
+  const action = user?.name + " updated this asset"
   const history = {
     user_holder: oldAssetData?.asset_holder,
     date_updated: new Date(),
-    actions_taken: historyArray,
+    actions_taken: [action],
   };
   const assetData = {
     _id: oldAssetData?._id,
@@ -194,11 +197,16 @@ export const updateLaptopAtom = atom(null, async (get, set) => {
     const response = await restUpdate("/assets", { assetData });
     if (response?.success) {
       console.log("Response Update: ", response);
-      const newAssetData = get(assetDataAtom).map((asset) =>
-        asset._id === oldAssetData._id ? assetData : asset
-      );
+      
       set(updateStatusAtom, true);
-      set(assetDataAtom, newAssetData);
+
+      // Realtime update - causing error in toast promise in update fields at charts
+
+      // const newAssetData = get(assetDataAtom).map((asset) =>
+      //   asset._id === oldAssetData._id ? assetData : asset
+      // );
+
+      // set(assetDataAtom, newAssetData);
       return { success: true, response };
     } else {
       return { success: false };

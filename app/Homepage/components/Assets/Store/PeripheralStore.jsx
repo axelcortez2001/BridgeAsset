@@ -119,6 +119,7 @@ export const handleAddPeripheralAtom = atom(null, async (get, set) => {
       remarks: get(remarksAtom),
       peripheral_type: get(peripheralTypeAtom),
       warranty_period: get(warrantyPeriodAtom),
+      tagCode: get(tagCodeAtom),
     };
     console.log("will be added: ", assetData);
     const response = await restInsert("/assets", assetData);
@@ -182,10 +183,12 @@ export const updatePeripheralAtom = atom(null, async (get, set) => {
       return [...oldAssetData?.asset_holder_history];
     }
   };
+
+  const action = user?.name + " updated this asset"
   const history = {
     user_holder: oldAssetData?.asset_holder,
     date_updated: new Date(),
-    actions_taken: historyArray,
+    actions_taken: [action],
   };
   const assetData = {
     _id: oldAssetData?._id,

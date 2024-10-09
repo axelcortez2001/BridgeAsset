@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -6,6 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  Divider,
 } from "@nextui-org/react";
 import CustomChart from "../ChartComponents/CustomChart";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -15,10 +16,10 @@ import {
   sideBarLocation,
 } from "@/app/Homepage/AssetStore";
 import Table from "../../../Assets/TableComponents/Table";
+import AddAsset from "../../../Assets/AssetComponents/Asset";
 const ExpandGatewayModal = ({
   isOpen,
-  onOpen,
-  onOpenChange,
+  onClose,
   chartData,
   options,
   type,
@@ -26,78 +27,88 @@ const ExpandGatewayModal = ({
 }) => {
   const [valueData, setValueData] = useAtom(selectedValueDataAtom);
   const setActionStatus = useSetAtom(globalActionStatusAtom);
-  const setSideBar = useSetAtom(sideBarLocation);
-  const setIsBranchOpen = useSetAtom(isBranchOpenAtom);
+  const [isAddModal, setAddModal] = useState(false);
 
-  // Detect if modal was closed unexpectedly.
-  useEffect(() => {
-    if (!isOpen) {
-      if (valueData?.location === "branch") {
-        setValueData(null);
-        setIsBranchOpen(false);
-      }
-    }
-  }, [isOpen, setValueData, setIsBranchOpen]);
+  const handleAddModal = () => {
+    setAddModal((prev) => !prev);
+  };
+
   const handleActionStatus = () => {
-    onOpenChange(false);
-    setValueData(null);
-    setSideBar("assets");
+    handleAddModal();
     setActionStatus(true);
-    setIsBranchOpen(false);
   };
-  const handleClose = () => {
-    onOpenChange(false);
-    setValueData(null);
-    setIsBranchOpen(false);
-  };
-  return (
-    <Modal
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-      isDismissable={false}
-      isKeyboardDismissDisabled={true}
-      className='max-h-[95%] overflow-y-auto min-w-[60%] w-auto max-w-[90%]'
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className='flex flex-col gap-1 sticky top-0 w-full bg-white'>
-              {chartTitle}
-            </ModalHeader>
 
-            <ModalBody>
-              <div className='flex flex-col border items-center  p-2'>
-                <div className='border flex items-center justify-center w-1/2 max-h-[400px]'>
-                  <CustomChart
-                    chartData={chartData}
-                    options={options}
-                    type={type}
+  return (
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => onClose()}
+        className="!m-0 overflow-hidden rounded-md pb-2"
+      >
+        <ModalContent className="min-w-[90%] h-[calc(100%-80px)]">
+          <ModalHeader className="flex flex-col justify-center w-full h-[40px] border-b border-a-grey bg-a-lightgrey">
+            {chartTitle}
+          </ModalHeader>
+          <ModalBody className="flex lg:flex-row w-full gap-2 p-0 md:p-2 overflow-y-auto">
+            <div
+              className={` w-full ${
+                valueData !== null
+                  ? `h-[calc(50%-8px)] lg:h-full ${
+                      type === "Pie"
+                        ? "lg:w-[calc(32%-9px)]"
+                        : "lg:w-[calc(40%-9px)]"
+                    }
+                `
+                  : "h-full"
+              } flex-none flex items-center justify-center`}
+            >
+              <CustomChart
+                chartData={chartData}
+                options={options}
+                type={type}
+                className={`${type === "Pie" && "max-h-[76%] max-w-[76%]"} ${
+                  type === "Line" && "max-h-[80%] max-w-[80%]"
+                }`}
+              />
+            </div>
+
+            {valueData !== null && (
+              <>
+                <div className="lg:h-full lg:py-8 px-4 lg:px-0">
+                  <Divider orientation="vertical" className="hidden lg:block" />
+                  <Divider
+                    orientation="horizontal"
+                    className="block lg:hidden"
                   />
                 </div>
-                {valueData !== null && (
-                  <>
-                    <p className='capitalize mt-3 text-xl font-bold'>
-                      {valueData?.label}
+                <div
+                  className={`p-4 flex-initial h-[calc(50%-4px)] lg:h-full w-full ${
+                    type === "Pie"
+                      ? "lg:w-[calc(68%-9px)]"
+                      : "lg:w-[calc(60%-9px)]"
+                  } `}
+                >
+                  <div className="flex flex-row items-center">
+                    <p className={`tracking-widest font-bold p-2`}>
+                      {valueData?.label.toUpperCase()}
                     </p>
-                    <div className='mt-4 p-2 text-xs w-full max-h-[500px] overflow-y-auto'>
-                      <Table
-                        assetData={valueData?.data}
-                        setActionStatus={handleActionStatus}
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-            </ModalBody>
-            <ModalFooter className='sticky bottom-0'>
-              <Button color='danger' variant='light' onPress={handleClose}>
-                Close
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+                  </div>
+
+                  <div className="text-sm">
+                    <Table
+                      assetData={valueData?.data}
+                      setActionStatus={handleActionStatus}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <AddAsset isOpen={isAddModal} onclose={handleAddModal} />
+    </>
   );
 };
 

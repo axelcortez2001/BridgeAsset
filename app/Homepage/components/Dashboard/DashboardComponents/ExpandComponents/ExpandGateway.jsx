@@ -7,11 +7,9 @@ const ExpandGateway = ({
   chartData,
   options,
   type,
-  isOpen,
-  onOpen,
-  onOpenChange,
-  handleModal,
   middleContent,
+  isOpen,
+  onClose,
 }) => {
   return (
     <div className="relative w-full h-full flex flex-row justify-between items-center">
@@ -29,17 +27,16 @@ const ExpandGateway = ({
         <Button
           isIconOnly
           variant="light"
-          onClick={handleModal}
+          onClick={onClose}
           className="absolute top-0 right-0"
         >
           <IoMdExpand size={20} title="Expand" />
         </Button>
       </div>
+      
       <ExpandGatewayModal
-        onOpen={onOpen}
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        className="p-2 max-h-screen"
+        onClose={onClose}
         chartData={chartData}
         options={options}
         type={type}

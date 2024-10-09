@@ -120,8 +120,6 @@ export const fetchEmployeeAtom = atom(null, async (get, set, category) => {
     const assetData = get(assetDataAtom);
 
     const { user } = await getUsers("/users");
-    console.log("Asset Data from fetchEMployee: ", assetData);
-    console.log("user Data from fetchEMployee: ", user);
     if (assetData !== null && user !== null) {
       if (category === "peripheral") {
         const peripheralType = get(peripheralTypeAtom);
@@ -205,11 +203,16 @@ export const deleteAssetDataAtom = atom(null, async (get, set, _id) => {
     const response = await restDelete("/assets", { _id });
     if (response?.success) {
       console.log("Response: ", response);
-      const newAssetData = get(assetDataAtom).filter(
-        (asset) => asset._id !== _id
-      );
       set(updateStatusAtom, true);
-      set(assetDataAtom, newAssetData);
+
+      // same with update causes an error in chart expand, this is for responsiveness
+      // put to to make the data realtime. soon to be changed to swr.
+
+      // const newAssetData = get(assetDataAtom).filter(
+      //   (asset) => asset._id !== _id
+      // );
+      // set(assetDataAtom, newAssetData);
+
       return { success: true, response };
     } else {
       return { success: false };

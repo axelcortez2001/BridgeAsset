@@ -1,15 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { isValid } from "date-fns";
-import { Tabs, Tab } from "@nextui-org/react";
+import {
+  Tabs,
+  Tab,
+  TableHeader,
+  Table,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Dropdown,
+  DropdownTrigger,
+  Button,
+  DropdownMenu,
+  DropdownItem,
+  Pagination,
+  Card,
+  CardBody,
+} from "@nextui-org/react";
+import { filterIcon } from "@/public/Icon";
+import NoItems from "@/app/SharedComponents/NoItems";
 
 const UserHistory = ({ userData }) => {
-  const [accordionArray, setAccordionArray] = useState([]);
   const [tabLocation, setTabLocation] = useState("All");
   const historyArray = userData?.asset_holder_history;
   const [filteredHistoryArray, setFilteredHistoryArray] =
     useState(historyArray);
-  console.log("History Array: ", historyArray);
+
+  const [selectedKeys, setSelectedKeys] = useState(new Set(["All"]));
+
   const formatDate = (opt) => {
     if (isValid(new Date(opt))) {
       const formattedDate = new Date(opt).toLocaleDateString("en-US", {
@@ -22,16 +42,7 @@ const UserHistory = ({ userData }) => {
       return "No Date";
     }
   };
-  //handlers
-  const toggleAccordion = (opt) => {
-    console.log(accordionArray);
-    console.log(opt);
-    if (accordionArray.some((acc) => acc === opt)) {
-      setAccordionArray(accordionArray.filter((acc) => acc !== opt));
-    } else {
-      setAccordionArray([...accordionArray, opt]);
-    }
-  };
+
   useEffect(() => {
     if (tabLocation === "All") {
       setFilteredHistoryArray(historyArray);
@@ -43,90 +54,139 @@ const UserHistory = ({ userData }) => {
       );
     }
   }, [tabLocation, historyArray]);
-  const handleTab = (opt) => {
-    setTabLocation(opt);
+
+  const dropdownOption = [
+    {
+      label: "All",
+      action: () => handleFilter("All"),
+    },
+    {
+      label: "Laptop",
+      action: () => handleFilter("Laptop"),
+    },
+    {
+      label: "Monitor",
+      action: () => handleFilter("Monitor"),
+    },
+    {
+      label: "Peripheral",
+      action: () => handleFilter("Peripheral"),
+    },
+  ];
+
+  const handleFilter = (item) => {
+    setTabLocation(item);
   };
+
+  const tableHeader = ["Name", "Category", "Date Received", "Date Return"];
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemPerPage, setItemPerPage] = useState(5);
+
+  const totalPage = Math.ceil(filteredHistoryArray?.length / itemPerPage);
+
+  const currentTableData = filteredHistoryArray?.slice(
+    (currentPage - 1) * itemPerPage,
+    currentPage * itemPerPage
+  );
+
   return (
-    <div className='w-full flex flex-col p-2 gap-2'>
-      <div>
-        <Tabs onSelectionChange={handleTab}>
-          <Tab key='All' title='All' />
-          <Tab key='Laptop' title='Laptop' />
-          <Tab key='Monitor' title='Monitor' />
-          <Tab key='Peripheral' title='Peripheral' />
-        </Tabs>
-      </div>
-      User History
-      <div className='flex flex-col gap-2 max-h-[350px] overflow-y-auto'>
-        {filteredHistoryArray &&
-          filteredHistoryArray?.map((history, index) => (
-            <div
-              key={index}
-              className=' flex flex-col justify-between border p-2 rounded-md'
+    <>
+      <div className="grid grid-cols-3 pb-2">
+        <div></div>
+        <div className="text-lg font-bold flex items-center justify-center">
+          <p>ASSET HISTORY</p>
+        </div>
+        <div className="flex justify-end">
+          <Dropdown>
+            <DropdownTrigger>
+              <Button size="sm" isIconOnly className="bg-a-blue mx-2">
+                {filterIcon("text-a-white")}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              selectionMode="single"
+              selectedKeys={selectedKeys}
+              onSelectionChange={setSelectedKeys}
             >
-              <div
-                onClick={() => toggleAccordion(index)}
-                className='Accordion flex justify-between w-full cursor-pointer'
-              >
-                <div className='flex'>
-                  {accordionArray &&
-                  accordionArray.some((acc) => acc === index) ? (
-                    <div></div>
-                  ) : (
-                    <div className=''>
-                      {" "}
-                      {formatDate(history?.date_return)}
-                      {" : "}
-                    </div>
-                  )}
-                  <div className='font-semibold'>{history?.asset_name}</div>
-                </div>
-                <motion.div
-                  className='font-semibold'
-                  initial={{ rotate: 0 }}
-                  animate={{
-                    rotate:
-                      accordionArray &&
-                      accordionArray.some((acc) => acc === index)
-                        ? 90
-                        : 0,
-                  }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {">"}
-                </motion.div>
-              </div>
-              <AnimatePresence>
-                {accordionArray &&
-                  accordionArray.some((acc) => acc === index) && (
-                    <motion.div
-                      className='mt-2'
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className='w-full p-1 indent-1 flex flex-col'>
-                        <div>
-                          <p className='capitalize'>
-                            Category: {history?.category}
-                          </p>
-                          {history?.peripheral_type && (
-                            <p>Type: {history?.peripheral_type}</p>
-                          )}
-                        </div>
-                        <div className='flex flex-row justify-between'>
-                          <p>Received: {formatDate(history?.date_received)}</p>
-                          <p>Returned: {formatDate(history?.date_return)}</p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-              </AnimatePresence>
-            </div>
-          ))}
+              {dropdownOption.map((item, index) => (
+                <DropdownItem key={item.label} onPress={item.action}>
+                  {item.label}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        </div>
       </div>
-    </div>
+
+      {filteredHistoryArray.length > 0 ? (
+        <>
+          <Table
+            layout="fixed"
+            shadow="md"
+            hideHeader
+            aria-label="ShowData"
+            classNames={{
+              wrapper: "rounded-lg p-0 mb-2",
+              td: "border",
+            }}
+          >
+            <TableHeader>
+              {tableHeader.map((item, index) => (
+                <TableColumn key={index}>{item}</TableColumn>
+              ))}
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                {tableHeader.map((item, index) => (
+                  <TableCell key={index} className="font-bold text-center">
+                    {item}
+                  </TableCell>
+                ))}
+              </TableRow>
+              {currentTableData?.length > 0 &&
+                currentTableData?.map((item, index) => (
+                  <TableRow
+                    key={index}
+                    className="cursor-default select-none hover:bg-a-blue/20 hover:text-a-blue/80 "
+                  >
+                    <TableCell>{item?.asset_name}</TableCell>
+                    <TableCell>
+                      {item?.peripheral_type
+                        ? item?.peripheral_type
+                        : item?.category}
+                    </TableCell>
+                    <TableCell> {formatDate(item?.date_received)}</TableCell>
+                    <TableCell> {formatDate(item?.date_return)}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </>
+      ) : (
+        <div className="my-4">
+          <NoItems
+            classNameImage={"h-[100px] w-auto"}
+            classNameLabel={"text-base"}
+            label="No Asset"
+          />
+        </div>
+      )}
+
+      <div
+        className={`flex items-center justify-center ${
+          filteredHistoryArray.length === 0 && "hidden"
+        }`}
+      >
+        <Pagination
+          total={totalPage}
+          initialPage={1}
+          page={currentPage}
+          onChange={setCurrentPage}
+          classNames={{ cursor: "bg-a-blue" }}
+        />
+      </div>
+    </>
   );
 };
 

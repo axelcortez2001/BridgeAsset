@@ -6,10 +6,10 @@ import { actionPeripheralHistoryAtom } from "../Store/PeripheralStore";
 
 export const historyActionfunction = atom(
   null,
-  async (get, set, field, newData, oldData) => {
+  async (get, set, message) => {
     const user = await fetchUserAttributes();
     const historyArray = get(actionHistoryAtom);
-    const action = "set" + field + " to " + newData + " from " + oldData;
+    const action = message;
     const actionDefinition = user.name + " " + action;
     const newActionHistory = [actionDefinition, ...historyArray];
     set(actionHistoryAtom, newActionHistory);

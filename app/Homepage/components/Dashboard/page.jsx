@@ -11,6 +11,7 @@ import AssetLoading from "../LoadingComponents/AssetLoading";
 import { updateStatusAtom } from "../../AssetStore";
 import { Card } from "@nextui-org/react";
 import DashboardSkeleton from "./DashboardComponents/DashboardSkeleton";
+import NoItems from "@/app/SharedComponents/NoItems";
 
 const Dashboard = ({ isSideNavBar, setSideNavBar }) => {
   const [dashboardLoading, setDashboardLoading] = useState(false);
@@ -69,7 +70,7 @@ const Dashboard = ({ isSideNavBar, setSideNavBar }) => {
       </div>
     </div>
   ) : dashboardData && dashboardData?.length <= 0 ? (
-    <div>No Data Available</div>
+    <NoItems/>
   ) : (
     <div className="h-full w-full">
       <DashboardHome

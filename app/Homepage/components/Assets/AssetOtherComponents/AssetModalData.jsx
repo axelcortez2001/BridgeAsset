@@ -5,9 +5,22 @@ import {
   checkWarrantyPeriod,
   computeYTD,
 } from "../TableComponents/TableFunction";
+import {
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
+import { list } from "postcss";
+import { useAtomValue } from "jotai";
+import { selectedTypeAtom } from "@/app/Homepage/AssetStore";
 
 const AssetModalData = ({ asset }) => {
-  console.log("Asset View: ", asset);
+  const selectedType = useAtomValue(selectedTypeAtom);
+
   const formatDate = (opt) => {
     if (isValid(new Date(opt))) {
       const formattedDate = new Date(opt).toLocaleDateString("en-US", {
@@ -20,58 +33,115 @@ const AssetModalData = ({ asset }) => {
       return "No Date";
     }
   };
-  return (
-    <div className='w-full flex flex-col p-2 border rounded-md text-sm gap-2'>
-      <div>
-        Category: <span className='capitalize'>{asset?.category}</span>
-      </div>
-      <div>
-        Status: <span className='capitalize'>{asset?.status?.name}</span>
-      </div>
-      <div>
-        Serial No: <span className=''>{asset?.serial_number}</span>
-      </div>
-      <div>
-        <p>
-          Current User:
-          <span className='capitalize'>{asset?.asset_holder?.name}</span>
-        </p>
-        <p>
-          Date of Issued:{" "}
-          <span className='capitalize'>{formatDate(asset?.doi)}</span>
-        </p>
-      </div>
-      <div>
-        Supplier: <span>{asset?.supplier?.name}</span>
-      </div>
-      <div>
-        Branch: <span>{asset?.branch}</span>
-      </div>
-      <div>
-        Inventory Filed: <span>{formatDate(asset?.inventory_filed)}</span>
-      </div>
-      <div>
-        Unit Price: <span>{asset?.unit_price}</span>
-      </div>
-      <div>
-        Date of Purchase: <span>{formatDate(asset?.dop)}</span>
-      </div>
-      <div>
-        YTD: <span>{computeYTD(asset?.dop)}</span>
-      </div>
-      <div>
-        Warranty Period:{" "}
-        <span>{checkWarrantyPeriod(asset?.warranty_period, asset?.dop)}</span>
-      </div>
-      <div>
-        Warranty Status:{" "}
-        <span>{checkWarrantStatus(asset?.warranty_period, asset?.dop)}</span>
-      </div>
 
-      <div className='w-full bg-gray min-h-20'>
-        Remarks: <span>{asset?.remarks}</span>
-      </div>
-    </div>
+  const listData = [
+    {
+      title: "Item",
+      data: asset?.item,
+    },
+    {
+      title: "Category",
+      data: asset?.category,
+    },
+    {
+      title: "Tag Code",
+      data: asset?.tagCode,
+      className: selectedType === "laptop" && "hidden",
+    },
+    {
+      title: "Status",
+      data: asset?.status?.name,
+    },
+    {
+      title: "User Type",
+      data: asset?.user_type,
+    },
+    {
+      title: "Serial Number",
+      data: asset?.serial_number,
+    },
+    {
+      title: "Current User",
+      data: asset?.asset_holder?.name,
+    },
+    {
+      title: "Date of Issued",
+      data: formatDate(asset?.doi),
+    },
+    {
+      title: "Supplier",
+      data: asset?.supplier?.name,
+    },
+    {
+      title: "Branch",
+      data: asset?.branch,
+    },
+    {
+      title: "Inventory Filed",
+      data: formatDate(asset?.inventory_filed),
+    },
+    {
+      title: "Unit Price",
+      data: asset?.unit_price,
+    },
+    {
+      title: "Date of Purchase",
+      data: formatDate(asset?.dop),
+    },
+    {
+      title: "Year to Date",
+      data: computeYTD(asset?.dop),
+    },
+    {
+      title: "Warranty Period",
+      data: checkWarrantyPeriod(asset?.warranty_period, asset?.dop),
+    },
+    {
+      title: "Warranty Status",
+      data: checkWarrantStatus(asset?.warranty_period, asset?.dop),
+    },
+    {
+      title: "Remarks",
+      data: asset?.remarks,
+    },
+  ];
+
+  return (
+    <Table
+      hideHeader
+      aria-label="ShowData"
+      shadow="md"
+      classNames={{
+        wrapper: "p-0 rounded-lg",
+        td: "border ",
+      }}
+    >
+      <TableHeader>
+        <TableColumn>TITLE</TableColumn>
+        <TableColumn>DATA</TableColumn>
+      </TableHeader>
+      <TableBody>
+        {listData.map((item, index) => (
+          <TableRow
+            key={index}
+            className={`${item.className} select-none hover:bg-a-blue/20 hover:text-a-blue/80 `}
+          >
+            <TableCell className="font-bold">
+              {item.title.toUpperCase()}
+            </TableCell>
+            <TableCell className="font-medium">
+              {item.data !== "" &&
+              item.data !== null &&
+              item.data !== undefined ? (
+                item.data
+              ) : (
+                <p className="text-a-red">NO RECORD</p>
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
 

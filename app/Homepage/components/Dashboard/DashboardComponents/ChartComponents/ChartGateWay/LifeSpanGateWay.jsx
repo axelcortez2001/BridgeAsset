@@ -4,13 +4,12 @@ import { Button, useDisclosure } from "@nextui-org/react";
 import ExpandGateway from "../../ExpandComponents/ExpandGateway";
 import { useAtom, useAtomValue } from "jotai";
 import {
-  isBranchOpenAtom,
   selectedValueDataAtom,
   warrantyLabelsAtom,
 } from "../../ExpandComponents/ExpandStore";
 const LifeSpanGateWay = ({ chartData }) => {
   const [newChartData, setNewChartData] = useState(chartData);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   const labelMapping = {
     Good: "Good",
     above: "More than 3 years",
@@ -18,7 +17,6 @@ const LifeSpanGateWay = ({ chartData }) => {
     invalid: "No Date",
   };
 
-  const [isBranchOpen, setIsBranchOpen] = useAtom(isBranchOpenAtom);
   const [selectedValueData, setSelectedValueData] = useAtom(
     selectedValueDataAtom
   );
@@ -27,9 +25,21 @@ const LifeSpanGateWay = ({ chartData }) => {
   const oldLabels = Object.keys(newChartData.newAsset);
   // Map old labels to new labels
   const labels = oldLabels.map((label) => labelMapping[label] || label);
+
   const dataValues = oldLabels.map(
     (label) => newChartData.newAsset[label]?.length
   );
+
+  const [isExpandChart, setExpandChart] = useState(false);
+
+  const handleExpandChart = () => {
+    setExpandChart((prev) => !prev);
+
+    if (isExpandChart) {
+      setSelectedValueData(null);
+    }
+  };
+
   useEffect(() => {
     if (
       selectedValueData &&
@@ -43,11 +53,13 @@ const LifeSpanGateWay = ({ chartData }) => {
           [selectedValueData.label]: filteredData,
         },
       }));
-    } else if (isBranchOpen === false) {
+    } else if (isExpandChart === false) {
       setNewChartData(chartData);
     }
   }, [selectedValueData, chartData]);
+
   const dataforTable = oldLabels.map((label) => newChartData.newAsset[label]);
+
   const backgroundColors = oldLabels.map((label) => {
     const status = warrantyLabels.find((s) => s.name === label);
     return status ? status.backgroundColor : "rgba(0, 0, 0, 0.1)";
@@ -74,6 +86,11 @@ const LifeSpanGateWay = ({ chartData }) => {
         },
       },
     },
+    onHover: (event, chartElement) => {
+      event.native.target.style.cursor = chartElement[0]
+        ? "pointer"
+        : "default";
+    },
     onClick: (event, elements, context) => {
       if (elements.length > 0) {
         const elementIndex = elements[0].index;
@@ -85,10 +102,11 @@ const LifeSpanGateWay = ({ chartData }) => {
           data: dataforTable[elementIndex],
           location: "warranty",
         };
-        setIsBranchOpen(true);
-        if (!isBranchOpen) {
-          onOpenChange(true);
+
+        if (!isExpandChart) {
+          handleExpandChart();
         }
+
         if (selectedValueData === null) {
           setSelectedValueData(selectedItemData);
         } else {
@@ -111,13 +129,9 @@ const LifeSpanGateWay = ({ chartData }) => {
       },
     ],
   };
-  const handleModal = () => {
-    if (!isBranchOpen) {
-      onOpenChange(true);
-      setIsBranchOpen(true);
-    }
-  };
+
   const chartTitle = "Asset Warranty Status";
+
   return (
     <div className="w-full h-full flex items-center flex-col p-2 ">
       <div className="w-full h-[40px] flex flex-row justify-between items-center">
@@ -126,10 +140,8 @@ const LifeSpanGateWay = ({ chartData }) => {
           chartData={data}
           options={options}
           type="Pie"
-          onOpen={onOpen}
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          handleModal={handleModal}
+          onClose={handleExpandChart}
+          isOpen={isExpandChart}
         />
       </div>
       <div className="w-full h-[calc(100%-40px)] flex items-center justify-center border-t border-a-grey">
